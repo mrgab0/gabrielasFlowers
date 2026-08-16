@@ -1,0 +1,127 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 42, 0, 2; /* Vinotinto Profundo (#2a0002) */
+  --background-start-rgb: 255, 248, 247; /* Superficie Calida (#fff8f7) */
+  --background-end-rgb: 255, 248, 247;
+}
+
+.dark {
+  --foreground-rgb: 255, 255, 255; /* Blanco Puro (#FFFFFF) */
+  --background-start-rgb: 15, 16, 21;
+  --background-end-rgb: 15, 16, 21;
+}
+
+/* Base Body Typography */
+body {
+  color: #2a0002;
+  background: rgb(var(--background-start-rgb));
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dark body {
+  color: #FFFFFF !important;
+}
+
+/* --- REGLAS GLOBALES DE TIPOGRAFÍA: VINOTINTO (CLARO) & BLANCO (OSCURO) --- */
+
+/* Titulares y Encabezados */
+h1, h2, h3, h4, h5, h6 {
+  color: #2a0002;
+}
+
+.dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
+  color: #FFFFFF !important;
+}
+
+/* Colores de Texto Primarios */
+.text-\[\#1A1C1C\],
+.text-gray-900,
+.text-gray-800 {
+  color: #2a0002;
+}
+
+.dark .text-\[\#1A1C1C\],
+.dark .text-gray-900,
+.dark .text-gray-800 {
+  color: #FFFFFF !important;
+}
+
+/* Colores de Texto Secundarios (Subtítulos, párrafos y descripciones) */
+.text-gray-700,
+.text-gray-600 {
+  color: #5c0005;
+}
+
+.dark .text-gray-700,
+.dark .text-gray-600 {
+  color: #E5E7EB !important;
+}
+
+.text-gray-500,
+.text-gray-400 {
+  color: #8B0024;
+}
+
+.dark .text-gray-500,
+.dark .text-gray-400 {
+  color: #D1D5DB !important;
+}
+
+/* --- COBERTURA COMPLETA DE MODO OSCURO (CLIENTE & ADMIN) --- */
+
+.dark main,
+.dark .bg-gray-100,
+.dark .bg-gray-200 {
+  background-color: #0F1015 !important;
+  color: #FFFFFF !important;
+}
+
+.dark .bg-white {
+  background-color: #181922 !important;
+  color: #FFFFFF !important;
+  border-color: rgba(212, 175, 55, 0.2) !important;
+}
+
+.dark .bg-\[\#F9F9F9\] {
+  background-color: #0F1015 !important;
+}
+
+.dark .bg-gray-50,
+.dark .bg-gray-50\/50,
+.dark .bg-gray-50\/80 {
+  background-color: #12131A !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Bordes en Modo Oscuro con Tono Dorado sutil */
+.dark .border-gray-100,
+.dark .border-gray-200,
+.dark .border-gray-300 {
+  border-color: rgba(212, 175, 55, 0.15) !important;
+}
+
+/* Formularios y Tablas Admin */
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: #12131A !important;
+  color: #FFFFFF !important;
+  border-color: rgba(212, 175, 55, 0.2) !important;
+}
+
+.dark table,
+.dark tr,
+.dark td,
+.dark th {
+  background-color: #181922 !important;
+  color: #FFFFFF !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark header {
+  background-color: rgba(24, 25, 34, 0.9) !important;
+  border-color: rgba(212, 175, 55, 0.2) !important;
+}
