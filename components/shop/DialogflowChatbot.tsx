@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Script from "next/script";
 import Link from "next/link";
-import { MessageCircle, X, Send, Sparkles, Bot, PhoneCall, Truck, Package, Heart, RefreshCw } from "lucide-react";
+import { MessageCircle, X, Send, Sparkles, Bot, PhoneCall, Truck, Package, Heart, RefreshCw, Maximize2, ChevronDown } from "lucide-react";
 
 interface DialogflowChatbotProps {
   siteConfig?: {
@@ -156,8 +156,8 @@ export function DialogflowChatbot({ siteConfig }: DialogflowChatbotProps) {
           {isOpen && (
             <div className="w-[90vw] sm:w-[380px] h-[520px] max-h-[80vh] bg-white/95 dark:bg-[#12131A]/95 backdrop-blur-2xl rounded-3xl border border-[#D4AF37]/30 dark:border-gray-800 shadow-[0_20px_60px_rgba(42,0,2,0.3)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.9)] flex flex-col overflow-hidden mb-4 transition-all duration-300 animate-in fade-in slide-in-from-bottom-5">
               
-              {/* Encabezado del Chat */}
-              <div className="bg-gradient-to-r from-[#80273B] via-[#982D46] to-[#2B0002] p-4 text-white flex items-center justify-between shadow-md">
+              {/* Encabezado del Chat Expandido */}
+              <div className="bg-gradient-to-r from-[#80273B] via-[#982D46] to-[#2B0002] p-4 text-white flex items-center justify-between shadow-md flex-shrink-0">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full border border-[#D4AF37]/60 overflow-hidden bg-white p-0.5 shadow-sm flex items-center justify-center">
                     <img src="/logo.jpg" alt="Logo" className="w-full h-full object-cover rounded-full" />
@@ -174,13 +174,26 @@ export function DialogflowChatbot({ siteConfig }: DialogflowChatbotProps) {
                   </div>
                 </div>
 
-                <button
-                  onClick={() => setIsOpen(false)}
-                  className="p-1.5 text-white/80 hover:text-white hover:bg-white/10 rounded-full transition-all"
-                  aria-label="Cerrar Chat"
-                >
-                  <X size={18} />
-                </button>
+                <div className="flex items-center gap-1">
+                  {/* Botón Minimizar a Mini-Chat */}
+                  <button
+                    onClick={() => setIsOpen(false)}
+                    className="p-1.5 text-white/80 hover:text-white hover:bg-white/15 rounded-full transition-all"
+                    title="Minimizar Asistente"
+                    aria-label="Minimizar Asistente"
+                  >
+                    <ChevronDown size={18} />
+                  </button>
+                  {/* Botón Cerrar */}
+                  <button
+                    onClick={() => setIsOpen(false)}
+                    className="p-1.5 text-white/80 hover:text-white hover:bg-white/15 rounded-full transition-all"
+                    title="Cerrar Chat"
+                    aria-label="Cerrar Chat"
+                  >
+                    <X size={18} />
+                  </button>
+                </div>
               </div>
 
               {/* Área de Mensajes */}
@@ -269,20 +282,56 @@ export function DialogflowChatbot({ siteConfig }: DialogflowChatbotProps) {
             </div>
           )}
 
-          {/* Botón Flotante de Burbuja */}
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="group relative flex items-center gap-2 bg-gradient-to-r from-[#80273B] to-[#2B0002] text-white px-4 py-3 rounded-full shadow-[0_10px_30px_rgba(128,39,59,0.5)] hover:shadow-[0_15px_40px_rgba(128,39,59,0.7)] hover:scale-105 active:scale-95 transition-all duration-300 border border-[#D4AF37]/50"
-            aria-label="Abrir Asistente Virtual"
-          >
-            <div className="relative">
-              <Bot size={22} className="text-[#FF97A4] group-hover:rotate-12 transition-transform" />
-              <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-400 border-2 border-white rounded-full"></span>
+          {/* ESTADO MINIFICADO: Mini-Tarjeta Chat Flotante (Tipo Reproductor Mini / Thumbnail) */}
+          {!isOpen && (
+            <div
+              onClick={() => setIsOpen(true)}
+              className="group w-[280px] sm:w-[310px] bg-white/95 dark:bg-[#12131A]/95 backdrop-blur-xl rounded-3xl border border-[#D4AF37]/40 dark:border-gray-800 shadow-[0_15px_40px_rgba(42,0,2,0.22)] dark:shadow-[0_15px_40px_rgba(0,0,0,0.85)] p-3.5 cursor-pointer hover:scale-[1.03] active:scale-98 transition-all duration-300 origin-bottom-right relative overflow-hidden"
+              role="button"
+              aria-label="Abrir y expandir Asistente Virtual"
+            >
+              {/* Brillo sutil decorativo */}
+              <div className="absolute top-0 right-0 -mr-6 -mt-6 w-24 h-24 bg-gradient-to-br from-pink-500/20 to-transparent rounded-full blur-xl pointer-events-none"></div>
+
+              {/* Cabecera del Mini-Chat */}
+              <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-gray-100 dark:border-gray-800">
+                <div className="flex items-center gap-2.5">
+                  <div className="relative w-8 h-8 rounded-full overflow-hidden border border-[#D4AF37]/60 bg-white p-0.5 shadow-xs flex-shrink-0">
+                    <img src="/logo.jpg" alt="Logo" className="w-full h-full object-cover rounded-full" />
+                    <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-400 border border-white"></span>
+                  </div>
+                  <div className="leading-tight">
+                    <h5 className="font-serif font-black text-xs text-[#2B0002] dark:text-white flex items-center gap-1">
+                      <span>Gabriela's Assistant</span>
+                      <Sparkles size={11} className="text-[#D4AF37]" />
+                    </h5>
+                    <span className="text-[9px] font-bold text-emerald-600 dark:text-emerald-400">
+                      En línea 24/7 🌸
+                    </span>
+                  </div>
+                </div>
+
+                <div className="p-1.5 bg-[#80273B] text-white rounded-full group-hover:scale-110 transition-transform shadow-sm">
+                  <Maximize2 size={13} />
+                </div>
+              </div>
+
+              {/* Burbuja Preview del Mini-Chat */}
+              <div className="py-2.5 text-slate-800 dark:text-gray-200">
+                <div className="p-2.5 rounded-2xl bg-pink-50/70 dark:bg-pink-950/30 border border-pink-100 dark:border-pink-900/40 text-[11px] leading-relaxed font-medium chatbot-mini-preview text-black dark:text-gray-100">
+                  {messages.length > 0 && messages[messages.length - 1].sender === "bot"
+                    ? messages[messages.length - 1].text.slice(0, 75) + "..."
+                    : "¡Hola! 🌸 ¿Cómo puedo ayudarte hoy con tus flores?"}
+                </div>
+              </div>
+
+              {/* Barra de Acción Rápida para Expandir */}
+              <div className="flex items-center justify-between text-[10px] font-extrabold text-[#80273B] dark:text-pink-300 bg-gray-50 dark:bg-gray-800/60 px-3 py-1.5 rounded-xl border border-gray-150 dark:border-gray-700/60">
+                <span>💬 Toca para chatear</span>
+                <span className="text-[9px] uppercase tracking-wider opacity-75">Expandir ↗</span>
+              </div>
             </div>
-            <span className="font-bold text-xs pr-1 hidden sm:inline">
-              {isOpen ? "Cerrar Chat" : "Asistente Virtual 🌸"}
-            </span>
-          </button>
+          )}
 
         </div>
       )}

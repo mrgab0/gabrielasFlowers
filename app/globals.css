@@ -113,6 +113,9 @@ html:not(.dark) .chatbot-input {
   color: #000000 !important;
   background-color: #ffffff !important;
 }
+html:not(.dark) .chatbot-mini-preview {
+  color: #000000 !important;
+}
 
 /* Ajustes a los gradientes del Hero en modo claro */
 html:not(.dark) .from-\[\#fff8f7\] {

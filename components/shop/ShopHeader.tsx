@@ -18,24 +18,24 @@ export const ShopHeader = () => {
   return (
     <>
       <header className="sticky top-0 z-40 bg-white/90 dark:bg-[#181922]/90 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 shadow-sm transition-all">
-        <div className="container mx-auto px-6 h-20 flex items-center justify-between">
+        <div className="container mx-auto px-4 sm:px-6 h-20 flex items-center justify-between gap-3 sm:gap-6">
           {/* Logo Presionable hacia el Home */}
-          <Link href="/" className="flex items-center gap-3 group flex-shrink-0">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden border-2 border-[#D4AF37]/50 shadow-md group-hover:scale-105 group-active:scale-95 transition-transform bg-white p-0.5">
+          <Link href="/" className="flex items-center gap-3 group flex-shrink-0 z-10">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden border-2 border-[#D4AF37]/50 shadow-md group-hover:scale-105 group-active:scale-95 transition-transform bg-white p-0.5 flex-shrink-0">
               <img src="/logo.jpg" alt="Gabriela's Flowers Logo" className="w-full h-full object-cover rounded-full" />
             </div>
-            <div className="hidden lg:block">
-              <span className="text-xl font-serif font-black text-[#2B0002] dark:text-white tracking-tight group-hover:text-[#FF97A4] transition-colors block">
+            <div className="hidden xl:block flex-shrink-0">
+              <span className="text-lg font-serif font-black text-[#2B0002] dark:text-white tracking-tight group-hover:text-[#FF97A4] transition-colors block">
                 Gabriela's <span className="text-[#FF97A4]">Flowers</span>
               </span>
-              <span className="text-[9px] uppercase tracking-widest text-slate-500 font-bold block -mt-1">
+              <span className="text-[9px] uppercase tracking-widest text-slate-500 font-bold block -mt-0.5">
                 Boutique Floral
               </span>
             </div>
           </Link>
 
           {/* Navegación Central */}
-          <nav className="flex-1 flex justify-center overflow-x-auto whitespace-nowrap [&::-webkit-scrollbar]:hidden font-bold text-[10px] sm:text-xs uppercase tracking-[0.1em] sm:tracking-[0.15em] mx-4 gap-2 sm:gap-3 py-2">
+          <nav className="flex-1 min-w-0 flex items-center justify-start lg:justify-center overflow-x-auto whitespace-nowrap [&::-webkit-scrollbar]:hidden font-bold text-[10px] sm:text-xs uppercase tracking-[0.1em] sm:tracking-[0.15em] px-2 gap-2 sm:gap-3 py-2">
             {[
               { href: "/", label: t('home') },
               { href: "/productos", label: t('catalog') },
