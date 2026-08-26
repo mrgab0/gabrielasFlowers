@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { ShopHeader } from "@/components/shop/ShopHeader";
 import { Footer } from "@/components/shop/Footer";
-import { WhatsAppButton } from "@/components/shop/WhatsAppButton/WhatsAppButton";
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle2, MessageCircle, Loader2, Sparkles } from "lucide-react";
 import { sendContactEmail } from "@/lib/actions/contact";
 
@@ -269,7 +268,6 @@ export function ContactFormClient() {
         </div>
       </main>
 
-      <WhatsAppButton phoneNumber="16576988586" />
       <Footer />
     </div>
   );

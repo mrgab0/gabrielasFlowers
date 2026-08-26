@@ -4,7 +4,6 @@ import { useState, useMemo } from "react";
 import { ProductCard } from "@/components/shop/ProductCard/ProductCard";
 import { ShopHeader } from "@/components/shop/ShopHeader";
 import { Footer } from "@/components/shop/Footer";
-import { WhatsAppButton } from "@/components/shop/WhatsAppButton/WhatsAppButton";
 import { Search, ArrowUpDown, Sparkles, Flower2, RefreshCw, Gift, Check, Tag } from "lucide-react";
 import { useCart } from "@/components/shop/Cart/CartContext";
 import { useTranslations } from "next-intl";
@@ -347,7 +346,6 @@ export function CatalogClient({ initialProducts, initialAddons = [] }: CatalogCl
         </div>
       </main>
 
-      <WhatsAppButton phoneNumber="16576988586" />
       <Footer />
     </div>
   );
