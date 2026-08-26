@@ -84,6 +84,17 @@ html:not(.dark) .admin-nav-links a svg {
   color: #000000 !important;
 }
 
+/* Tarjetas de Reseñas en Modo Claro: Forzar texto oscuro legible */
+html:not(.dark) .review-card-item .review-text {
+  color: #1e293b !important;
+}
+html:not(.dark) .review-card-item .review-author {
+  color: #0f172a !important;
+}
+html:not(.dark) .review-card-item .review-date {
+  color: #64748b !important;
+}
+
 /* Ajustes a los gradientes del Hero en modo claro */
 html:not(.dark) .from-\[\#fff8f7\] {
   --tw-gradient-from: var(--bg-main) !important;

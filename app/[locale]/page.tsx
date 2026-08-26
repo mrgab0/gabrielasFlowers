@@ -7,6 +7,9 @@ import { Footer } from "@/components/shop/Footer";
 import { SocialAndReviewsSection } from "@/components/shop/SocialAndReviewsSection";
 import { CustomIframeSection } from "@/components/shop/CustomIframeSection";
 import { AnimatedButterflies } from "@/components/shop/AnimatedButterflies";
+import { FeaturedProductsSlider } from "@/components/shop/FeaturedProductsSlider";
+import { FlashSaleCollectionsSection } from "@/components/shop/FlashSaleCollectionsSection";
+import { DeliveryShowcaseBanners } from "@/components/shop/DeliveryShowcaseBanners";
 import dbConnect from "@/lib/db";
 import { Product } from "@/lib/models/Product";
 import { getSiteConfig } from "@/lib/actions/siteConfig";
@@ -36,7 +39,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
       {/* Componente de Mariposas Animadas con Aleteo 3D (Ultra ligero 1.5KB) */}
       <AnimatedButterflies />
 
-      {/* Header & Sticky Nav Bar */}
+      {/* Header & Sticky Nav Bar con Mega-Menu integrado */}
       <StickyNav siteConfig={siteConfig} />
 
       {/* Hero Section Editorial (Estilo Botanical Romance & Gabriela's Flowers) */}
@@ -105,6 +108,12 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
         <HeroSlider />
       </div>
 
+      {/* 2. NUEVO: Slider de Productos Destacados con Pestañas de Filtrado */}
+      <FeaturedProductsSlider products={products} />
+
+      {/* 4. NUEVO: Hub de Colección 2026 & Oferta Flash con Reloj en Vivo */}
+      <FlashSaleCollectionsSection />
+
       {/* Módulo iFrame Personalizado */}
       {siteConfig?.enableCustomIframe && (
         <CustomIframeSection
@@ -113,7 +122,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
         />
       )}
 
-      {/* Product Grid con Columnas Dinámicas */}
+      {/* Product Grid con Columnas Dinámicas (Catálogo Principal) */}
       <section className="container mx-auto px-4 sm:px-6 py-16 sm:py-20 z-20 relative">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-10 pb-4 border-b border-[#D4AF37]/20 gap-4">
           <div>
@@ -149,7 +158,10 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
         </div>
       </section>
 
-      {/* Secciones Combinadas en 2 Columnas Paralelas */}
+      {/* 3. NUEVO: Banners Dobles de Demostración de Entregas & Diseños VIP */}
+      <DeliveryShowcaseBanners />
+
+      {/* Secciones Combinadas en 2 Columnas Paralelas (Instagram & Trustpilot) */}
       <SocialAndReviewsSection
         enableReviews={siteConfig?.enableReviewsSection !== false}
         reviewsTitle={locale === 'en' ? undefined : siteConfig?.reviewsTitle}

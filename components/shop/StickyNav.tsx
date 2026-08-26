@@ -5,7 +5,8 @@ import Link from "next/link";
 import { LanguageSwitcher } from "@/components/shop/LanguageSwitcher";
 import { ThemeToggle } from "@/components/shop/ThemeToggle";
 import { CustomerBiometricModal } from "@/components/auth/CustomerBiometricModal";
-import { Fingerprint, Instagram, Facebook, MessageCircle } from "lucide-react";
+import { MegaMenuDropdown } from "@/components/shop/MegaMenuDropdown";
+import { Fingerprint, Instagram, Facebook, MessageCircle, ChevronDown } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 interface StickyNavProps {
@@ -15,6 +16,7 @@ interface StickyNavProps {
 export function StickyNav({ siteConfig }: StickyNavProps) {
   const [isSticky, setIsSticky] = useState(false);
   const [isBioModalOpen, setIsBioModalOpen] = useState(false);
+  const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const t = useTranslations("nav");
 
@@ -89,23 +91,38 @@ export function StickyNav({ siteConfig }: StickyNavProps) {
           <div 
             ref={scrollRef}
             className="flex-1 flex justify-center overflow-x-auto whitespace-nowrap [&::-webkit-scrollbar]:hidden font-bold text-[10px] sm:text-xs uppercase tracking-[0.1em] sm:tracking-[0.15em] py-2 gap-2 sm:gap-3 px-4"
+            onMouseLeave={() => setIsMegaMenuOpen(false)}
           >
             {[
               { href: "/", label: t('home') },
-              { href: "/productos", label: t('catalog') },
+              { href: "/productos", label: t('catalog'), isMega: true },
               { href: "/rastreo", label: t('tracking') },
               { href: "/nosotros", label: t('about') },
               { href: "/contacto", label: t('contact') },
               { href: "/checkout", label: t('cart') }
             ].map((link, idx) => (
-              <Link 
-                key={idx}
-                href={link.href} 
-                className="px-4 py-2.5 rounded-full bg-white/60 dark:bg-gray-800/60 text-[#2B0002] dark:text-gray-200 shadow-[0_4px_12px_rgba(42,0,2,0.15)] dark:shadow-none hover:shadow-[0_8px_20px_rgba(42,0,2,0.25)] hover:bg-white dark:hover:bg-gray-700 hover:text-[#8B0025] hover:-translate-y-0.5 active:scale-95 active:translate-y-0 transition-all duration-300 border border-transparent hover:border-[#FF97A4]/30"
+              <div 
+                key={idx} 
+                className="relative"
+                onMouseEnter={() => link.isMega && setIsMegaMenuOpen(true)}
               >
-                {link.label}
-              </Link>
+                <Link 
+                  href={link.href} 
+                  className="px-4 py-2.5 rounded-full bg-white/60 dark:bg-gray-800/60 text-[#2B0002] dark:text-gray-200 shadow-[0_4px_12px_rgba(42,0,2,0.15)] dark:shadow-none hover:shadow-[0_8px_20px_rgba(42,0,2,0.25)] hover:bg-white dark:hover:bg-gray-700 hover:text-[#8B0025] hover:-translate-y-0.5 active:scale-95 active:translate-y-0 transition-all duration-300 border border-transparent hover:border-[#FF97A4]/30 inline-flex items-center gap-1"
+                >
+                  {link.label}
+                  {link.isMega && <ChevronDown size={12} className={`transition-transform duration-300 ${isMegaMenuOpen ? "rotate-180" : ""}`} />}
+                </Link>
+              </div>
             ))}
+          </div>
+
+          {/* Mega Menú Flotante */}
+          <div onMouseEnter={() => setIsMegaMenuOpen(true)} onMouseLeave={() => setIsMegaMenuOpen(false)}>
+            <MegaMenuDropdown 
+              isOpen={isMegaMenuOpen} 
+              onClose={() => setIsMegaMenuOpen(false)} 
+            />
           </div>
 
           {/* DERECHA: Botones de Control (Huella, Modo Oscuro e Idioma) */}

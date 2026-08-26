@@ -220,7 +220,7 @@ export function SocialAndReviewsSection({
                     {reviewsList.map((rev) => (
                       <div
                         key={rev.id}
-                        className="bg-[#F9F9F9] dark:bg-gray-900/70 p-4 sm:p-5 rounded-2xl border border-gray-200/70 dark:border-gray-800/80 shadow-sm relative transition-all hover:border-pink-200"
+                        className="bg-[#F9F9F9] dark:bg-gray-900/70 p-4 sm:p-5 rounded-2xl border border-gray-200/70 dark:border-gray-800/80 shadow-sm relative transition-all hover:border-pink-200 review-card-item"
                       >
                         <Quote size={24} className="absolute right-4 top-4 text-pink-200 dark:text-pink-950/40 pointer-events-none" />
 
@@ -232,19 +232,19 @@ export function SocialAndReviewsSection({
                         </div>
 
                         {/* Comentario */}
-                        <p className="text-xs text-gray-700 dark:text-gray-300 font-medium leading-relaxed italic mb-3">
+                        <p className="text-xs text-slate-800 dark:text-gray-300 font-medium leading-relaxed italic mb-3 review-text">
                           "{rev.comment}"
                         </p>
 
                         {/* Autor e Info */}
-                        <div className="flex items-center justify-between text-[11px] font-bold text-gray-500">
-                          <span className="flex items-center gap-1 text-[#1A1C1C] dark:text-white">
+                        <div className="flex items-center justify-between text-[11px] font-bold text-slate-500">
+                          <span className="flex items-center gap-1 text-[#2B0002] dark:text-white review-author">
                             {rev.name}
-                            <span className="text-[10px] text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.5 rounded-md">
+                            <span className="text-[10px] text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.5 rounded-md">
                               <CheckCircle2 size={10} className="inline mr-0.5" /> Verificado
                             </span>
                           </span>
-                          <span className="text-gray-400">{rev.date}</span>
+                          <span className="text-slate-400 dark:text-gray-400 review-date">{rev.date}</span>
                         </div>
                       </div>
                     ))}
