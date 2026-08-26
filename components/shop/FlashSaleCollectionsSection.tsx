@@ -136,9 +136,7 @@ export function FlashSaleCollectionsSection() {
                   id: "flash-sale-50-roses",
                   name: "Caja Velvet con 50 Rosas Rojas & Ferrero",
                   price: 119.99,
-                  image: "https://images.unsplash.com/photo-1563241527-3004b7be0ffd?w=800",
-                  quantity: 1,
-                  category: "Cajas de Lujo"
+                  image: "https://images.unsplash.com/photo-1563241527-3004b7be0ffd?w=800"
                 })}
                 className="w-full inline-flex items-center justify-center gap-2 bg-[#80273B] hover:bg-[#2B0002] text-white py-3.5 px-6 rounded-2xl font-black text-xs uppercase tracking-wider transition-all duration-300 shadow-lg active:scale-95"
               >
