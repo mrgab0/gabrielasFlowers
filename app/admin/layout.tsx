@@ -42,7 +42,7 @@ export default async function AdminLayout({
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2 text-xs font-bold">
+          <div className="flex flex-wrap items-center gap-2 text-xs font-bold admin-nav-links">
             <a href="/admin/ordenes" className="px-3.5 py-2 rounded-xl bg-pink-100 dark:bg-pink-950/80 hover:bg-pink-200 dark:hover:bg-pink-900/80 text-[#B0004A] dark:text-pink-300 transition-colors border border-pink-300 dark:border-pink-800/80 flex items-center gap-1.5 font-extrabold shadow-sm">
               <Package size={15} />
               <span>🛍️ Órdenes & Despacho</span>

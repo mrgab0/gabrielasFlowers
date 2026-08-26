@@ -70,6 +70,13 @@ html.dark .admin-logo-subtitle {
   color: rgba(255, 255, 255, 0.8) !important;
 }
 
+/* Letras negras en los botones del menú superior del Admin en modo claro */
+html:not(.dark) .admin-nav-links a,
+html:not(.dark) .admin-nav-links a span,
+html:not(.dark) .admin-nav-links a svg {
+  color: #000000 !important;
+}
+
 /* Ajustes a los gradientes del Hero en modo claro */
 html:not(.dark) .from-\[\#fff8f7\] {
   --tw-gradient-from: var(--bg-main) !important;
