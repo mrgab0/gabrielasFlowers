@@ -3,12 +3,18 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 42, 0, 2; /* Vinotinto Profundo (#2a0002) */
-  --background-start-rgb: 255, 248, 247; /* Superficie Calida (#fff8f7) */
-  --background-end-rgb: 255, 248, 247;
+  /* TEMA CLARO: Vinotinto Oscuro (#80273B) con letras blancas */
+  --foreground-rgb: 255, 255, 255; /* Blanco para el texto */
+  --background-start-rgb: 128, 39, 59; /* Fondo principal: #80273B */
+  --background-end-rgb: 128, 39, 59;
+  
+  --bg-main: #80273B;
+  --bg-card: #982D46; /* Ligeramente más claro para que resalten las tarjetas (bg-white) */
+  --text-main: #FFFFFF;
 }
 
 .dark {
+  /* TEMA OSCURO: Se mantiene intacto */
   --foreground-rgb: 255, 255, 255; /* Blanco Puro (#FFFFFF) */
   --background-start-rgb: 15, 16, 21;
   --background-end-rgb: 15, 16, 21;
@@ -16,58 +22,104 @@
 
 /* Base Body Typography */
 body {
-  color: #2a0002;
-  background: rgb(var(--background-start-rgb));
+  color: var(--text-main) !important;
+  background: rgb(var(--background-start-rgb)) !important;
+  background-color: var(--bg-main) !important;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .dark body {
+  background-color: #0B0C10 !important;
   color: #FFFFFF !important;
 }
 
-/* --- REGLAS GLOBALES DE TIPOGRAFÍA: VINOTINTO (CLARO) & BLANCO (OSCURO) --- */
+/* --- REGLAS DE FONDOS PARA MODO CLARO (#80273B) --- */
+html:not(.dark) .bg-\[\#fff8f7\] {
+  background-color: var(--bg-main) !important;
+}
+html:not(.dark) .bg-white {
+  background-color: var(--bg-card) !important;
+  color: var(--text-main) !important;
+  border-color: rgba(255,255,255,0.1) !important;
+}
+html:not(.dark) .bg-gray-50,
+html:not(.dark) .bg-gray-100,
+html:not(.dark) .bg-gray-200,
+html:not(.dark) .bg-pink-50,
+html:not(.dark) .hover\:bg-pink-100:hover,
+html:not(.dark) .bg-\[\#fff0ef\],
+html:not(.dark) .hover\:bg-\[\#faeae9\]:hover,
+html:not(.dark) .bg-\[\#faeae9\]\/50 {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+html:not(.dark) .bg-white\/90 {
+  background-color: rgba(152, 45, 70, 0.9) !important; /* Opacidad para StickyNav sobre bg-card */
+}
+html:not(.dark) .admin-panel-container {
+  background-color: #80273B !important;
+  box-shadow: 8px 8px 24px rgba(0,0,0,0.15) !important;
+}
+html.dark .admin-panel-container {
+  background-color: #0F1015 !important;
+}
+html.dark .admin-logo-title {
+  color: #FFFFFF !important;
+}
+html.dark .admin-logo-subtitle {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* Ajustes a los gradientes del Hero en modo claro */
+html:not(.dark) .from-\[\#fff8f7\] {
+  --tw-gradient-from: var(--bg-main) !important;
+}
+html:not(.dark) .to-\[\#fff8f7\] {
+  --tw-gradient-to: var(--bg-main) !important;
+}
+html:not(.dark) .via-\[\#faeae9\]\/50 {
+  --tw-gradient-via: rgba(255, 255, 255, 0.05) !important;
+}
+
+
+/* --- REGLAS GLOBALES DE TIPOGRAFÍA: BLANCO (CLARO) & BLANCO (OSCURO) --- */
 
 /* Titulares y Encabezados */
 h1, h2, h3, h4, h5, h6 {
-  color: #2a0002;
-}
-
-.dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
   color: #FFFFFF !important;
 }
 
-/* Colores de Texto Primarios */
-.text-\[\#1A1C1C\],
-.text-gray-900,
-.text-gray-800 {
-  color: #2a0002;
-}
-
-.dark .text-\[\#1A1C1C\],
-.dark .text-gray-900,
-.dark .text-gray-800 {
+/* Forzar que todas las clases de texto (que antes eran vinotinto o oscuras) ahora sean blancas en modo claro */
+html:not(.dark) .text-\[\#1A1C1C\],
+html:not(.dark) .text-\[\#2a0002\],
+html:not(.dark) .text-\[\#221a19\],
+html:not(.dark) .text-gray-900,
+html:not(.dark) .text-gray-800 {
   color: #FFFFFF !important;
 }
 
-/* Colores de Texto Secundarios (Subtítulos, párrafos y descripciones) */
-.text-gray-700,
-.text-gray-600 {
-  color: #5c0005;
+html:not(.dark) .text-gray-700,
+html:not(.dark) .text-gray-600 {
+  color: rgba(255, 255, 255, 0.85) !important;
 }
 
-.dark .text-gray-700,
-.dark .text-gray-600 {
-  color: #E5E7EB !important;
+html:not(.dark) .text-gray-500,
+html:not(.dark) .text-gray-400 {
+  color: rgba(255, 255, 255, 0.7) !important;
 }
 
-.text-gray-500,
-.text-gray-400 {
-  color: #8B0024;
+/* Modificar los acentos Vinotinto puro para que pasen a blanco puro en modo claro */
+html:not(.dark) .text-\[\#8B0024\] {
+  color: #FFFFFF !important; 
 }
-
-.dark .text-gray-500,
-.dark .text-gray-400 {
-  color: #D1D5DB !important;
+html:not(.dark) .border-\[\#8B0024\] {
+  border-color: #FFFFFF !important;
+}
+html:not(.dark) .bg-\[\#8B0024\] {
+  background-color: #5c1828 !important; /* Aún más oscuro para botones sobre el fondo vinotinto */
+}
+html:not(.dark) .hover\:bg-\[\#8B0024\]:hover {
+  background-color: #4a1320 !important;
 }
 
 /* --- COBERTURA COMPLETA DE MODO OSCURO (CLIENTE & ADMIN) --- */

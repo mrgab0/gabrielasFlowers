@@ -34,14 +34,14 @@ export default function AdminSeoPage() {
     const { data } = await getSiteConfig();
     if (data) {
       setConfig(data);
-      setTitle(data.seoTitle || "Flowers For You | Boutique Digital de Alta Floristería");
+      setTitle(data.seoTitle || "Gabriela's Flowers LLC | Boutique Digital de Alta Floristería");
       setDescription(data.seoDescription || "Floristería exclusiva con arreglos florales de lujo, rosas y detalles personalizados a domicilio con entrega express.");
       setKeywords(data.seoKeywords || "floristeria, flores a domicilio, arreglos florales, rosas, ramos de flores, regalos");
       setOgImage(data.ogImage || "https://images.unsplash.com/photo-1563241527-3004b7be0ffd?w=1200");
       setGoogleVerification(data.googleSiteVerification || "");
       setBingVerification(data.bingSiteVerification || "");
       setAnalyticsId(data.googleAnalyticsId || "");
-      setBusinessName(data.businessName || "Flowers For You LLC");
+      setBusinessName(data.businessName || "Gabriela's Flowers LLC");
       setBusinessPhone(data.businessPhone || "+1 (800) 555-3569");
       setBusinessAddress(data.businessAddress || "Av. Principal Floristería #123");
       setBusinessCity(data.businessCity || "Ciudad de México");
@@ -152,7 +152,7 @@ export default function AdminSeoPage() {
                     name="seoTitle"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    placeholder="Ej: Flowers For You | Boutique Digital de Alta Floristería"
+                    placeholder="Ej: Gabriela's Flowers LLC | Boutique Digital de Alta Floristería"
                     className="p-3 border rounded-2xl text-xs font-bold text-[#1A1C1C] dark:text-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     required
                   />
@@ -290,7 +290,7 @@ export default function AdminSeoPage() {
                     <span>https://flowersforyou.com</span>
                   </div>
                   <h3 className="text-sm font-bold text-blue-700 dark:text-blue-400 hover:underline cursor-pointer leading-snug">
-                    {title || "Flowers For You | Boutique Digital de Alta Floristería"}
+                    {title || "Gabriela's Flowers LLC | Boutique Digital de Alta Floristería"}
                   </h3>
                   <p className="text-xs text-gray-600 dark:text-gray-300 line-clamp-2 leading-relaxed">
                     {description || "Floristería exclusiva con arreglos florales de lujo, rosas y detalles personalizados a domicilio con entrega express."}

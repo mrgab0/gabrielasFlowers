@@ -171,8 +171,8 @@ export function SocialAndReviewsSection({
   if (!enableReviews && !enableSocialFeed) return null;
 
   return (
-    <section className="relative z-10 py-16 bg-[#fff8f7]/90 dark:bg-[#0B0C10]/90 backdrop-blur-sm border-t border-[#D4AF37]/20 transition-colors duration-300">
-      <div className="container mx-auto px-4 max-w-7xl relative z-10">
+    <section className="relative z-20 py-16 bg-[#fff8f7]/90 dark:bg-[#0B0C10]/90 backdrop-blur-sm border-t border-[#D4AF37]/20 transition-colors duration-300">
+      <div className="container mx-auto px-4 max-w-7xl relative z-20">
         <div className={`grid grid-cols-1 ${enableReviews && enableSocialFeed ? "lg:grid-cols-12" : "max-w-4xl mx-auto"} gap-8 items-stretch`}>
 
           {/* COLUMNA IZQUIERDA: Reseñas Verificadas & Trustpilot */}

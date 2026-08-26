@@ -271,7 +271,7 @@ export default function AdminConfiguracionPage() {
               </div>
               <SingleImageUploader
                 currentImage={config.logoUrl || "/logo.jpg"}
-                label="Logo de Flowers For You (Boutique Floral)"
+                label="Logo de Gabriela's Flowers (Boutique Floral)"
               />
               <input type="hidden" name="logoUrl" value={config.logoUrl || "/logo.jpg"} />
             </div>
@@ -288,7 +288,7 @@ export default function AdminConfiguracionPage() {
                   <label className="text-xs font-bold text-gray-700 dark:text-gray-300">Título Principal en Portada</label>
                   <input
                     name="heroTitle"
-                    defaultValue={config.heroTitle || "Flowers For You LLC"}
+                    defaultValue={config.heroTitle || "Gabriela's Flowers LLC"}
                     className="p-3.5 border rounded-2xl text-sm font-bold dark:bg-gray-900 dark:text-white focus:ring-2 focus:ring-[#FF97A4]"
                     required
                   />
@@ -329,7 +329,7 @@ export default function AdminConfiguracionPage() {
                   <label className="text-xs font-bold text-gray-700 dark:text-gray-300">Nombre en Pie de Página (Footer)</label>
                   <input
                     name="footerTitle"
-                    defaultValue={config.footerTitle || "Flowers For You LLC"}
+                    defaultValue={config.footerTitle || "Gabriela's Flowers LLC"}
                     className="p-3.5 border rounded-2xl text-xs font-bold dark:bg-gray-900 dark:text-white focus:ring-2 focus:ring-[#FF97A4]"
                     required
                   />
@@ -350,7 +350,7 @@ export default function AdminConfiguracionPage() {
                 <label className="text-xs font-bold text-gray-700 dark:text-gray-300">Texto de Derechos Reservados (Copyright)</label>
                 <input
                   name="footerCopyright"
-                  defaultValue={config.footerCopyright || "© 2026 Flowers For You LLC. Todos los derechos reservados."}
+                  defaultValue={config.footerCopyright || "© 2026 Gabriela's Flowers LLC. Todos los derechos reservados."}
                   className="p-3.5 border rounded-2xl text-xs font-medium dark:bg-gray-900 dark:text-white focus:ring-2 focus:ring-[#FF97A4]"
                   required
                 />

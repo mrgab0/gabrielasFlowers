@@ -28,8 +28,8 @@ export function LanguageSwitcher() {
         onClick={() => toggleLanguage("es")}
         className={`px-2.5 py-1 rounded-full transition-all flex items-center gap-1 ${
           !isEnglish
-            ? "bg-white text-[#1A1C1C] shadow-sm font-black"
-            : "text-gray-400 hover:text-gray-700"
+            ? "bg-white text-[#2B0002] shadow-sm font-black"
+            : "text-slate-500 hover:text-[#2B0002]"
         }`}
         title="Cambiar a Español"
       >
@@ -41,8 +41,8 @@ export function LanguageSwitcher() {
         onClick={() => toggleLanguage("en")}
         className={`px-2.5 py-1 rounded-full transition-all flex items-center gap-1 ${
           isEnglish
-            ? "bg-white text-[#1A1C1C] shadow-sm font-black"
-            : "text-gray-400 hover:text-gray-700"
+            ? "bg-white text-[#2B0002] shadow-sm font-black"
+            : "text-slate-500 hover:text-[#2B0002]"
         }`}
         title="Switch to English"
       >

@@ -4,8 +4,8 @@ import React from "react";
 
 export function AnimatedButterflies() {
   return (
-    /* z-40 con pointer-events-none para que las mariposas vuelen POR ENCIMA de todos los elementos y widgets manteniendo la interactividad total */
-    <div className="fixed inset-0 pointer-events-none z-40 overflow-hidden select-none" style={{ zIndex: 40 }}>
+    /* z-10 con pointer-events-none para que las mariposas vuelen por encima del fondo y footer, pero debajo de productos y sliders */
+    <div className="fixed inset-0 pointer-events-none z-10 overflow-hidden select-none" style={{ zIndex: 10 }}>
       <style>{`
         /* --- Titileo Suave de Destellos --- */
         @keyframes sparklePulse {

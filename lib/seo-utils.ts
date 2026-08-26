@@ -22,7 +22,7 @@ export function getProductSchema(product: Product, siteUrl: string = "https://fl
         : "https://schema.org/OutOfStock",
       "seller": {
         "@type": "FlowerShop",
-        "name": "Flowers For You"
+        "name": "Gabriela's Flowers LLC"
       }
     }
   };
@@ -37,7 +37,7 @@ export function getLocalBusinessSchema(config: any, siteUrl: string = "https://f
   const schema = {
     "@context": "https://schema.org",
     "@type": "FlowerShop",
-    "name": config?.businessName || "Flowers For You LLC",
+    "name": config?.businessName || "Gabriela's Flowers LLC",
     "image": config?.ogImage || `${siteUrl}/logo.jpg`,
     "@id": siteUrl,
     "url": siteUrl,
@@ -104,7 +104,7 @@ export function constructMetadata({
   const fullUrl = slug ? `${siteUrl}/${slug}` : siteUrl;
 
   return {
-    title: `${title} | Flowers For You`,
+    title: `${title} | Gabriela's Flowers LLC`,
     description,
     openGraph: {
       title,

@@ -1,7 +1,7 @@
 import { ContactFormClient } from "@/components/shop/ContactFormClient";
 
 export const metadata = {
-  title: "Contacto | Flowers For You LLC",
+  title: "Contacto | Gabriela's Flowers LLC",
   description: "Ponte en contacto con nuestro equipo de boutique floral para consultas o asesoría personalizada.",
 };
 

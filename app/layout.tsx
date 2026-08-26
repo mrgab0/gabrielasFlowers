@@ -37,7 +37,9 @@ export default function RootLayout({
         <meta name="trustpilot-one-time-domain-verification-id" content="e993157a-ecc6-48b6-985d-bca8eebb5fb2" />
         
         {/* Script Oficial Permanente de Integración e Invitaciones de Trustpilot */}
-        <script
+        <Script
+          id="trustpilot-invite-script"
+          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               (function(w,d,s,r,n){w.TrustpilotObject=n;w[n]=w[n]||function(){(w[n].q=w[n].q||[]).push(arguments)};

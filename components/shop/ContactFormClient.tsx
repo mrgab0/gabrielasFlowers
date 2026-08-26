@@ -75,7 +75,7 @@ export function ContactFormClient() {
               
               <div className="space-y-6">
                 <div>
-                  <span className="text-[#FF97A4] text-[10px] font-black uppercase tracking-widest block mb-1">Flowers For You LLC</span>
+                  <span className="text-[#FF97A4] text-[10px] font-black uppercase tracking-widest block mb-1">Gabriela's Flowers LLC</span>
                   <h2 className="text-2xl font-serif font-bold">Información Boutique</h2>
                 </div>
 

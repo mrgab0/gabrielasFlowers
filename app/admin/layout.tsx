@@ -27,10 +27,10 @@ export default async function AdminLayout({
                 <img src="/logo.jpg" alt="Logo" className="w-full h-full object-cover" />
               </div>
               <div>
-                <span className="font-serif font-black text-lg text-[#1A1C1C] dark:text-white block leading-none group-hover:text-[#FF97A4] transition-colors">
-                  Flowers For You
+                <span className="font-serif font-black text-lg text-[#1A1C1C] dark:!text-white block leading-none group-hover:text-[#FF97A4] transition-colors admin-logo-title">
+                  Gabriela's Flowers
                 </span>
-                <span className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest block mt-0.5">
+                <span className="text-[10px] font-bold text-gray-500 dark:!text-white/80 uppercase tracking-widest block mt-0.5 admin-logo-subtitle">
                   Panel de Administración
                 </span>
               </div>

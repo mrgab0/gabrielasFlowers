@@ -7,64 +7,70 @@ import { useCart } from "@/components/shop/Cart/CartContext";
 import { LanguageSwitcher } from "@/components/shop/LanguageSwitcher";
 import { ThemeToggle } from "@/components/shop/ThemeToggle";
 import { CustomerBiometricModal } from "@/components/auth/CustomerBiometricModal";
+import { useTranslations } from "next-intl";
 
 export const ShopHeader = () => {
   const { cartItems } = useCart();
   const totalCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
   const [isBioModalOpen, setIsBioModalOpen] = useState(false);
+  const t = useTranslations("nav");
 
   return (
     <>
       <header className="sticky top-0 z-40 bg-white/90 dark:bg-[#181922]/90 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 shadow-sm transition-all">
         <div className="container mx-auto px-6 h-20 flex items-center justify-between">
           {/* Logo Presionable hacia el Home */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-[#FF97A4]/40 dark:border-gray-700 shadow-md group-hover:scale-105 transition-transform flex-shrink-0 bg-white p-0.5">
-              <img src="/logo.jpg" alt="Flowers For You Logo" className="w-full h-full object-cover rounded-full" />
+          <Link href="/" className="flex items-center gap-3 group flex-shrink-0">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden border-2 border-[#D4AF37]/50 shadow-md group-hover:scale-105 group-active:scale-95 transition-transform bg-white p-0.5">
+              <img src="/logo.jpg" alt="Gabriela's Flowers Logo" className="w-full h-full object-cover rounded-full" />
             </div>
-            <div>
-              <span className="text-xl font-serif font-black text-[#1A1C1C] dark:text-white tracking-tight group-hover:text-[#FF97A4] transition-colors block">
-                Flowers <span className="text-[#FF97A4]">For You</span>
+            <div className="hidden lg:block">
+              <span className="text-xl font-serif font-black text-[#2B0002] dark:text-white tracking-tight group-hover:text-[#FF97A4] transition-colors block">
+                Gabriela's <span className="text-[#FF97A4]">Flowers</span>
               </span>
-              <span className="text-[9px] uppercase tracking-widest text-gray-400 font-bold block -mt-1">
+              <span className="text-[9px] uppercase tracking-widest text-slate-500 font-bold block -mt-1">
                 Boutique Floral
               </span>
             </div>
           </Link>
 
           {/* Navegación Central */}
-          <nav className="hidden md:flex items-center gap-8 font-bold text-xs uppercase tracking-widest text-gray-600 dark:text-gray-300">
-            <Link href="/" className="hover:text-[#FF97A4] transition-colors">
-              Inicio
-            </Link>
-            <Link href="/productos" className="hover:text-[#FF97A4] transition-colors">
-              Colección
-            </Link>
-            <Link href="/rastreo" className="hover:text-[#FF97A4] transition-colors">
-              Rastreo
-            </Link>
-            <Link href="/nosotros" className="hover:text-[#FF97A4] transition-colors">
-              Nosotros
-            </Link>
-            <Link href="/contacto" className="hover:text-[#FF97A4] transition-colors">
-              Contacto
-            </Link>
+          <nav className="flex-1 flex justify-center overflow-x-auto whitespace-nowrap [&::-webkit-scrollbar]:hidden font-bold text-[10px] sm:text-xs uppercase tracking-[0.1em] sm:tracking-[0.15em] mx-4 gap-2 sm:gap-3 py-2">
+            {[
+              { href: "/", label: t('home') },
+              { href: "/productos", label: t('catalog') },
+              { href: "/rastreo", label: t('tracking') },
+              { href: "/nosotros", label: t('about') },
+              { href: "/contacto", label: t('contact') }
+            ].map((link, idx) => (
+              <Link 
+                key={idx}
+                href={link.href} 
+                className="px-4 py-2.5 rounded-full bg-white/60 dark:bg-gray-800/60 text-[#2B0002] dark:text-gray-200 shadow-[0_4px_12px_rgba(42,0,2,0.15)] dark:shadow-none hover:shadow-[0_8px_20px_rgba(42,0,2,0.25)] hover:bg-white dark:hover:bg-gray-700 hover:text-[#8B0025] hover:-translate-y-0.5 active:scale-95 active:translate-y-0 transition-all duration-300 border border-transparent hover:border-[#FF97A4]/30"
+              >
+                {link.label}
+              </Link>
+            ))}
           </nav>
 
           {/* Acciones Derecha (Acceso por Huella, Tema, Idioma y Carrito) */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-shrink-0">
             {/* Botón de Acceso Biométrico / Passkeys con Huella */}
             <button
               onClick={() => setIsBioModalOpen(true)}
-              className="flex items-center gap-1.5 bg-pink-50 dark:bg-pink-950/60 text-[#FF97A4] border border-pink-200 dark:border-pink-900 px-3 py-2 rounded-xl text-xs font-extrabold hover:bg-pink-100 dark:hover:bg-pink-900 transition-colors shadow-sm"
+              className="flex items-center gap-1.5 bg-pink-50 dark:bg-pink-950/60 text-[#8B0025] border border-pink-200 dark:border-pink-900 px-3 py-2 rounded-full text-xs font-bold shadow-[0_2px_8px_rgba(42,0,2,0.06)] hover:shadow-[0_6px_16px_rgba(42,0,2,0.12)] hover:-translate-y-0.5 active:scale-95 transition-all duration-300"
               title="Acceso con Huella / Face ID"
             >
               <Fingerprint size={16} />
-              <span className="inline text-[11px]">Huella 👆</span>
+              <span className="hidden sm:inline text-[11px]">Huella 👆</span>
             </button>
 
-            <ThemeToggle />
-            <LanguageSwitcher />
+            <div className="hover:-translate-y-0.5 active:scale-95 transition-all duration-300">
+              <ThemeToggle />
+            </div>
+            <div className="hover:-translate-y-0.5 active:scale-95 transition-all duration-300">
+              <LanguageSwitcher />
+            </div>
 
             {/* Cart Button indicator */}
             <div className="relative ml-1">

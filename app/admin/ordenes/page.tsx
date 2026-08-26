@@ -44,7 +44,7 @@ export default function AdminOrdenesPage() {
     const trackUrl = `${siteUrl}/rastreo`;
     const statusText = order.status || "En Proceso";
 
-    const msg = `¡Hola ${order.customerName}! 🌸 Te notificamos de Flowers For You que tu pedido *${order.orderId}* ha sido actualizado a estado: *${statusText}* ✨\n\nPuedes rastrear el avance en tiempo real aquí: ${trackUrl}`;
+    const msg = `¡Hola ${order.customerName}! 🌹 Te notificamos de Gabriela's Flowers LLC que tu pedido *${order.orderId}* ha sido actualizado a estado: *${statusText}* ✨\n\nPuedes rastrear el avance en tiempo real aquí: ${trackUrl}`;
 
     return phone ? `https://wa.me/${phone}?text=${encodeURIComponent(msg)}` : `https://wa.me/?text=${encodeURIComponent(msg)}`;
   };

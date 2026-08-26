@@ -144,7 +144,7 @@ export default function AdminPagosPage() {
                     <input
                       name="holderName"
                       defaultValue={cfg.holderName || ""}
-                      placeholder="Ej: Flowers For You LLC"
+                      placeholder="Ej: Gabriela's Flowers LLC"
                       className="p-3 border rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#FF97A4]"
                     />
                   </div>

@@ -105,7 +105,7 @@ export async function createOrder(orderData: any, existingOrderId?: string) {
       console.error("Error enviando email SMTP: No se encontraron destinatarios válidos en ADMIN_EMAILS ni SMTP_USER.");
     } else {
       const transporter = getTransporter();
-      const sender = process.env.SMTP_USER ? `"Flowers For You" <${process.env.SMTP_USER}>` : '"Flowers For You"';
+      const sender = process.env.SMTP_USER ? `"Gabriela's Flowers" <${process.env.SMTP_USER}>` : '"Gabriela\'s Flowers"';
 
       // Destinatarios: Administradores y opcionalmente el cliente
       const recipients = [...adminEmails];
@@ -138,10 +138,10 @@ export async function createOrder(orderData: any, existingOrderId?: string) {
             <table role="presentation" style="margin: 0 auto; border-collapse: collapse;">
               <tr>
                 <td style="vertical-align: middle; padding-right: 14px;">
-                  <img src="${logoSrc}" alt="Flowers For You Logo" style="width: 46px; height: 46px; border-radius: 50%; border: 2px solid #ffffff; display: block; object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" />
+                  <img src="${logoSrc}" alt="Gabriela's Flowers Logo" style="width: 46px; height: 46px; border-radius: 50%; border: 2px solid #ffffff; display: block; object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" />
                 </td>
                 <td style="vertical-align: middle; text-align: left;">
-                  <h1 style="color: #ffffff; margin: 0; font-family: Georgia, serif; font-size: 24px; font-weight: bold; line-height: 1.1;">Flowers For You LLC</h1>
+                  <h1 style="color: #ffffff; margin: 0; font-family: Georgia, serif; font-size: 24px; font-weight: bold; line-height: 1.1;">Gabriela's Flowers LLC</h1>
                   <p style="color: rgba(255,255,255,0.92); margin: 3px 0 0 0; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; font-family: Arial, sans-serif; font-weight: bold;">Boutique Digital & Alta Floristería</p>
                 </td>
               </tr>
@@ -252,7 +252,7 @@ export async function createOrder(orderData: any, existingOrderId?: string) {
           </div>
           
           <div style="background-color: #1A1C1C; color: white; padding: 15px; text-align: center; font-size: 12px;">
-            <p style="margin: 0;">Flowers For You LLC • Boutique Digital</p>
+            <p style="margin: 0;">Gabriela's Flowers LLC • Boutique Digital</p>
           </div>
         </div>
       `;

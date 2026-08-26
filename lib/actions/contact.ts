@@ -51,7 +51,7 @@ export async function sendContactEmail(formData: {
           </div>
         </div>
         <div style="background-color: #1A1C1C; color: white; padding: 15px; text-align: center; font-size: 12px;">
-          <p style="margin: 0;">Flowers For You LLC - Boutique Digital</p>
+          <p style="margin: 0;">Gabriela's Flowers LLC - Boutique Digital</p>
         </div>
       </div>
     `;

@@ -231,12 +231,12 @@ export async function sendEmergencyRescueOtpAction() {
     );
 
     const transporter = getTransporter();
-    const sender = process.env.SMTP_USER ? `"Flowers For You Security" <${process.env.SMTP_USER}>` : '"Flowers For You Security"';
+    const sender = process.env.SMTP_USER ? `"Gabriela's Flowers Security" <${process.env.SMTP_USER}>` : '"Gabriela\'s Flowers Security"';
 
     const emailContent = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; border-radius: 12px; overflow: hidden; background: #ffffff;">
         <div style="background-color: #1A1C1C; padding: 25px; text-align: center;">
-          <h1 style="color: #FF97A4; margin: 0; font-family: Georgia, serif; font-size: 24px;">Flowers For You LLC</h1>
+          <h1 style="color: #FF97A4; margin: 0; font-family: Georgia, serif; font-size: 24px;">Gabriela's Flowers LLC</h1>
           <p style="color: #ffffff; margin: 5px 0 0 0; font-size: 12px; text-transform: uppercase; letter-spacing: 2px;">Recuperación de Emergencia del Panel Admin</p>
         </div>
         
@@ -257,7 +257,7 @@ export async function sendEmergencyRescueOtpAction() {
         </div>
         
         <div style="background-color: #f9f9f9; padding: 15px; text-align: center; border-top: 1px solid #eee; font-size: 11px; color: #aaa;">
-          Flowers For You Security System • Miami, FL
+          Gabriela's Flowers Security System • Houston, TX
         </div>
       </div>
     `;
@@ -265,7 +265,7 @@ export async function sendEmergencyRescueOtpAction() {
     await transporter.sendMail({
       from: sender,
       to: adminEmails.join(", "),
-      subject: `🔑 Código de Rescate 2FA: ${rescueOtp} - Flowers For You Admin`,
+      subject: `🔑 Código de Rescate 2FA: ${rescueOtp} - Gabriela's Flowers Admin`,
       html: emailContent,
     });
 

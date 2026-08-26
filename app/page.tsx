@@ -49,9 +49,9 @@ export default async function Home() {
       <StickyNav siteConfig={siteConfig} />
 
       {/* Hero Section Editorial (Estilo Botanical Romance & Gabriela's Flowers) */}
-      <section className="relative z-10 min-h-[480px] pt-8 pb-14 flex flex-col items-center justify-center bg-gradient-to-b from-[#fff8f7] via-[#faeae9]/50 to-[#fff8f7] dark:from-[#12131A] dark:via-[#181922] dark:to-[#12131A] border-b border-[#D4AF37]/20 transition-colors duration-300">
+      <section className="relative z-20 min-h-[480px] pt-8 pb-14 flex flex-col items-center justify-center bg-gradient-to-b from-transparent via-[#faeae9]/50 to-transparent dark:from-transparent dark:via-[#181922]/50 dark:to-transparent border-b border-[#D4AF37]/20 transition-colors duration-300">
         
-        <div className="container mx-auto px-6 text-center z-10 flex flex-col items-center">
+        <div className="container mx-auto px-6 text-center z-20 flex flex-col items-center">
           
           {/* Logo Oficial de Gabriela's Flowers (Tamaño equilibrado 80px) */}
           <div className="mb-5 relative group">
@@ -71,7 +71,7 @@ export default async function Home() {
 
           {/* Título Principal en Playfair Display */}
           <h1 className="text-4xl sm:text-6xl md:text-7xl font-serif font-bold text-[#2a0002] dark:text-white mb-4 tracking-tight leading-tight">
-            {siteConfig?.heroTitle || "Gabriela's Flowers LLC"}
+            {(!siteConfig?.heroTitle || siteConfig.heroTitle.includes("Flowers For You")) ? "Gabriela's Flowers LLC" : siteConfig.heroTitle}
           </h1>
 
           {/* Eslogan e Información de Ubicación / Servicios */}
@@ -123,7 +123,7 @@ export default async function Home() {
       )}
 
       {/* Product Grid con Columnas Dinámicas (3, 4 o 5) */}
-      <section className="container mx-auto px-4 sm:px-6 py-16 sm:py-20 z-10 relative">
+      <section className="container mx-auto px-4 sm:px-6 py-16 sm:py-20 z-20 relative">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-10 pb-4 border-b border-[#D4AF37]/20 gap-4">
           <div>
             <span className="text-[#8B0024] dark:text-pink-400 text-xs font-bold uppercase tracking-[0.2em] block mb-1">

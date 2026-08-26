@@ -195,7 +195,7 @@ export default function RastreoPedidoPage() {
                       ) : (
                         <MapPin size={15} className="text-[#FF97A4] flex-shrink-0 mt-0.5" />
                       )}
-                      <span>{isPickup ? "Boutique Flowers For You • 6705 Fairway Dr. Houston TX 77087" : (order.address || "Dirección registrada")}</span>
+                      <span>{isPickup ? "Boutique Gabriela's Flowers LLC • 6705 Fairway Dr. Houston TX 77087" : (order.address || "Dirección registrada")}</span>
                     </p>
                   </div>
 
