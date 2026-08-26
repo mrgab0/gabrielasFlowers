@@ -47,6 +47,14 @@ export interface ISiteConfig extends Document {
   customIframeTitle?: string;
   customIframeHtml?: string;
 
+  // Módulo de Chatbot Inteligente Dialogflow CX
+  enableChatbot?: boolean;
+  dialogflowAgentId?: string;
+  dialogflowProjectId?: string;
+  dialogflowLocation?: string;
+  dialogflowLanguageCode?: string;
+  dialogflowChatTitle?: string;
+
   // Campos de 2FA (Seguridad de Dos Factores)
   twoFactorMode?: "none" | "pin" | "totp";
   twoFactorPin?: string;
@@ -118,6 +126,14 @@ const SiteConfigSchema: Schema = new Schema({
   enableCustomIframe: { type: Boolean, default: false },
   customIframeTitle: { type: String, default: "Ubicación & Promociones Destacadas" },
   customIframeHtml: { type: String, default: "" },
+
+  // Módulo de Chatbot Inteligente Dialogflow CX
+  enableChatbot: { type: Boolean, default: true },
+  dialogflowAgentId: { type: String, default: "" },
+  dialogflowProjectId: { type: String, default: "" },
+  dialogflowLocation: { type: String, default: "us-central1" },
+  dialogflowLanguageCode: { type: String, default: "es" },
+  dialogflowChatTitle: { type: String, default: "Gabriela's Flowers Virtual Assistant 🌸" },
 
   twoFactorMode: { type: String, default: "none" },
   twoFactorPin: { type: String, default: "" },

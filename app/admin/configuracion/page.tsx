@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { getSiteConfig, updateSiteConfig } from "@/lib/actions/siteConfig";
 import { generateTotpSecretAction, getOrCreateTotpSecretAction, update2FASettingsAction, test2FACodeAction } from "@/lib/actions/admin2fa";
-import { Sparkles, Save, CheckCircle2, ArrowLeft, Layout, AlignLeft, Type, Footprints, ShieldCheck, Key, Smartphone, QrCode, RefreshCw, Lock, AlertTriangle, Check, Grid, Image as ImageIcon, Menu, Share2, Globe, Eye, Palette, Sliders, Star } from "lucide-react";
+import { Sparkles, Save, CheckCircle2, ArrowLeft, Layout, AlignLeft, Type, Footprints, ShieldCheck, Key, Smartphone, QrCode, RefreshCw, Lock, AlertTriangle, Check, Grid, Image as ImageIcon, Menu, Share2, Globe, Eye, Palette, Sliders, Star, Bot } from "lucide-react";
 import Link from "next/link";
 import { SingleImageUploader } from "@/components/admin/SingleImageUploader";
 
@@ -12,7 +12,7 @@ export default function AdminConfiguracionPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
-  const [activeTab, setActiveTab] = useState<"grid" | "branding" | "social" | "reviews" | "iframe" | "security">("grid");
+  const [activeTab, setActiveTab] = useState<"grid" | "branding" | "social" | "reviews" | "iframe" | "chatbot" | "security">("grid");
 
   useEffect(() => {
     loadConfig();
@@ -140,6 +140,18 @@ export default function AdminConfiguracionPage() {
           }`}
         >
           <Globe size={16} /> Módulo iFrames / Widgets
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab("chatbot")}
+          className={`flex items-center gap-2 px-5 py-3 rounded-xl font-extrabold text-xs whitespace-nowrap transition-all ${
+            activeTab === "chatbot"
+              ? "bg-[#FF97A4] text-white shadow-md shadow-pink-500/20"
+              : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+          }`}
+        >
+          <Bot size={16} /> Chatbot Dialogflow CX 🤖
         </button>
 
         <button
@@ -678,7 +690,115 @@ export default function AdminConfiguracionPage() {
           </div>
         )}
 
-        {/* PESTAÑA 6: Seguridad 2FA */}
+        {/* PESTAÑA 6: Chatbot Inteligente Dialogflow CX */}
+        {activeTab === "chatbot" && (
+          <div className="bg-white dark:bg-[#12131A] p-6 md:p-8 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm space-y-6 animate-in fade-in duration-200">
+            <div className="flex items-center justify-between border-b pb-4 border-gray-100 dark:border-gray-800">
+              <div className="flex items-center gap-3">
+                <div className="p-3 bg-pink-50 dark:bg-pink-950/60 rounded-2xl text-[#8B0024] dark:text-pink-300">
+                  <Bot size={24} />
+                </div>
+                <div>
+                  <h2 className="font-serif font-black text-lg text-[#1A1C1C] dark:text-white">
+                    Chatbot Inteligente con Dialogflow CX
+                  </h2>
+                  <span className="text-[11px] font-bold text-gray-400">Atención al Cliente Automatizada 24/7</span>
+                </div>
+              </div>
+
+              {/* Interruptor Toggle ON/OFF */}
+              <label className="flex items-center gap-2 cursor-pointer">
+                <span className="text-xs font-extrabold text-gray-600 dark:text-gray-300">
+                  {config.enableChatbot !== false ? "ACTIVADO [ON]" : "DESACTIVADO [OFF]"}
+                </span>
+                <input
+                  type="checkbox"
+                  checked={config.enableChatbot !== false}
+                  onChange={(e) => setConfig({ ...config, enableChatbot: e.target.checked })}
+                  className="w-5 h-5 accent-[#FF97A4] rounded cursor-pointer"
+                />
+                <input type="hidden" name="enableChatbot" value={config.enableChatbot !== false ? "true" : "false"} />
+              </label>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-pink-50/50 dark:bg-pink-950/20 border border-pink-100 dark:border-pink-900/40 text-xs text-slate-700 dark:text-gray-300 space-y-2">
+              <p className="font-bold flex items-center gap-1.5 text-[#8B0024] dark:text-pink-300">
+                <Sparkles size={14} /> ¿Cómo conectar tu Agente de Dialogflow CX (Google Cloud)?
+              </p>
+              <p className="leading-relaxed">
+                1. Ingresa a <strong>Google Cloud Console / Dialogflow CX Console</strong> y crea o selecciona tu agente.
+                <br />
+                2. En la pestaña <strong>Integrations</strong>, habilita <strong>Dialogflow CX Messenger</strong>.
+                <br />
+                3. Copia el <code>Agent ID</code> y <code>Project ID</code> y pégalos aquí abajo. Si dejas los campos vacíos, el sistema usará automáticamente el <strong>Asistente Boutique Nativo</strong> integrado.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-bold text-gray-700 dark:text-gray-300">
+                  Agent ID (Dialogflow CX)
+                </label>
+                <input
+                  name="dialogflowAgentId"
+                  defaultValue={config.dialogflowAgentId || ""}
+                  placeholder="ej. 8a3f6b92-4c12-4d89-98a2-..."
+                  className="p-3.5 border rounded-xl text-xs font-mono dark:bg-gray-900 dark:text-white"
+                />
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-bold text-gray-700 dark:text-gray-300">
+                  Project ID (Google Cloud)
+                </label>
+                <input
+                  name="dialogflowProjectId"
+                  defaultValue={config.dialogflowProjectId || ""}
+                  placeholder="ej. gabrielas-flowers-bot-12345"
+                  className="p-3.5 border rounded-xl text-xs font-mono dark:bg-gray-900 dark:text-white"
+                />
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-bold text-gray-700 dark:text-gray-300">
+                  Región / Location
+                </label>
+                <input
+                  name="dialogflowLocation"
+                  defaultValue={config.dialogflowLocation || "us-central1"}
+                  placeholder="us-central1 o global"
+                  className="p-3.5 border rounded-xl text-xs font-medium dark:bg-gray-900 dark:text-white"
+                />
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-bold text-gray-700 dark:text-gray-300">
+                  Idioma Predeterminado
+                </label>
+                <input
+                  name="dialogflowLanguageCode"
+                  defaultValue={config.dialogflowLanguageCode || "es"}
+                  placeholder="es o en"
+                  className="p-3.5 border rounded-xl text-xs font-medium dark:bg-gray-900 dark:text-white"
+                />
+              </div>
+
+              <div className="flex flex-col gap-1.5 md:col-span-2">
+                <label className="text-xs font-bold text-gray-700 dark:text-gray-300">
+                  Título de la Ventana del Chat
+                </label>
+                <input
+                  name="dialogflowChatTitle"
+                  defaultValue={config.dialogflowChatTitle || "Gabriela's Flowers Virtual Assistant 🌸"}
+                  placeholder="Gabriela's Flowers Virtual Assistant 🌸"
+                  className="p-3.5 border rounded-xl text-xs font-bold dark:bg-gray-900 dark:text-white"
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* PESTAÑA 7: Seguridad 2FA */}
         {activeTab === "security" && (
           <div className="animate-in fade-in duration-200">
             <TwoFactorConfigSection config={config} onSaveSuccess={loadConfig} />

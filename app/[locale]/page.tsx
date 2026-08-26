@@ -10,6 +10,7 @@ import { AnimatedButterflies } from "@/components/shop/AnimatedButterflies";
 import { FeaturedProductsSlider } from "@/components/shop/FeaturedProductsSlider";
 import { FlashSaleCollectionsSection } from "@/components/shop/FlashSaleCollectionsSection";
 import { DeliveryShowcaseBanners } from "@/components/shop/DeliveryShowcaseBanners";
+import { DialogflowChatbot } from "@/components/shop/DialogflowChatbot";
 import dbConnect from "@/lib/db";
 import { Product } from "@/lib/models/Product";
 import { getSiteConfig } from "@/lib/actions/siteConfig";
@@ -22,7 +23,8 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
   const { locale } = await params;
   const t = await getTranslations({ locale });
   await dbConnect();
-  const products = await Product.find({ isActive: { $ne: false } }).lean();
+  const productsRaw = await Product.find({ isActive: { $ne: false } }).lean();
+  const products = JSON.parse(JSON.stringify(productsRaw));
   const { data: siteConfig } = await getSiteConfig();
 
   const desktopCols = siteConfig?.productColumnsDesktop || 3;
@@ -176,6 +178,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
 
       <Footer siteConfig={siteConfig} />
       <WhatsAppButton />
+      <DialogflowChatbot siteConfig={siteConfig} />
     </main>
   );
 }

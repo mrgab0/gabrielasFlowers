@@ -37,7 +37,13 @@ const DEFAULT_SITE_CONFIG = {
   trustpilotWidgetHtml: "",
   enableCustomIframe: false,
   customIframeTitle: "Ubicación & Promociones Destacadas",
-  customIframeHtml: ""
+  customIframeHtml: "",
+  enableChatbot: true,
+  dialogflowAgentId: "",
+  dialogflowProjectId: "",
+  dialogflowLocation: "us-central1",
+  dialogflowLanguageCode: "es",
+  dialogflowChatTitle: "Gabriela's Flowers Virtual Assistant 🌸"
 };
 
 export async function getSiteConfig() {
@@ -123,6 +129,14 @@ export async function updateSiteConfig(formData: FormData) {
     const customIframeTitle = getValue("customIframeTitle", DEFAULT_SITE_CONFIG.customIframeTitle);
     const customIframeHtml = getValue("customIframeHtml", "");
 
+    // Módulo de Chatbot Dialogflow CX (Toggle ON/OFF)
+    const enableChatbot = getBool("enableChatbot", true);
+    const dialogflowAgentId = getValue("dialogflowAgentId", "");
+    const dialogflowProjectId = getValue("dialogflowProjectId", "");
+    const dialogflowLocation = getValue("dialogflowLocation", "us-central1");
+    const dialogflowLanguageCode = getValue("dialogflowLanguageCode", "es");
+    const dialogflowChatTitle = getValue("dialogflowChatTitle", "Gabriela's Flowers Virtual Assistant 🌸");
+
     await SiteConfig.findOneAndUpdate(
       { key: "global" },
       {
@@ -158,6 +172,12 @@ export async function updateSiteConfig(formData: FormData) {
         enableCustomIframe,
         customIframeTitle,
         customIframeHtml,
+        enableChatbot,
+        dialogflowAgentId,
+        dialogflowProjectId,
+        dialogflowLocation,
+        dialogflowLanguageCode,
+        dialogflowChatTitle,
         updatedAt: new Date()
       },
       { upsert: true, new: true }

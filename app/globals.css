@@ -95,6 +95,25 @@ html:not(.dark) .review-card-item .review-date {
   color: #64748b !important;
 }
 
+/* Chatbot Asistente Virtual: Forzar fuentes negras y fondos nítidos en modo claro */
+html:not(.dark) .chatbot-bot-bubble {
+  color: #000000 !important;
+  background-color: #f1f5f9 !important;
+}
+html:not(.dark) .chatbot-chip-btn {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.15) !important;
+}
+html:not(.dark) .chatbot-chip-btn:hover {
+  color: #ffffff !important;
+  background-color: #80273B !important;
+}
+html:not(.dark) .chatbot-input {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+}
+
 /* Ajustes a los gradientes del Hero en modo claro */
 html:not(.dark) .from-\[\#fff8f7\] {
   --tw-gradient-from: var(--bg-main) !important;
