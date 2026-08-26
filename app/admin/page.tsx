@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 
 export default function AdminPage() {
-  const clayBase = "group relative p-6 rounded-2xl font-bold text-center transition-all duration-500 flex flex-col items-center justify-center gap-4 text-white shadow-[inset_-4px_-4px_8px_rgba(0,0,0,0.2),inset_4px_4px_8px_rgba(255,255,255,0.3),4px_4px_16px_rgba(0,0,0,0.1)] dark:shadow-[inset_-4px_-4px_8px_rgba(0,0,0,0.6),inset_4px_4px_8px_rgba(255,255,255,0.08),6px_6px_20px_rgba(0,0,0,0.5)] hover:shadow-[inset_-6px_-6px_12px_rgba(0,0,0,0.25),inset_6px_6px_12px_rgba(255,255,255,0.4),8px_8px_24px_rgba(0,0,0,0.15)] dark:hover:shadow-[inset_-6px_-6px_12px_rgba(0,0,0,0.7),inset_6px_6px_12px_rgba(255,255,255,0.12),8px_8px_28px_rgba(0,0,0,0.6)] hover:-translate-y-2 border border-white/10 dark:border-white/5 dark:bg-[#161822]";
+  const clayBase = "group relative p-6 rounded-2xl font-bold text-center transition-all duration-500 flex flex-col items-center justify-center gap-4 text-white shadow-[inset_-4px_-4px_8px_rgba(0,0,0,0.2),inset_4px_4px_8px_rgba(255,255,255,0.3),4px_4px_16px_rgba(0,0,0,0.1)] dark:shadow-[inset_-4px_-4px_8px_rgba(0,0,0,0.6),inset_4px_4px_8px_rgba(255,255,255,0.08),6px_6px_20px_rgba(0,0,0,0.5)] hover:shadow-[inset_-6px_-6px_12px_rgba(0,0,0,0.25),inset_6px_6px_12px_rgba(255,255,255,0.4),8px_8px_24px_rgba(0,0,0,0.15)] dark:hover:shadow-[inset_-6px_-6px_12px_rgba(0,0,0,0.7),inset_6px_6px_12px_rgba(255,255,255,0.12),8px_8px_28px_rgba(0,0,0,0.6)] hover:-translate-y-2 border border-white/10 dark:border-white/5 dark:!bg-[#161822]";
   const iconBase = "w-12 h-12 transition-transform duration-500";
 
   return (
