@@ -1,5 +1,4 @@
 import { ProductCard } from "@/components/shop/ProductCard/ProductCard";
-import { WhatsAppButton } from "@/components/shop/WhatsAppButton/WhatsAppButton";
 import { HeroSlider } from "@/components/shop/HeroSlider/HeroSlider";
 import { StickyNav } from "@/components/shop/StickyNav";
 import { Footer } from "@/components/shop/Footer";
@@ -172,7 +171,6 @@ export default async function Home() {
       />
 
       <Footer siteConfig={siteConfig} />
-      <WhatsAppButton />
     </main>
   );
 }
