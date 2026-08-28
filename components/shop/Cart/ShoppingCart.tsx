@@ -16,9 +16,10 @@ export const ShoppingCartComponent = () => {
       {/* Botón activador - Magenta Style */}
       <button 
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-44 sm:bottom-48 right-6 z-50 p-4 bg-[#FF97A4] text-white rounded-full shadow-[0px_8px_25px_rgba(216,27,96,0.3)] hover:scale-105 transition-all duration-300 active:scale-95"
+        aria-label="Ver Carrito de Compras"
+        className="fixed bottom-28 sm:bottom-32 right-5 sm:right-6 z-40 p-3.5 sm:p-4 bg-[#FF97A4] hover:bg-[#ff7b8c] text-white rounded-full shadow-[0px_8px_25px_rgba(216,27,96,0.35)] border-2 border-white/90 dark:border-gray-800 hover:scale-105 transition-all duration-300 active:scale-95 group"
       >
-        <ShoppingCart size={24} />
+        <ShoppingCart size={22} className="group-hover:scale-110 transition-transform" />
         {cartItems.length > 0 && (
           <span className="absolute -top-1 -right-1 bg-[#1A1C1C] text-white text-[10px] font-bold h-5 w-5 flex items-center justify-center rounded-full border-2 border-white">
             {cartItems.reduce((acc, item) => acc + item.quantity, 0)}

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageCircle, X, Send, Sparkles, RefreshCw, PhoneCall, ExternalLink, Bot } from 'lucide-react';
+import { MessageCircle, X, Send, Sparkles, RefreshCw, PhoneCall, ExternalLink, Bot, ChevronRight, MessageSquareHeart } from 'lucide-react';
 import Link from 'next/link';
 
 interface Message {
@@ -18,10 +18,18 @@ const QUICK_QUESTIONS = [
   "💍 Arreglos para aniversarios"
 ];
 
+const PREVIEW_TICKERS = [
+  "¿Buscas flores hoy? Te ayudo a elegir 🌸",
+  "🚚 Delivery el mismo día en Houston",
+  "🌹 Rosas de lujo y arreglos exclusivos",
+  "💬 Consulta precios y disponibilidad aquí"
+];
+
 export const ChatbotModal = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [tickerIndex, setTickerIndex] = useState(0);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "welcome-msg",
@@ -33,6 +41,14 @@ export const ChatbotModal = () => {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Rotador automático de mensajes en el mini-reproductor
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTickerIndex((prev) => (prev + 1) % PREVIEW_TICKERS.length);
+    }, 3800);
+    return () => clearInterval(interval);
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -62,7 +78,6 @@ export const ChatbotModal = () => {
     setIsLoading(true);
 
     try {
-      // Filtrar el historial para la API
       const apiHistory = newMessages.map(m => ({
         role: m.role,
         text: m.text
@@ -109,9 +124,7 @@ export const ChatbotModal = () => {
     ]);
   };
 
-  // Renderizar enlaces markdown [Texto](URL) y negritas **texto**
   const renderFormattedText = (text: string) => {
-    // Reemplazo básico de links en markdown: [label](url)
     const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
     const parts = [];
     let lastIndex = 0;
@@ -156,46 +169,94 @@ export const ChatbotModal = () => {
 
   return (
     <>
-      {/* Botón Flotante del Chatbot */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        aria-label="Abrir Asistente Floral IA"
-        className={`fixed bottom-6 right-6 z-50 flex items-center gap-2.5 bg-gradient-to-r from-[#8B0024] to-[#a81436] hover:from-[#70001d] hover:to-[#8B0024] text-white p-3.5 sm:px-5 sm:py-3.5 rounded-full shadow-[0px_10px_25px_rgba(139,0,36,0.4)] border-2 border-[#D4AF37]/80 hover:scale-105 active:scale-95 transition-all duration-300 group`}
-      >
-        <div className="relative">
-          <Sparkles size={20} className="text-[#D4AF37] animate-spin-slow" />
-          <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#D4AF37] opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#D4AF37]"></span>
-          </span>
+      {/* Botón Flotante Estilo Mini-Reproductor / Thumbnail Visual Preview */}
+      {!isOpen && (
+        <div
+          onClick={() => setIsOpen(true)}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => e.key === 'Enter' && setIsOpen(true)}
+          aria-label="Abrir Asistente Floral IA Gabriela"
+          className="fixed bottom-5 right-4 sm:right-6 z-40 cursor-pointer group select-none animate-in fade-in slide-in-from-bottom-4 duration-300"
+        >
+          <div className="flex items-center gap-2.5 sm:gap-3.5 bg-white/95 dark:bg-[#12131a]/95 backdrop-blur-md pl-2 pr-3.5 sm:pr-4 py-2 rounded-2xl shadow-[0px_10px_35px_rgba(139,0,36,0.25)] border-2 border-[#D4AF37]/80 hover:border-[#D4AF37] hover:shadow-[0px_12px_40px_rgba(139,0,36,0.35)] transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] max-w-[310px] sm:max-w-none">
+            
+            {/* Thumbnail / Portada estilo Mini-Player */}
+            <div className="relative flex-shrink-0">
+              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl overflow-hidden border border-[#D4AF37] shadow-sm relative group-hover:scale-105 transition-transform duration-300 bg-[#2a0002]">
+                <img
+                  src="/logo.jpg"
+                  alt="Gabriela Asesora IA"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
+                <div className="absolute bottom-0.5 right-0.5">
+                  <Sparkles size={11} className="text-[#D4AF37] animate-pulse" />
+                </div>
+              </div>
+
+              {/* Indicador de Estado En Vivo con Ondas */}
+              <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#25D366] opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-[#25D366] border-2 border-white dark:border-[#12131a]"></span>
+              </span>
+            </div>
+
+            {/* Texto y Ticker Dinámico estilo Mini-Player */}
+            <div className="flex flex-col text-left overflow-hidden min-w-[155px] sm:min-w-[200px]">
+              <div className="flex items-center gap-1.5 leading-none mb-1">
+                <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-[#8B0024] dark:text-pink-400">
+                  GABRIELA • ASESORA IA
+                </span>
+                <span className="flex items-center gap-0.5 text-[8px] bg-green-100 dark:bg-green-950/60 text-green-700 dark:text-green-300 font-bold px-1.5 py-0.5 rounded-full">
+                  <span className="w-1 h-1 bg-green-500 rounded-full animate-ping"></span>
+                  EN VIVO
+                </span>
+              </div>
+
+              {/* Ticker de mensaje animado */}
+              <div className="h-4 overflow-hidden relative">
+                <p 
+                  key={tickerIndex} 
+                  className="text-[11px] sm:text-xs font-semibold text-gray-800 dark:text-gray-200 truncate animate-in fade-in slide-in-from-bottom-2 duration-300"
+                >
+                  {PREVIEW_TICKERS[tickerIndex]}
+                </p>
+              </div>
+            </div>
+
+            {/* Botón Acción Mini-Player (Ícono de Chat / Play) */}
+            <div className="flex-shrink-0 bg-gradient-to-r from-[#8B0024] to-[#a81436] text-white p-2 rounded-xl shadow-md group-hover:bg-[#70001d] transition-colors flex items-center justify-center">
+              <MessageSquareHeart size={16} className="text-white group-hover:scale-110 transition-transform" />
+            </div>
+
+          </div>
         </div>
-        <div className="hidden sm:flex flex-col items-start text-left leading-tight">
-          <span className="text-[9px] uppercase font-black tracking-widest text-[#D4AF37]">Asesora Floral IA</span>
-          <span className="text-xs font-bold">Chatear con Gabriela</span>
-        </div>
-      </button>
+      )}
 
       {/* Ventana Modal del Chatbot */}
       {isOpen && (
-        <div className="fixed bottom-20 right-4 sm:right-6 z-50 w-[92vw] sm:w-[400px] h-[540px] max-h-[82vh] bg-white dark:bg-[#12131a] rounded-2xl shadow-[0px_15px_40px_rgba(0,0,0,0.3)] border border-[#D4AF37]/40 flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-200">
+        <div className="fixed bottom-4 sm:bottom-6 right-3 sm:right-6 z-50 w-[94vw] sm:w-[410px] h-[560px] max-h-[85vh] bg-white dark:bg-[#12131a] rounded-3xl shadow-[0px_20px_50px_rgba(0,0,0,0.35)] border-2 border-[#D4AF37]/50 flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
           
           {/* Header del Chatbot */}
-          <div className="bg-gradient-to-r from-[#2a0002] via-[#8B0024] to-[#2a0002] text-white px-4 py-3.5 flex items-center justify-between border-b border-[#D4AF37]/40">
+          <div className="bg-gradient-to-r from-[#2a0002] via-[#8B0024] to-[#2a0002] text-white px-4 py-3.5 flex items-center justify-between border-b border-[#D4AF37]/40 shadow-md">
             <div className="flex items-center gap-3">
               <div className="relative">
                 <img
                   src="/logo.jpg"
                   alt="Gabriela's Flowers"
-                  className="w-9 h-9 rounded-full object-cover border border-[#D4AF37]"
+                  className="w-10 h-10 rounded-full object-cover border-2 border-[#D4AF37]"
                 />
-                <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-[#2a0002]"></span>
+                <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-[#2a0002]"></span>
               </div>
               <div className="flex flex-col">
                 <div className="flex items-center gap-1.5">
                   <span className="font-bold text-sm text-white">Gabriela</span>
-                  <span className="text-[10px] bg-[#D4AF37]/30 text-[#D4AF37] border border-[#D4AF37]/40 px-1.5 py-0.2 rounded font-semibold">IA</span>
+                  <span className="text-[9px] bg-[#D4AF37]/30 text-[#D4AF37] border border-[#D4AF37]/40 px-1.5 py-0.2 rounded font-black tracking-wider">IA</span>
                 </div>
-                <span className="text-[11px] text-pink-200/90 font-medium">Asesora Floral • En línea 🌸</span>
+                <span className="text-[11px] text-pink-200/90 font-medium flex items-center gap-1">
+                  Asesora Floral • En línea 🌸
+                </span>
               </div>
             </div>
 
@@ -203,14 +264,14 @@ export const ChatbotModal = () => {
               <button
                 onClick={handleReset}
                 title="Reiniciar chat"
-                className="p-1.5 hover:bg-white/10 rounded-lg text-pink-200 hover:text-white transition-colors"
+                className="p-1.5 hover:bg-white/10 rounded-xl text-pink-200 hover:text-white transition-colors"
               >
                 <RefreshCw size={15} />
               </button>
               <button
                 onClick={() => setIsOpen(false)}
                 title="Cerrar chat"
-                className="p-1.5 hover:bg-white/10 rounded-lg text-pink-200 hover:text-white transition-colors"
+                className="p-1.5 hover:bg-white/10 rounded-xl text-pink-200 hover:text-white transition-colors"
               >
                 <X size={18} />
               </button>
@@ -247,7 +308,7 @@ export const ChatbotModal = () => {
                 <span className="w-1.5 h-1.5 bg-[#8B0024] dark:bg-pink-400 rounded-full animate-bounce"></span>
                 <span className="w-1.5 h-1.5 bg-[#8B0024] dark:bg-pink-400 rounded-full animate-bounce [animation-delay:0.2s]"></span>
                 <span className="w-1.5 h-1.5 bg-[#8B0024] dark:bg-pink-400 rounded-full animate-bounce [animation-delay:0.4s]"></span>
-                <span className="ml-1 text-[11px] font-medium">Gabriela está escribiendo...</span>
+                <span className="ml-1 text-[11px] font-medium">Gabriela está buscando en el catálogo...</span>
               </div>
             )}
 
@@ -255,7 +316,7 @@ export const ChatbotModal = () => {
             {messages.length <= 2 && !isLoading && (
               <div className="pt-2 space-y-1.5">
                 <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block mb-1.5">
-                  Preguntas sugeridas:
+                  Consultas populares:
                 </span>
                 {QUICK_QUESTIONS.map((q, idx) => (
                   <button
@@ -288,7 +349,7 @@ export const ChatbotModal = () => {
                 type="text"
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
-                placeholder="Escribe tu consulta o arreglo deseado..."
+                placeholder="Pregunta por arreglos, precios o delivery..."
                 disabled={isLoading}
                 className="flex-1 text-xs sm:text-sm bg-gray-50 dark:bg-[#1c1d28] text-gray-900 dark:text-white px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:border-[#8B0024] dark:focus:border-pink-400 transition-colors placeholder:text-gray-400"
               />
