@@ -5,6 +5,7 @@ import {notFound} from 'next/navigation';
 import { CookieConsent } from "@/components/CookieConsent";
 import { PedidoFlotante } from "@/components/shop/PedidoFlotante";
 import { ShoppingCartComponent } from "@/components/shop/Cart/ShoppingCart";
+import { ChatbotModal } from "@/components/shop/Chatbot/ChatbotModal";
  
 export default async function LocaleLayout({
   children,
@@ -28,6 +29,7 @@ export default async function LocaleLayout({
         <PedidoFlotante />
         <ShoppingCartComponent />
         {children}
+        <ChatbotModal />
         <CookieConsent />
     </NextIntlClientProvider>
   );

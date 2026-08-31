@@ -177,7 +177,6 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
       />
 
       <Footer siteConfig={siteConfig} />
-      <DialogflowChatbot siteConfig={siteConfig} />
     </main>
   );
 }

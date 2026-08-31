@@ -1,126 +1,121 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/db';
 import { Product } from '@/lib/models/Product';
+import { getSiteConfig } from '@/lib/actions/siteConfig';
 
-export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 export async function POST(req: Request) {
   try {
     const { messages } = await req.json();
 
-    if (!messages || !Array.isArray(messages)) {
-      return NextResponse.json({ error: "Invalid messages array" }, { status: 400 });
+    if (!messages || !Array.isArray(messages) || messages.length === 0) {
+      return NextResponse.json({ error: "No se proporcionaron mensajes válidos." }, { status: 400 });
     }
 
     const apiKey = process.env.GEMINI_API_KEY;
 
-    // Obtener catálogo activo de la base de datos (con fallback tolerante a fallos)
-    let catalogSummary = "No hay productos disponibles por el momento.";
-    try {
-      if (process.env.MONGODB_URI) {
-        await dbConnect();
-        const activeProducts = await Product.find({ isActive: { $ne: false } })
-          .select('name price category slug description badge')
-          .limit(20)
-          .lean();
+    // 1. Obtener catálogo y configuración de la tienda para nutrir el contexto
+    await dbConnect();
+    const [products, { data: siteConfig }] = await Promise.all([
+      Product.find({ isActive: { $ne: false } })
+        .select('name price slug category description flowerType badge')
+        .limit(30)
+        .lean(),
+      getSiteConfig()
+    ]);
 
-        if (activeProducts && activeProducts.length > 0) {
-          catalogSummary = activeProducts.map((p: any) => 
-            `- ${p.name} ($${p.price}) | Categoría: ${p.category} | Link: /productos/${p.slug}`
-          ).join('\n');
-        }
-      }
-    } catch (dbErr) {
-      console.warn("No se pudo cargar el catálogo para el chatbot:", dbErr);
+    const productCatalogSummary = (products && products.length > 0)
+      ? products.map((p: any) => `- ${p.name} ($${p.price} USD) [Categoría: ${p.category || 'General'}] [Enlace: /productos/${p.slug}]: ${p.description ? p.description.slice(0, 100) : ''}`).join('\n')
+      : "No hay productos listados actualmente en el catálogo online.";
+
+    const whatsappPhone = "+1 832 391-1835";
+    const storeLocation = "Houston, Texas";
+
+    // 2. Definir instrucciones de sistema precisas
+    const systemPrompt = `Eres "Gabriela", la asesora floral virtual y experta de "Gabriela's Flowers LLC", una boutique floral de lujo ubicada en ${storeLocation}.
+Tu objetivo es brindar una atención cálida, sofisticada, amable y rápida a los clientes, ayudándoles a elegir el arreglo floral perfecto para cualquier ocasión.
+
+Información clave del negocio:
+- Ubicación y Envíos: Houston, Texas y zonas metropolitanas cercanas. Entregas y delivery disponibles el mismo día programado.
+- Teléfono / WhatsApp: ${whatsappPhone}
+- Horario de Atención: Lunes a Sábado.
+- Especialidades: Arreglos florales de rosas premium, ramos buchones, cajas de lujo, orquídeas, ocasiones románticas, aniversarios, cumpleaños, agradecimientos y condolencias.
+- Complementos: Globos personalizados, chocolates finos, peluches y dedicatorias con tarjeta.
+
+Catálogo de productos disponibles en la tienda:
+${productCatalogSummary}
+
+Reglas de respuesta:
+1. Responde siempre en un tono cercano, elegante, dulce y servicial (usando emojis florales como 🌸, 🌹, ✨ con buen gusto).
+2. Si el usuario busca un arreglo para una ocasión específica o un presupuesto, recomienda 1 a 3 productos del catálogo e incluye siempre el enlace en formato Markdown: [Nombre del Producto](/productos/slug) para que el cliente pueda hacer clic directo.
+3. Al finalizar una recomendación, o si el cliente desea ordenar, cotizar algo personalizado o atención inmediata, ofrécele siempre el enlace directo a WhatsApp con este formato exacto: [📲 Escribir a WhatsApp (+1 832 391-1835)](https://wa.me/18323911835).
+4. Mantén las respuestas concisas (máximo 2-3 párrafos cortos) y fáciles de leer en dispositivos móviles.
+5. Puedes atender tanto en Español como en Inglés según el idioma en que te hable el cliente.`;
+
+    // Si no hay API key configurada en las variables de entorno:
+    if (!apiKey) {
+      return NextResponse.json({
+        text: "🌸 ¡Hola! Soy Gabriela, tu asesora floral. Actualmente el servicio de IA está en configuración (recuerda agregar `GEMINI_API_KEY` en tus variables de entorno). Mientras tanto, puedes contactarnos directamente por WhatsApp al [📲 Escribir a WhatsApp (+1 832 391-1835)](https://wa.me/18323911835) o explorar nuestra colección en [Catálogo de Flores](/productos). ¿En qué te puedo ayudar hoy? ✨"
+      });
     }
 
-    const systemInstruction = `
-Eres 'Gabriela's Assistant', la florista virtual y experta de 'Gabriela's Flowers LLC', una boutique floral de lujo en Houston, Texas.
-Tu objetivo es brindar una atención amable, elegante, profesional y orientada a la venta de arreglos florales de alta calidad.
-
-INFORMACIÓN IMPORTANTE DE LA TIENDA:
-- Nombre: Gabriela's Flowers LLC
-- Ubicación principal: Houston, Texas (Cobertura en Houston, Katy, Sugar Land, The Woodlands y áreas metropolitanas).
-- Teléfono y WhatsApp Oficial: +1 832 391-1835.
-- Entregas: Mismo día disponible, entregas a domicilio personalizadas.
-- Idiomas: Español e Inglés.
-
-CATÁLOGO ACTUAL DE PRODUCTOS EN STOCK:
-${catalogSummary}
-
-REGLAS DE RESPUESTA:
-1. Responde de forma cálida, concisa y elegante (máximo 3 o 4 párrafos cortos o viñetas).
-2. Si el usuario pregunta por precios o recomendaciones, ofrece opciones de nuestro catálogo con su nombre exacto y su precio.
-3. Si el usuario desea un arreglo personalizado o atención directa con una maestra florista, invítalo a escribirnos a WhatsApp (+1 832 391-1835).
-4. Utiliza un tono alegre con emoticones florales sutiles (🌸, 🌹, 💐, ✨).
-5. Mantén tus respuestas breves y legibles para un widget de chat móvil.
-`;
-
-    // Si NO hay API key configurada en .env.local, devolver respuesta amable de contingencia
-    if (!apiKey || apiKey.trim() === "" || apiKey === "tu_api_key_aqui") {
-      const lastUserMsg = messages[messages.length - 1]?.content || "";
-      const lower = lastUserMsg.toLowerCase();
-      let fallbackReply = "¡Hola! 🌸 Gracias por comunicarte con Gabriela's Flowers. Nuestro catálogo está repleto de creaciones florales únicas. ¿Te gustaría ver nuestros ramos más populares o hablar con una florista por WhatsApp?";
-      
-      if (lower.includes("precio") || lower.includes("ramo") || lower.includes("catalogo") || lower.includes("comprar")) {
-        fallbackReply = "🌸 ¡Tenemos ramos hermosos! Desde cajas de rosas ecuatorianas hasta arreglos de girasoles y orquídeas. Puedes explorar nuestro catálogo completo en la sección de Productos o escribirnos al WhatsApp +1 832 391-1835.";
-      } else if (lower.includes("envio") || lower.includes("houston") || lower.includes("entrega") || lower.includes("delivery")) {
-        fallbackReply = "🚚 Entregamos el mismo día en todo Houston, TX y zonas vecinas. ¡Tus flores llegarán frescas y listas para enamorar!";
-      }
-
-      return NextResponse.json({ reply: fallbackReply });
-    }
-
-    // Convertir historial de mensajes al formato de la API de Gemini
-    const contents = messages.map((m: { role: string; content: string }) => ({
+    // 3. Formatear historial de conversación para Gemini API
+    const formattedContents = messages.map((m: { role: string; text: string }) => ({
       role: m.role === 'user' ? 'user' : 'model',
-      parts: [{ text: m.content }]
+      parts: [{ text: m.text }]
     }));
 
-    // Intentar consultar la API gratuita de Gemini 2.5 Flash o Gemini 1.5 Flash
-    const modelName = process.env.GEMINI_MODEL || "gemini-2.5-flash";
-    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+    // 4. Llamar a la API de Gemini (Modelo: gemini-2.5-flash-lite / gemini-1.5-flash)
+    const modelsToTry = ['gemini-2.5-flash-lite', 'gemini-2.0-flash-lite', 'gemini-1.5-flash'];
+    let aiResponseText = "";
+    let lastError: any = null;
 
-    const apiRes = await fetch(endpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        system_instruction: {
-          parts: [{ text: systemInstruction }]
-        },
-        contents: contents,
-        generationConfig: {
-          temperature: 0.7,
-          maxOutputTokens: 500,
+    for (const model of modelsToTry) {
+      try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: formattedContents,
+            systemInstruction: {
+              parts: [{ text: systemPrompt }]
+            },
+            generationConfig: {
+              temperature: 0.7,
+              topP: 0.95,
+              maxOutputTokens: 600
+            }
+          })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.candidates && data.candidates.length > 0 && data.candidates[0].content?.parts?.length > 0) {
+            aiResponseText = data.candidates[0].content.parts[0].text;
+            break;
+          }
+        } else {
+          const errData = await response.text();
+          console.warn(`Intento con modelo ${model} falló (${response.status}):`, errData);
+          lastError = errData;
         }
-      })
-    });
-
-    if (!apiRes.ok) {
-      const errBody = await apiRes.text();
-      console.error("Error al llamar Gemini API:", apiRes.status, errBody);
-      return NextResponse.json({ 
-        reply: "¡Hola! 🌸 Para brindarte la mejor atención de inmediato, te invitamos a contactar a nuestras floristas directamente vía WhatsApp al +1 832 391-1835." 
-      });
+      } catch (err) {
+        console.warn(`Error de conexión con modelo ${model}:`, err);
+        lastError = err;
+      }
     }
 
-    const data = await apiRes.json();
-    const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-
-    if (!replyText) {
-      return NextResponse.json({ 
-        reply: "¡Hola! 🌸 Con mucho gusto te asesoramos con tu arreglo floral. Escríbenos a WhatsApp al +1 832 391-1835 para atenderte al instante." 
-      });
+    if (!aiResponseText) {
+      throw new Error(`No se pudo obtener respuesta de los modelos Gemini: ${lastError}`);
     }
 
-    return NextResponse.json({ reply: replyText });
+    return NextResponse.json({ text: aiResponseText });
 
   } catch (error: any) {
-    console.error("Excepción en /api/chat:", error);
-    return NextResponse.json({ 
-      reply: "¡Hola! 🌸 Gracias por visitar Gabriela's Flowers. Puedes explorar nuestro catálogo o escribirnos por WhatsApp al +1 832 391-1835." 
-    }, { status: 200 });
+    console.error("Error en Chatbot API:", error);
+    return NextResponse.json({
+      text: "🌸 Disculpa, tuve un pequeño inconveniente al procesar tu mensaje. Puedes escribirnos directo a nuestro WhatsApp [📲 WhatsApp (+1 832 391-1835)](https://wa.me/18323911835) y con mucho gusto te atenderemos de inmediato."
+    }, { status: 500 });
   }
 }
