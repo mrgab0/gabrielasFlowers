@@ -3,6 +3,7 @@
 import { ImageUploader } from "@/components/admin/ImageUploader";
 import { FeatureListBuilder } from "@/components/admin/FeatureListBuilder";
 import { AdminAddonManager } from "@/components/admin/AdminAddonManager";
+import { ProductNameSkuInputs } from "@/components/admin/ProductNameSkuInputs";
 import { useState, useEffect } from "react";
 import { createProduct, getProductById } from "@/lib/actions/product";
 import { getAddons } from "@/lib/actions/addon";
@@ -88,29 +89,11 @@ export default function CrearProductoPage() {
               <Package size={18} className="text-[#FF97A4]" /> Información General
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-bold text-gray-700">Nombre del Producto *</label>
-                <input
-                  name="name"
-                  defaultValue={initialData?.name || ""}
-                  placeholder="Ej: Ramo Magenta Imperial"
-                  className="p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF97A4] font-medium"
-                  required
-                />
-              </div>
-
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-bold text-gray-700">SKU (Código único) *</label>
-                <input
-                  name="sku"
-                  defaultValue={initialData?.sku || ""}
-                  placeholder="Ej: RAM-MAG-001"
-                  className="p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF97A4] font-mono text-sm"
-                  required
-                />
-              </div>
-            </div>
+            <ProductNameSkuInputs
+              key={initialData?._id || duplicateId || "new"}
+              initialName={initialData?.name || ""}
+              initialSku={initialData?.sku || ""}
+            />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex flex-col gap-1.5">

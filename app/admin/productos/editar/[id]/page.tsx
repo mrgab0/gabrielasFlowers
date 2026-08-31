@@ -7,6 +7,7 @@ import { ArrowLeft, Package, Tag, DollarSign, Image as ImageIcon, Flower2, Save 
 import { ImageUploader } from "@/components/admin/ImageUploader";
 import { FeatureListBuilder } from "@/components/admin/FeatureListBuilder";
 import { AdminAddonManager } from "@/components/admin/AdminAddonManager";
+import { ProductNameSkuInputs } from "@/components/admin/ProductNameSkuInputs";
 import mongoose from "mongoose";
 
 export default async function EditarProductoPage({ params }: { params: Promise<{ id: string }> }) {
@@ -74,29 +75,11 @@ export default async function EditarProductoPage({ params }: { params: Promise<{
             <Package size={18} className="text-[#FF97A4]" /> Información General
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-gray-700 dark:text-gray-300">Nombre del Producto *</label>
-              <input
-                name="name"
-                defaultValue={product.name}
-                placeholder="Ramo Magenta Imperial"
-                className="p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF97A4] font-medium dark:bg-gray-900 dark:text-white"
-                required
-              />
-            </div>
-
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-gray-700 dark:text-gray-300">SKU (Código único) *</label>
-              <input
-                name="sku"
-                defaultValue={product.sku || ""}
-                placeholder="RAM-MAG-001"
-                className="p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF97A4] font-mono text-sm dark:bg-gray-900 dark:text-white"
-                required
-              />
-            </div>
-          </div>
+          <ProductNameSkuInputs
+            initialName={product.name}
+            initialSku={product.sku || ""}
+            isEditMode={true}
+          />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
