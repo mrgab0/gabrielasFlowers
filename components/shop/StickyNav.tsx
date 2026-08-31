@@ -6,7 +6,7 @@ import { LanguageSwitcher } from "@/components/shop/LanguageSwitcher";
 import { ThemeToggle } from "@/components/shop/ThemeToggle";
 import { CustomerBiometricModal } from "@/components/auth/CustomerBiometricModal";
 import { MegaMenuDropdown } from "@/components/shop/MegaMenuDropdown";
-import { Fingerprint, Instagram, Facebook, MessageCircle, ChevronDown } from "lucide-react";
+import { Fingerprint, Instagram, Facebook, MessageCircle, ChevronDown, Menu, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 interface StickyNavProps {
@@ -17,6 +17,7 @@ export function StickyNav({ siteConfig }: StickyNavProps) {
   const [isSticky, setIsSticky] = useState(false);
   const [isBioModalOpen, setIsBioModalOpen] = useState(false);
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const t = useTranslations("nav");
 
@@ -34,6 +35,15 @@ export function StickyNav({ siteConfig }: StickyNavProps) {
   const facebookUrl = siteConfig?.facebookUrl || "https://facebook.com";
   const tiktokUrl = siteConfig?.tiktokUrl || "https://tiktok.com";
   const whatsappUrl = siteConfig?.whatsappUrl || "https://wa.me/16576988586";
+
+  const navLinks = [
+    { href: "/", label: t('home') },
+    { href: "/productos", label: t('catalog'), isMega: true },
+    { href: "/rastreo", label: t('tracking') },
+    { href: "/nosotros", label: t('about') },
+    { href: "/contacto", label: t('contact') },
+    { href: "/checkout", label: t('cart') }
+  ];
 
   return (
     <>
@@ -87,20 +97,13 @@ export function StickyNav({ siteConfig }: StickyNavProps) {
             )}
           </div>
 
-          {/* CENTRO: Menú de Navegación (Botones flotantes con sombra y hover) */}
+          {/* CENTRO: Menú de Navegación en Escritorio */}
           <div 
             ref={scrollRef}
-            className="flex-1 min-w-0 flex items-center justify-start lg:justify-center overflow-x-auto whitespace-nowrap [&::-webkit-scrollbar]:hidden font-bold text-[10px] sm:text-xs uppercase tracking-[0.1em] sm:tracking-[0.15em] py-2 gap-2 sm:gap-3 px-2"
+            className="hidden md:flex flex-1 min-w-0 items-center justify-start lg:justify-center overflow-x-auto whitespace-nowrap [&::-webkit-scrollbar]:hidden font-bold text-[10px] sm:text-xs uppercase tracking-[0.1em] sm:tracking-[0.15em] py-2 gap-2 sm:gap-3 px-2"
             onMouseLeave={() => setIsMegaMenuOpen(false)}
           >
-            {[
-              { href: "/", label: t('home') },
-              { href: "/productos", label: t('catalog'), isMega: true },
-              { href: "/rastreo", label: t('tracking') },
-              { href: "/nosotros", label: t('about') },
-              { href: "/contacto", label: t('contact') },
-              { href: "/checkout", label: t('cart') }
-            ].map((link, idx) => (
+            {navLinks.map((link, idx) => (
               <div 
                 key={idx} 
                 className="relative"
@@ -125,7 +128,7 @@ export function StickyNav({ siteConfig }: StickyNavProps) {
             />
           </div>
 
-          {/* DERECHA: Botones de Control (Huella, Modo Oscuro e Idioma) */}
+          {/* DERECHA: Botones de Control y Toggle Móvil */}
           <div className="flex items-center gap-2 flex-shrink-0">
             <button
               onClick={() => setIsBioModalOpen(true)}
@@ -143,8 +146,36 @@ export function StickyNav({ siteConfig }: StickyNavProps) {
             <div className="hover:-translate-y-0.5 active:scale-95 transition-all duration-300">
               <LanguageSwitcher />
             </div>
+
+            {/* Botón de Menú Móvil (Contraer / Desplegar) */}
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="md:hidden p-2.5 rounded-full bg-white/80 dark:bg-gray-800/80 text-[#2B0002] dark:text-gray-200 border border-[#D4AF37]/30 shadow-sm hover:bg-white dark:hover:bg-gray-700 active:scale-95 transition-all"
+              aria-label={isMobileMenuOpen ? "Contraer menú" : "Desplegar menú"}
+            >
+              {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
           </div>
         </div>
+
+        {/* MENÚ MÓVIL DESPLEGABLE */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden border-t border-[#D4AF37]/20 bg-[#fff8f7]/98 dark:bg-[#181922]/98 backdrop-blur-xl px-4 py-4 space-y-2 shadow-lg animate-in fade-in slide-in-from-top-2 duration-200">
+            <nav className="flex flex-col gap-2">
+              {navLinks.map((link, idx) => (
+                <Link
+                  key={idx}
+                  href={link.href}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-between px-4 py-3 rounded-2xl bg-white/70 dark:bg-gray-800/70 text-[#2B0002] dark:text-gray-100 font-bold text-sm shadow-sm active:scale-[0.98] transition-all hover:bg-[#FF97A4]/10 hover:text-[#8B0025] dark:hover:text-[#FF97A4]"
+                >
+                  <span>{link.label}</span>
+                  <span className="text-xs text-[#FF97A4]">→</span>
+                </Link>
+              ))}
+            </nav>
+          </div>
+        )}
       </nav>
 
       <CustomerBiometricModal
