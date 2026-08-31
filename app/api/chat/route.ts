@@ -67,8 +67,8 @@ Reglas de respuesta:
       parts: [{ text: m.text }]
     }));
 
-    // 4. Llamar a la API de Gemini con modelos oficiales de Google AI
-    const modelsToTry = ['gemini-2.0-flash', 'gemini-2.0-flash-lite', 'gemini-1.5-flash', 'gemini-1.5-pro'];
+    // 4. Llamar a la API de Gemini con modelos compatibles de Google AI
+    const modelsToTry = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-flash-latest', 'gemini-3.7-flash'];
     let aiResponseText = "";
     let lastError: any = null;
 
