@@ -7,6 +7,7 @@ import { Footer } from "@/components/shop/Footer";
 import { Search, ArrowUpDown, Sparkles, Flower2, RefreshCw, Gift, Check, Tag } from "lucide-react";
 import { useCart } from "@/components/shop/Cart/CartContext";
 import { useTranslations } from "next-intl";
+import { WhatsAppButton } from "@/components/shop/WhatsAppButton";
 
 interface CatalogClientProps {
   initialProducts: any[];

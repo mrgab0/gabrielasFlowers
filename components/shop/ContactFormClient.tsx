@@ -5,6 +5,7 @@ import { ShopHeader } from "@/components/shop/ShopHeader";
 import { Footer } from "@/components/shop/Footer";
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle2, MessageCircle, Loader2, Sparkles } from "lucide-react";
 import { sendContactEmail } from "@/lib/actions/contact";
+import { WhatsAppButton } from "@/components/shop/WhatsAppButton";
 
 export function ContactFormClient() {
   const [loading, setLoading] = useState(false);
