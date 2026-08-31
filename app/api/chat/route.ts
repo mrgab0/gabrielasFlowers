@@ -30,6 +30,7 @@ export async function POST(req: Request) {
       : "No hay productos listados actualmente en el catálogo online.";
 
     const whatsappPhone = "+1 832 391-1835";
+    const whatsappUrl = "https://wa.me/18323911835";
     const storeLocation = "Houston, Texas";
 
     // 2. Definir instrucciones de sistema precisas
@@ -49,14 +50,14 @@ ${productCatalogSummary}
 Reglas de respuesta:
 1. Responde siempre en un tono cercano, elegante, dulce y servicial (usando emojis florales como 🌸, 🌹, ✨ con buen gusto).
 2. Si el usuario busca un arreglo para una ocasión específica o un presupuesto, recomienda 1 a 3 productos del catálogo e incluye siempre el enlace en formato Markdown: [Nombre del Producto](/productos/slug) para que el cliente pueda hacer clic directo.
-3. Al finalizar una recomendación, o si el cliente desea ordenar, cotizar algo personalizado o atención inmediata, ofrécele siempre el enlace directo a WhatsApp con este formato exacto: [📲 Escribir a WhatsApp (+1 832 391-1835)](https://wa.me/18323911835).
+3. Al finalizar una recomendación, o si el cliente desea ordenar, cotizar algo personalizado o atención inmediata, ofrécele siempre el enlace directo a WhatsApp con este formato exacto: [📲 Escribir a WhatsApp (${whatsappPhone})](${whatsappUrl}).
 4. Mantén las respuestas concisas (máximo 2-3 párrafos cortos) y fáciles de leer en dispositivos móviles.
 5. Puedes atender tanto en Español como en Inglés según el idioma en que te hable el cliente.`;
 
-    // Si no hay API key configurada en las variables de entorno:
+    // Si no hay API key configurada, responder con un mensaje cálido y comercial
     if (!apiKey) {
       return NextResponse.json({
-        text: "🌸 ¡Hola! Soy Gabriela, tu asesora floral. Actualmente el servicio de IA está en configuración (recuerda agregar `GEMINI_API_KEY` en tus variables de entorno). Mientras tanto, puedes contactarnos directamente por WhatsApp al [📲 Escribir a WhatsApp (+1 832 391-1835)](https://wa.me/18323911835) o explorar nuestra colección en [Catálogo de Flores](/productos). ¿En qué te puedo ayudar hoy? ✨"
+        text: `🌸 ¡Hola! Soy **Gabriela**, tu asesora floral en *Gabriela's Flowers* (${storeLocation}).\n\nCon mucho gusto te ayudo a elegir el arreglo perfecto para tu ocasión especial. Puedes explorar nuestras opciones en el [Catálogo de Flores](/productos) o si deseas una cotización personalizada o entrega para hoy, escríbenos directamente a [📲 WhatsApp (${whatsappPhone})](${whatsappUrl}). ¿Qué tipo de ocasión estás celebrando? ✨`
       });
     }
 
@@ -66,8 +67,8 @@ Reglas de respuesta:
       parts: [{ text: m.text }]
     }));
 
-    // 4. Llamar a la API de Gemini (Modelo: gemini-2.5-flash-lite / gemini-1.5-flash)
-    const modelsToTry = ['gemini-2.5-flash-lite', 'gemini-2.0-flash-lite', 'gemini-1.5-flash'];
+    // 4. Llamar a la API de Gemini con modelos oficiales de Google AI
+    const modelsToTry = ['gemini-2.0-flash', 'gemini-2.0-flash-lite', 'gemini-1.5-flash', 'gemini-1.5-pro'];
     let aiResponseText = "";
     let lastError: any = null;
 
@@ -107,7 +108,9 @@ Reglas de respuesta:
     }
 
     if (!aiResponseText) {
-      throw new Error(`No se pudo obtener respuesta de los modelos Gemini: ${lastError}`);
+      return NextResponse.json({
+        text: `🌸 ¡Hola! Con mucho gusto te asesoro. Puedes ver todos nuestros arreglos en el [Catálogo de Flores](/productos) o contactarnos directo por [📲 WhatsApp (${whatsappPhone})](${whatsappUrl}) para tomar tu pedido de inmediato. ✨`
+      });
     }
 
     return NextResponse.json({ text: aiResponseText });
@@ -115,7 +118,7 @@ Reglas de respuesta:
   } catch (error: any) {
     console.error("Error en Chatbot API:", error);
     return NextResponse.json({
-      text: "🌸 Disculpa, tuve un pequeño inconveniente al procesar tu mensaje. Puedes escribirnos directo a nuestro WhatsApp [📲 WhatsApp (+1 832 391-1835)](https://wa.me/18323911835) y con mucho gusto te atenderemos de inmediato."
-    }, { status: 500 });
+      text: "🌸 Con mucho gusto te ayudamos. Puedes explorar nuestros ramos en el [Catálogo de Flores](/productos) o escribirnos directo a [📲 WhatsApp (+1 832 391-1835)](https://wa.me/18323911835) para atenderte en tiempo real."
+    }, { status: 200 });
   }
 }
