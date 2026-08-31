@@ -2,6 +2,7 @@
 
 import dbConnect from "@/lib/db";
 import { Order } from "@/lib/models/Order";
+import { verify2FACodeAction } from "@/lib/actions/admin2fa";
 import nodemailer from "nodemailer";
 import path from "path";
 import fs from "fs";
@@ -327,6 +328,38 @@ export async function updateOrderStatusAction(orderId: string, status: string) {
   }
 }
 
+export async function updateOrderWith2FAAction(
+  orderId: string,
+  updateData: any,
+  twoFactorCode: string
+) {
+  try {
+    await dbConnect();
+
+    // 1. Verificar 2FA
+    const vRes = await verify2FACodeAction(twoFactorCode);
+    if (!vRes.success) {
+      return { success: false, error: vRes.error || "Código 2FA incorrecto." };
+    }
+
+    // 2. Actualizar datos de la orden
+    const updated = await Order.findOneAndUpdate(
+      { orderId },
+      { $set: updateData },
+      { new: true }
+    );
+
+    if (!updated) {
+      return { success: false, error: "No se encontró la orden a modificar." };
+    }
+
+    return { success: true, data: JSON.parse(JSON.stringify(updated)) };
+  } catch (error: any) {
+    console.error("Error al actualizar la orden con 2FA:", error);
+    return { success: false, error: "Error de servidor al guardar los cambios de la orden." };
+  }
+}
+
 export async function getAllOrdersAction() {
   try {
     await dbConnect();
@@ -337,3 +370,4 @@ export async function getAllOrdersAction() {
     return { success: false, error: "No se pudieron obtener las órdenes." };
   }
 }
+

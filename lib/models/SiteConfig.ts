@@ -152,8 +152,8 @@ const SiteConfigSchema: Schema = new Schema({
   googleAnalyticsId: { type: String, default: "" },
   businessName: { type: String, default: "Gabriela's Flowers LLC" },
   businessPhone: { type: String, default: "+1 (800) 555-3569" },
-  businessAddress: { type: String, default: "6705 Fairway Dr" },
-  businessCity: { type: String, default: "Houston, TX 77087" },
+  businessAddress: { type: String, default: "4201 Fairmont Pkwy" },
+  businessCity: { type: String, default: "Pasadena, TX 77504" },
 
   updatedAt: { type: Date, default: Date.now }
 });

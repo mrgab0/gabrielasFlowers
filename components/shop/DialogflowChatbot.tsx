@@ -55,66 +55,60 @@ export function DialogflowChatbot({ siteConfig }: DialogflowChatbotProps) {
     sendMessage(text);
   };
 
-  const sendMessage = (text: string) => {
+  const sendMessage = async (text: string) => {
     if (!text.trim()) return;
 
     const userMsg = text.trim();
-    setMessages(prev => [...prev, { sender: "user", text: userMsg }]);
+    const updatedMessages = [...messages, { sender: "user" as const, text: userMsg }];
+    setMessages(updatedMessages);
     setInput("");
     setIsTyping(true);
 
-    // Lógica Inteligente de Respuestas Rápidas (Simulador Local / Fallback mientras configuran Google Cloud)
-    setTimeout(() => {
-      setIsTyping(false);
-      const lower = userMsg.toLowerCase();
+    try {
+      const apiMessages = updatedMessages.map(m => ({
+        role: m.sender === "user" ? "user" : "assistant",
+        content: m.text
+      }));
 
-      if (lower.includes("ramo") || lower.includes("popular") || lower.includes("catálogo") || lower.includes("precio") || lower.includes("comprar")) {
-        setMessages(prev => [...prev, {
-          sender: "bot",
-          text: "¡Tenemos creaciones florales espectaculares! Nuestros ramos más solicitados son las Cajas Velvet de 50 y 100 Rosas Rojas Ecuatorianas, y nuestros Bouquets Silvestres Mixtos. Puedes explorar toda la colección directamente en nuestra tienda.",
-          options: [
-            { label: "🌸 Explorar Catálogo", action: () => window.location.href = "/productos" },
-            { label: "🔥 Ofertas de Temporada", action: () => window.location.href = "/productos?cat=ofertas" },
-            { label: "💬 Pedir por WhatsApp", action: () => window.open(whatsappUrl, "_blank") }
-          ]
-        }]);
-      } else if (lower.includes("rastrear") || lower.includes("pedido") || lower.includes("orden") || lower.includes("dónde está")) {
-        setMessages(prev => [...prev, {
-          sender: "bot",
-          text: "Puedes consultar el estatus en tiempo real de tu entrega introduciendo tu número de orden o tu correo en nuestro portal de rastreo.",
-          options: [
-            { label: "📦 Ir a Rastreo de Pedido", action: () => window.location.href = "/rastreo" },
-            { label: "💬 Consultar con Soporte", action: () => window.open(whatsappUrl, "_blank") }
-          ]
-        }]);
-      } else if (lower.includes("zona") || lower.includes("entrega") || lower.includes("horario") || lower.includes("envío") || lower.includes("delivery") || lower.includes("houston")) {
-        setMessages(prev => [...prev, {
-          sender: "bot",
-          text: "🚚 ¡Realizamos entregas el mismo día en todo Houston, Katy, Sugar Land, The Woodlands y áreas metropolitanas! Nuestros choferes privados garantizan que las flores lleguen frescas y en perfecto estado. Atendemos de Lunes a Domingo.",
-          options: [
-            { label: "📍 Ver Opciones de Envío", action: () => window.location.href = "/contacto" },
-            { label: "💬 Cotizar Envío Especial", action: () => window.open(whatsappUrl, "_blank") }
-          ]
-        }]);
-      } else if (lower.includes("florista") || lower.includes("personalizad") || lower.includes("humano") || lower.includes("asesor") || lower.includes("whatsapp") || lower.includes("boda")) {
-        setMessages(prev => [...prev, {
-          sender: "bot",
-          text: "¡Con mucho gusto! Nuestras maestras floristas están disponibles vía WhatsApp para ayudarte a diseñar un arreglo floral personalizado a tu gusto y presupuesto.",
-          options: [
-            { label: "📲 Chatear por WhatsApp Ahora", action: () => window.open(whatsappUrl, "_blank") }
-          ]
-        }]);
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: apiMessages })
+      });
+
+      const data = await res.json();
+      setIsTyping(false);
+
+      if (data && data.reply) {
+        setMessages(prev => [
+          ...prev,
+          {
+            sender: "bot",
+            text: data.reply,
+            options: [
+              { label: "🌸 Ver Catálogo", action: () => window.location.href = "/productos" },
+              { label: "💬 Hablar por WhatsApp", action: () => window.open(whatsappUrl, "_blank") }
+            ]
+          }
+        ]);
       } else {
-        setMessages(prev => [...prev, {
+        throw new Error("Respuesta inválida");
+      }
+    } catch (error) {
+      console.error("Error al conectar con la API de Chat:", error);
+      setIsTyping(false);
+      setMessages(prev => [
+        ...prev,
+        {
           sender: "bot",
-          text: "Gracias por tu mensaje. Para brindarte una atención más rápida o tomar tu pedido personalizado de inmediato, ¿prefieres ver nuestro catálogo o hablar por WhatsApp?",
+          text: "¡Hola! 🌸 Gracias por tu mensaje. Para una atención rápida o personalizar tu pedido al instante, te invitamos a escribirnos directo por WhatsApp.",
           options: [
             { label: "🌸 Ver Catálogo", action: () => window.location.href = "/productos" },
-            { label: "💬 Hablar por WhatsApp", action: () => window.open(whatsappUrl, "_blank") }
+            { label: "💬 Chatear por WhatsApp", action: () => window.open(whatsappUrl, "_blank") }
           ]
-        }]);
-      }
-    }, 1000);
+        }
+      ]);
+    }
   };
 
   return (

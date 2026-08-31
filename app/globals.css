@@ -203,6 +203,17 @@ html:not(.dark) .hover\:bg-\[\#8B0024\]:hover {
 }
 
 /* Formularios y Tablas Admin */
+html:not(.dark) input:not([type="submit"]):not([type="button"]):not([type="hidden"]),
+html:not(.dark) textarea,
+html:not(.dark) select {
+  color: #000000 !important;
+}
+
+html:not(.dark) input::placeholder,
+html:not(.dark) textarea::placeholder {
+  color: rgba(0, 0, 0, 0.4) !important;
+}
+
 .dark input,
 .dark textarea,
 .dark select {

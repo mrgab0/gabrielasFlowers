@@ -16,9 +16,9 @@ interface DeliveryMapPickerProps {
   }) => void;
 }
 
-// Coordenadas del punto de partida de la boutique matriz (6705 Fairway Dr, Houston, TX 77087)
-const DEFAULT_STORE_LAT = 29.7027;
-const DEFAULT_STORE_LNG = -95.2936;
+// Coordenadas del punto de partida de la boutique matriz (4201 Fairmont Pkwy, Pasadena, TX 77504)
+const DEFAULT_STORE_LAT = 29.6521;
+const DEFAULT_STORE_LNG = -95.1706;
 
 // Cálculo de Distancia Haversine corregida por factor terrestre de carretera (x 1.25)
 function calculateHaversineMiles(lat1: number, lon1: number, lat2: number, lon2: number): number {

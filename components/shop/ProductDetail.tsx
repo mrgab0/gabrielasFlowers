@@ -60,7 +60,7 @@ export const ProductDetail = ({ product }: { product: any }) => {
                 <img
                   src={activeImage}
                   alt={product.name}
-                  className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out"
+                  className="w-full h-full object-contain p-2 transform group-hover:scale-105 transition-transform duration-700 ease-out"
                 />
                 
                 {/* Insignia o Categoría Flotante */}

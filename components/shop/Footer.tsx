@@ -29,9 +29,9 @@ export function Footer({ siteConfig }: FooterProps) {
           </div>
           
           <div className="flex flex-wrap justify-center gap-6 text-xs font-bold tracking-widest text-gray-300 uppercase">
-            <span>6705 Fairway Dr.</span>
+            <span>4201 Fairmont Pkwy</span>
             <span>•</span>
-            <span>Houston, Texas 77087</span>
+            <span>Pasadena, TX 77504</span>
             <span>•</span>
             <span>Boutique Digital</span>
           </div>

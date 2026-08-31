@@ -151,6 +151,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
                 category={product.category}
                 badge={product.badge}
                 image={product.images && product.images.length > 0 ? product.images[0] : ""}
+                secondaryImage={product.images && product.images.length > 1 ? product.images[1] : undefined}
               />
             ))
           ) : (

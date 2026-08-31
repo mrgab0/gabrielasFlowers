@@ -85,7 +85,7 @@ export function ContactFormClient() {
                     </div>
                     <div>
                       <strong className="block text-white text-xs uppercase tracking-wider font-bold">Dirección Boutique</strong>
-                      <span className="text-gray-300 font-medium">6705 Fairway Dr., Houston, Texas 77087</span>
+                      <span className="text-gray-300 font-medium">4201 Fairmont Pkwy, Pasadena, TX 77504</span>
                     </div>
                   </div>
 

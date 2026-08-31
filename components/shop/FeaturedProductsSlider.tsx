@@ -100,6 +100,7 @@ export function FeaturedProductsSlider({ products }: FeaturedProductsSliderProps
         >
           {filteredProducts.map((product: any) => {
             const image = product.images && product.images.length > 0 ? product.images[0] : "https://images.unsplash.com/photo-1563241527-3004b7be0ffd?w=800";
+            const secondaryImage = product.images && product.images.length > 1 ? product.images[1] : undefined;
             return (
               <div
                 key={product._id.toString()}
@@ -110,9 +111,18 @@ export function FeaturedProductsSlider({ products }: FeaturedProductsSliderProps
                   <img
                     src={image}
                     alt={product.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    className={`w-full h-full object-contain p-1 group-hover:scale-105 transition-all duration-700 ${
+                      secondaryImage ? 'group-hover:opacity-0' : ''
+                    }`}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  {secondaryImage && (
+                    <img
+                      src={secondaryImage}
+                      alt={`${product.name} - alternativa`}
+                      className="absolute inset-0 w-full h-full object-contain p-1 transform scale-100 group-hover:scale-105 transition-all duration-700 ease-out opacity-0 group-hover:opacity-100"
+                    />
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
                   
                   {/* Badge de Categoría */}
                   <div className="absolute top-3 left-3">

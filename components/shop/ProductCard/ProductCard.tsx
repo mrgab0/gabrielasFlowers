@@ -14,6 +14,7 @@ interface ProductCardProps {
   category: string;
   badge?: string;
   image: string;
+  secondaryImage?: string;
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({
@@ -23,7 +24,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   price,
   category,
   badge,
-  image
+  image,
+  secondaryImage
 }) => {
   const { addToCart } = useCart();
   const t = useTranslations("common");
@@ -36,9 +38,18 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           <img
             src={image || "https://images.unsplash.com/photo-1563241527-3004b7be0ffd?w=800"}
             alt={name}
-            className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out"
+            className={`w-full h-full object-contain p-1 transform group-hover:scale-105 transition-all duration-700 ease-out ${
+              secondaryImage ? 'group-hover:opacity-0' : ''
+            }`}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          {secondaryImage && (
+            <img
+              src={secondaryImage}
+              alt={`${name} - alternativa`}
+              className="absolute inset-0 w-full h-full object-contain p-1 transform scale-100 group-hover:scale-105 transition-all duration-700 ease-out opacity-0 group-hover:opacity-100"
+            />
+          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
           
           {/* Badge Flotante estilo Categoría */}
           <div className="absolute top-3 left-3">
