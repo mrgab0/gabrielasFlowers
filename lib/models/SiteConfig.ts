@@ -100,7 +100,7 @@ const SiteConfigSchema: Schema = new Schema({
   facebookUrl: { type: String, default: "https://facebook.com" },
   instagramUrl: { type: String, default: "https://instagram.com" },
   tiktokUrl: { type: String, default: "https://tiktok.com" },
-  whatsappUrl: { type: String, default: "https://wa.me/16576988586" },
+  whatsappUrl: { type: String, default: "https://wa.me/18323911835" },
 
   // Módulo Social Pre-Footer (Incrustados Instagram/TikTok)
   enableSocialFeed: { type: Boolean, default: true },

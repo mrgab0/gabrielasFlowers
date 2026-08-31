@@ -9,7 +9,7 @@ interface WhatsAppButtonProps {
 }
 
 export const WhatsAppButton = ({
-  phoneNumber = "16576988586",
+  phoneNumber = "18323911835",
   message = "¡Hola! 🌸 Me gustaría recibir asesoría personalizada para elegir el arreglo floral ideal. ¿Me podrían ayudar?",
 }: WhatsAppButtonProps) => {
   const cleanPhone = phoneNumber.replace(/[^\d]/g, "");

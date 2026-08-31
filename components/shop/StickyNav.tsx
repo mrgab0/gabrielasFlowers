@@ -31,7 +31,7 @@ export function StickyNav({ siteConfig }: StickyNavProps) {
   const instagramUrl = siteConfig?.instagramUrl || "https://instagram.com";
   const facebookUrl = siteConfig?.facebookUrl || "https://facebook.com";
   const tiktokUrl = siteConfig?.tiktokUrl || "https://tiktok.com";
-  const whatsappUrl = siteConfig?.whatsappUrl || "https://wa.me/16576988586";
+  const whatsappUrl = siteConfig?.whatsappUrl || "https://wa.me/18323911835";
 
   return (
     <>
