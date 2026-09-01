@@ -32,7 +32,9 @@ import {
   Square,
   Flower2,
   Tag,
-  Gift
+  Gift,
+  DollarSign,
+  Edit3
 } from "lucide-react";
 
 const urlEndpoint = process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT || "https://ik.imagekit.io/nzjtc1avv";
@@ -86,6 +88,7 @@ interface UploadDraftItem {
   name: string;
   price: number;
   category: string;
+  isCustomCategory?: boolean;
   description: string;
   stock: number;
   images: string[];
@@ -104,14 +107,6 @@ export default function CargaEnMasaAdmin() {
   const [isSavingPreAgregated, setIsSavingPreAgregated] = useState(false);
   const [manualUrl, setManualUrl] = useState("");
   const [showManualUrlModal, setShowManualUrlModal] = useState(false);
-
-  // Parámetros por defecto para Step 1
-  const [globalCategory, setGlobalCategory] = useState("Rosas de Lujo");
-  const [globalPrice, setGlobalPrice] = useState<number>(50);
-  const [globalStock, setGlobalStock] = useState<number>(10);
-  const [globalDescription, setGlobalDescription] = useState(
-    "Hermoso arreglo elaborado con flores frescas de la más alta calidad en Gabriela's Flowers."
-  );
 
   // Step 2 State: Pre-Agregador Dashboard (DB Products with isActive: false)
   const [dbPreProducts, setDbPreProducts] = useState<any[]>([]);
@@ -185,10 +180,11 @@ export default function CargaEnMasaAdmin() {
       const newItem: UploadDraftItem = {
         id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         name: extractedName,
-        price: globalPrice,
-        category: globalCategory,
-        description: globalDescription,
-        stock: globalStock,
+        price: 50,
+        category: "Rosas de Lujo",
+        isCustomCategory: false,
+        description: "Hermoso arreglo elaborado con flores frescas de la más alta calidad en Gabriela's Flowers.",
+        stock: 10,
         images: [res.url],
         badge: "",
         flowerCount: 0,
@@ -203,10 +199,11 @@ export default function CargaEnMasaAdmin() {
     const newItem: UploadDraftItem = {
       id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       name: "Producto Importado por URL",
-      price: globalPrice,
-      category: globalCategory,
-      description: globalDescription,
-      stock: globalStock,
+      price: 50,
+      category: "Rosas de Lujo",
+      isCustomCategory: false,
+      description: "Hermoso arreglo elaborado con flores frescas de la más alta calidad en Gabriela's Flowers.",
+      stock: 10,
       images: [manualUrl.trim()],
       badge: "",
       flowerCount: 0,
@@ -221,16 +218,23 @@ export default function CargaEnMasaAdmin() {
     const newItem: UploadDraftItem = {
       id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       name: "Nuevo Arreglo Floral",
-      price: globalPrice,
-      category: globalCategory,
-      description: globalDescription,
-      stock: globalStock,
+      price: 50,
+      category: "Rosas de Lujo",
+      isCustomCategory: false,
+      description: "Hermoso arreglo elaborado con flores frescas de la más alta calidad en Gabriela's Flowers.",
+      stock: 10,
       images: ["https://images.unsplash.com/photo-1563241527-3004b7be0ffd?w=800"],
       badge: "",
       flowerCount: 0,
       bouquetType: "",
     };
     setDraftItems((prev) => [...prev, newItem]);
+  };
+
+  const handleUpdateDraftItem = (id: string, field: keyof UploadDraftItem, value: any) => {
+    setDraftItems((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, [field]: value } : item))
+    );
   };
 
   // Enviar borradores al estado Pre-Agregado (isActive: false)
@@ -256,7 +260,7 @@ export default function CargaEnMasaAdmin() {
         setDraftItems([]);
         await fetchPreProductsData();
         setActiveTab("step2");
-        alert(`¡Éxito! Se enviaron ${res.count} productos al Pre-Agregador. Ahora puedes editarlos en masa por lote.`);
+        alert(`¡Éxito! Se enviaron ${res.count} productos al Pre-Agregador. Ahora puedes visualizarlos y publicarlos.`);
       } else {
         alert(`Error al enviar a Pre-Agregador: ${res.error}`);
       }
@@ -374,7 +378,7 @@ export default function CargaEnMasaAdmin() {
             Módulo de Carga en Masa y Pre-Agregador
           </h1>
           <p className="text-xs text-gray-400">
-            Carga fotos a ImageKit, edita los parámetros comunes por lote (Rosas, Precios, Adicionales) y publícalos a la tienda cuando estén listos.
+            Carga fotos a ImageKit, edita individualmente o por lote los parámetros por tarjeta y publícalos cuando estén listos.
           </p>
         </div>
 
@@ -422,64 +426,11 @@ export default function CargaEnMasaAdmin() {
       </div>
 
       {/* ========================================================================= */}
-      {/* PASO 1: SUBIDA MASIVA Y GENERACIÓN DE BORRADORES */}
+      {/* PASO 1: SUBIDA MASIVA Y GENERACIÓN DE BORRADORES CON BLOQUES INDIVIDUALES */}
       {/* ========================================================================= */}
       {activeTab === "step1" && (
         <div className="space-y-6 animate-in fade-in duration-300">
           
-          {/* Instrucción del Paso 1 */}
-          <div className="bg-gradient-to-r from-gray-900 to-[#12131A] text-white p-6 rounded-2xl shadow-md border border-gray-800 space-y-4">
-            <div className="flex items-center justify-between border-b border-gray-800 pb-3">
-              <div className="flex items-center gap-2">
-                <Wand2 className="text-[#D4AF37]" size={18} />
-                <h2 className="font-bold text-sm uppercase tracking-wider text-pink-300">
-                  Paso 1: Subir Fotos y Configurar Valores Base
-                </h2>
-              </div>
-              <span className="text-xs text-gray-400 font-medium">
-                Los productos se guardarán pausados en el Pre-Agregador.
-              </span>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
-              <div>
-                <label className="block text-gray-400 font-bold mb-1 uppercase tracking-wider">Categoría Base</label>
-                <select
-                  value={globalCategory}
-                  onChange={(e) => setGlobalCategory(e.target.value)}
-                  className="w-full p-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none focus:border-[#D4AF37]"
-                >
-                  {CATEGORIES.map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-gray-400 font-bold mb-1 uppercase tracking-wider">Precio Base ($ USD)</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  value={globalPrice}
-                  onChange={(e) => setGlobalPrice(parseFloat(e.target.value) || 0)}
-                  className="w-full p-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none focus:border-[#D4AF37]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-gray-400 font-bold mb-1 uppercase tracking-wider">Stock por Defecto</label>
-                <input
-                  type="number"
-                  value={globalStock}
-                  onChange={(e) => setGlobalStock(parseInt(e.target.value) || 0)}
-                  className="w-full p-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none focus:border-[#D4AF37]"
-                />
-              </div>
-            </div>
-          </div>
-
           {/* Uploader ImageKit */}
           <IKContext publicKey={publicKey} urlEndpoint={urlEndpoint} authenticator={authenticator}>
             <IKUpload
@@ -500,10 +451,10 @@ export default function CargaEnMasaAdmin() {
 
               <div>
                 <h3 className="font-black text-lg text-gray-900">
-                  {uploading ? "Subiendo fotos a ImageKit..." : "Selecciona o Arrastra Múltiples Fotos de Arreglos"}
+                  {uploading ? "Subiendo fotos a ImageKit..." : "Selecciona o Arrastra Múltiples Fotos de Productos"}
                 </h3>
                 <p className="text-xs text-gray-500 mt-1 max-w-lg mx-auto">
-                  Cada imagen subida a ImageKit (`/products`) creará una tarjeta de producto en el borrador de Pre-Agregación.
+                  Cada imagen subida a ImageKit (`/products`) creará su propia tarjeta con bloques editables de Precio, Categoría (+ Nueva Categoría), Rosas, Stock y Estilo.
                 </p>
               </div>
 
@@ -515,7 +466,7 @@ export default function CargaEnMasaAdmin() {
                   className="bg-[#8B0024] hover:bg-[#70001d] text-white px-6 py-2.5 rounded-xl font-bold text-xs shadow-md transition-all flex items-center gap-2 active:scale-95 disabled:opacity-50"
                 >
                   <Upload size={14} />
-                  <span>{uploading ? "Cargando..." : "Subir Fotos en Masa"}</span>
+                  <span>{uploading ? "Cargando en ImageKit..." : "Subir Fotos en Masa"}</span>
                 </button>
 
                 <button
@@ -567,49 +518,237 @@ export default function CargaEnMasaAdmin() {
             </div>
           )}
 
-          {/* Lista de Borradores Subidos */}
+          {/* Lista de Tarjetas con Bloques de Selección e Inputs Editables por Producto */}
           {draftItems.length > 0 && (
             <div className="space-y-4 pt-4">
-              <div className="flex justify-between items-center px-1">
-                <h3 className="font-extrabold text-base text-gray-900 flex items-center gap-2">
-                  <Package size={18} className="text-[#8B0024]" />
-                  Fotos Cargadas ({draftItems.length})
-                </h3>
-                <button
-                  type="button"
-                  onClick={handleSaveToPreAggregator}
-                  disabled={isSavingPreAgregated}
-                  className="bg-[#8B0024] hover:bg-[#70001d] text-white px-5 py-2.5 rounded-full text-xs font-black shadow-md flex items-center gap-1.5 transition-all"
-                >
-                  {isSavingPreAgregated ? <Loader2 className="animate-spin" size={14} /> : <CheckCircle2 size={14} />}
-                  <span>Enviar a Pre-Agregador (Paso 2)</span>
-                </button>
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
+                <div>
+                  <h3 className="font-extrabold text-base text-gray-900 flex items-center gap-2">
+                    <Package size={18} className="text-[#8B0024]" />
+                    Tarjetas de Productos ({draftItems.length})
+                  </h3>
+                  <p className="text-xs text-gray-400">Edita los bloques de cada producto antes de enviarlos al Pre-Agregador.</p>
+                </div>
+
+                <div className="flex items-center gap-2 w-full sm:w-auto">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (confirm("¿Vaciar todas las tarjetas de la lista?")) setDraftItems([]);
+                    }}
+                    className="text-xs text-red-600 font-bold hover:underline px-2"
+                  >
+                    Vaciar Lista
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleSaveToPreAggregator}
+                    disabled={isSavingPreAgregated}
+                    className="bg-[#8B0024] hover:bg-[#70001d] text-white px-5 py-2.5 rounded-full text-xs font-black shadow-md flex items-center justify-center gap-1.5 transition-all active:scale-95 disabled:opacity-50 w-full sm:w-auto"
+                  >
+                    {isSavingPreAgregated ? <Loader2 className="animate-spin" size={14} /> : <CheckCircle2 size={14} />}
+                    <span>Enviar a Pre-Agregador (Paso 2)</span>
+                  </button>
+                </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Grid de Tarjetas de Productos */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {draftItems.map((item, idx) => (
-                  <div key={item.id} className="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex gap-3 items-center">
-                    <img src={item.images[0]} alt={item.name} className="w-16 h-16 rounded-xl object-cover border flex-shrink-0" />
-                    <div className="flex-1 min-w-0">
-                      <input
-                        type="text"
-                        value={item.name}
-                        onChange={(e) => setDraftItems(prev => prev.map(it => it.id === item.id ? { ...it, name: e.target.value } : it))}
-                        className="w-full text-xs font-bold p-1.5 border rounded-lg"
-                      />
-                      <div className="flex gap-2 text-[11px] text-gray-500 mt-1">
-                        <span>${item.price}</span>
-                        <span>•</span>
-                        <span>{item.category}</span>
-                      </div>
+                  <div
+                    key={item.id}
+                    className="bg-white rounded-2xl border-2 border-gray-200 shadow-sm overflow-hidden flex flex-col justify-between hover:border-[#8B0024]/40 transition-all"
+                  >
+                    {/* Header de la Tarjeta */}
+                    <div className="bg-gradient-to-r from-gray-900 to-[#12131A] text-white px-4 py-2.5 flex items-center justify-between">
+                      <span className="text-xs font-black uppercase tracking-wider text-pink-300">
+                        Producto #{idx + 1}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setDraftItems(prev => prev.filter(it => it.id !== item.id))}
+                        className="text-gray-400 hover:text-red-400 p-1 rounded-lg hover:bg-white/10 transition-colors"
+                        title="Eliminar tarjeta"
+                      >
+                        <Trash2 size={16} />
+                      </button>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => setDraftItems(prev => prev.filter(it => it.id !== item.id))}
-                      className="text-gray-400 hover:text-red-500 p-1"
-                    >
-                      <Trash2 size={16} />
-                    </button>
+
+                    <div className="p-4 space-y-4 flex-1">
+                      {/* Bloque Principal: Imagen & Nombre */}
+                      <div className="flex gap-4">
+                        <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-xl overflow-hidden bg-gray-100 border border-gray-200 flex-shrink-0 relative">
+                          <img src={item.images[0]} alt={item.name} className="w-full h-full object-cover" />
+                          <span className="absolute bottom-1 left-1 bg-black/60 text-white text-[9px] font-bold px-1.5 py-0.5 rounded backdrop-blur-sm">
+                            ImageKit
+                          </span>
+                        </div>
+
+                        <div className="flex-1 space-y-3">
+                          <div>
+                            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">
+                              Nombre del Producto *
+                            </label>
+                            <input
+                              type="text"
+                              value={item.name}
+                              onChange={(e) => handleUpdateDraftItem(item.id, "name", e.target.value)}
+                              placeholder="Nombre del arreglo..."
+                              className="w-full p-2 border rounded-xl text-xs font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#8B0024]"
+                            />
+                          </div>
+
+                          {/* Bloques de Precio y Stock */}
+                          <div className="grid grid-cols-2 gap-2">
+                            <div>
+                              <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5 flex items-center gap-1">
+                                <DollarSign size={10} className="text-[#8B0024]" /> Precio ($)
+                              </label>
+                              <input
+                                type="number"
+                                step="0.01"
+                                value={item.price}
+                                onChange={(e) => handleUpdateDraftItem(item.id, "price", parseFloat(e.target.value) || 0)}
+                                className="w-full p-2 border rounded-xl text-xs font-black text-[#8B0024] bg-white focus:outline-none focus:ring-2 focus:ring-[#8B0024]"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">
+                                Stock
+                              </label>
+                              <input
+                                type="number"
+                                value={item.stock}
+                                onChange={(e) => handleUpdateDraftItem(item.id, "stock", parseInt(e.target.value) || 0)}
+                                className="w-full p-2 border rounded-xl text-xs font-bold text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-[#8B0024]"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Bloque de Categoría (Selector + Categoría Nueva) */}
+                      <div>
+                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">
+                          Categoría del Producto
+                        </label>
+
+                        {item.isCustomCategory ? (
+                          <div className="flex gap-2">
+                            <input
+                              type="text"
+                              value={item.category}
+                              onChange={(e) => handleUpdateDraftItem(item.id, "category", e.target.value)}
+                              placeholder="Escribe la categoría nueva..."
+                              className="w-full p-2 border border-pink-400 bg-pink-50/40 rounded-xl text-xs font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#8B0024]"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => {
+                                handleUpdateDraftItem(item.id, "isCustomCategory", false);
+                                handleUpdateDraftItem(item.id, "category", "Rosas de Lujo");
+                              }}
+                              className="p-2 bg-gray-100 hover:bg-gray-200 rounded-xl text-xs font-bold text-gray-600 transition-colors flex-shrink-0"
+                              title="Volver a lista de categorías"
+                            >
+                              <X size={14} />
+                            </button>
+                          </div>
+                        ) : (
+                          <select
+                            value={item.category}
+                            onChange={(e) => {
+                              if (e.target.value === "__NEW_CATEGORY__") {
+                                handleUpdateDraftItem(item.id, "isCustomCategory", true);
+                                handleUpdateDraftItem(item.id, "category", "");
+                              } else {
+                                handleUpdateDraftItem(item.id, "category", e.target.value);
+                              }
+                            }}
+                            className="w-full p-2 border rounded-xl text-xs font-semibold bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#8B0024]"
+                          >
+                            {CATEGORIES.map((cat) => (
+                              <option key={cat} value={cat}>
+                                {cat}
+                              </option>
+                            ))}
+                            <option value="__NEW_CATEGORY__">➕ Crear Categoría Nueva...</option>
+                          </select>
+                        )}
+                      </div>
+
+                      {/* Bloques de Atributos: Rosas, Tipo Bouquet e Insignia */}
+                      <div className="grid grid-cols-3 gap-2 pt-1 border-t border-gray-100">
+                        <div>
+                          <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5 flex items-center gap-1">
+                            <Flower2 size={10} className="text-pink-600" /> Rosas
+                          </label>
+                          <select
+                            value={item.flowerCount}
+                            onChange={(e) => handleUpdateDraftItem(item.id, "flowerCount", parseInt(e.target.value) || 0)}
+                            className="w-full p-1.5 border rounded-xl text-xs font-bold bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#8B0024]"
+                          >
+                            {FLOWER_COUNT_OPTIONS.map((fc) => (
+                              <option key={fc} value={fc}>
+                                {fc === 0 ? "General" : `${fc} u.`}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">
+                            Estilo
+                          </label>
+                          <select
+                            value={item.bouquetType}
+                            onChange={(e) => handleUpdateDraftItem(item.id, "bouquetType", e.target.value)}
+                            className="w-full p-1.5 border rounded-xl text-xs font-semibold bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#8B0024]"
+                          >
+                            <option value="">Sin definir</option>
+                            {BOUQUET_TYPES.map((bt) => (
+                              <option key={bt} value={bt}>
+                                {bt}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5 flex items-center gap-1">
+                            <Tag size={10} className="text-[#8B0024]" /> Badge
+                          </label>
+                          <select
+                            value={item.badge}
+                            onChange={(e) => handleUpdateDraftItem(item.id, "badge", e.target.value)}
+                            className="w-full p-1.5 border rounded-xl text-xs font-semibold bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#8B0024]"
+                          >
+                            <option value="">Ninguno</option>
+                            {BADGES.filter(Boolean).map((b) => (
+                              <option key={b} value={b}>
+                                {b}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+
+                      {/* Bloque de Descripción */}
+                      <div>
+                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">
+                          Descripción
+                        </label>
+                        <textarea
+                          rows={2}
+                          value={item.description}
+                          onChange={(e) => handleUpdateDraftItem(item.id, "description", e.target.value)}
+                          className="w-full p-2 border rounded-xl text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#8B0024]"
+                        />
+                      </div>
+
+                    </div>
                   </div>
                 ))}
               </div>
