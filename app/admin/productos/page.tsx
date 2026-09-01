@@ -3,12 +3,13 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { deleteProduct, toggleProductStatus } from "@/lib/actions/product";
-import { Plus, Search, Edit3, Copy, Trash2, Tag, Package, Image as ImageIcon, Loader2, Pause, Play } from "lucide-react";
+import { Plus, Search, Edit3, Copy, Trash2, Tag, Package, Image as ImageIcon, Loader2, Pause, Play, Layers } from "lucide-react";
 
 export default function InventarioAdmin() {
   const [products, setProducts] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "pre_aggregation">("all");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -54,7 +55,7 @@ export default function InventarioAdmin() {
   // Obtener lista de categorías únicas para el filtro
   const categories = ["all", ...Array.from(new Set(products.map((p) => p.category).filter(Boolean)))];
 
-  // Filtrar productos en tiempo real por búsqueda y categoría
+  // Filtrar productos en tiempo real por búsqueda, categoría y estado
   const filteredProducts = products.filter((product) => {
     const matchesSearch =
       (product.name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -64,8 +65,16 @@ export default function InventarioAdmin() {
 
     const matchesCategory = selectedCategory === "all" || product.category === selectedCategory;
 
-    return matchesSearch && matchesCategory;
+    const matchesStatus =
+      statusFilter === "all" ||
+      (statusFilter === "active" && product.isActive !== false) ||
+      (statusFilter === "pre_aggregation" && product.isActive === false);
+
+    return matchesSearch && matchesCategory && matchesStatus;
   });
+
+  const preAggregationCount = products.filter((p) => p.isActive === false).length;
+  const activeCount = products.filter((p) => p.isActive !== false).length;
 
   return (
     <div className="max-w-6xl mx-auto space-y-6 pb-12">
@@ -75,12 +84,58 @@ export default function InventarioAdmin() {
           <h1 className="text-2xl font-bold text-[#1A1C1C]">Gestión de Catálogo e Inventario</h1>
           <p className="text-xs text-gray-400">Total: {products.length} productos registrados</p>
         </div>
-        <Link
-          href="/admin/productos/crear"
-          className="bg-[#FF97A4] text-white px-6 py-3 rounded-full font-bold text-sm hover:bg-[#B0004A] transition-colors shadow-md flex items-center gap-2"
+        <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+          <Link
+            href="/admin/productos/carga-en-masa"
+            className="bg-[#1A1C1C] text-white px-5 py-3 rounded-full font-bold text-sm hover:bg-black transition-colors shadow-md flex items-center gap-2"
+          >
+            <Layers size={18} /> Crear Productos en Masa
+          </Link>
+          <Link
+            href="/admin/productos/crear"
+            className="bg-[#FF97A4] text-white px-6 py-3 rounded-full font-bold text-sm hover:bg-[#B0004A] transition-colors shadow-md flex items-center gap-2"
+          >
+            <Plus size={18} /> Crear Nuevo Producto
+          </Link>
+        </div>
+      </div>
+
+      {/* Barra de Filtros por Estado */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-1">
+        <button
+          onClick={() => setStatusFilter("all")}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+            statusFilter === "all"
+              ? "bg-[#1A1C1C] text-white shadow-md"
+              : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200"
+          }`}
         >
-          <Plus size={18} /> Crear Nuevo Producto
-        </Link>
+          Todos los Productos ({products.length})
+        </button>
+
+        <button
+          onClick={() => setStatusFilter("active")}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+            statusFilter === "active"
+              ? "bg-green-700 text-white shadow-md"
+              : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200"
+          }`}
+        >
+          <span className="w-2 h-2 rounded-full bg-green-500"></span>
+          En Tienda ({activeCount})
+        </button>
+
+        <button
+          onClick={() => setStatusFilter("pre_aggregation")}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+            statusFilter === "pre_aggregation"
+              ? "bg-[#8B0024] text-white shadow-md"
+              : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200"
+          }`}
+        >
+          <span className="w-2 h-2 rounded-full bg-amber-400"></span>
+          Pre-Agregados / Pausados ⏸️ ({preAggregationCount})
+        </button>
       </div>
 
       {/* Buscador y Filtros en Tiempo Real */}

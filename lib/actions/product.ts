@@ -66,6 +66,150 @@ export async function createProduct(formData: FormData) {
   }
 }
 
+export async function createBulkProducts(
+  productsData: Array<{
+    name: string;
+    price: number;
+    category: string;
+    description?: string;
+    images: string[];
+    stock?: number;
+    sku?: string;
+    badge?: string;
+    flowerCount?: number;
+    bouquetType?: string;
+    addons?: string[];
+  }>,
+  publishImmediately: boolean = false
+) {
+  try {
+    await dbConnect();
+    
+    if (!productsData || !Array.isArray(productsData) || productsData.length === 0) {
+      return { success: false, error: "No hay productos para guardar." };
+    }
+
+    const batchCreatedAt = new Date();
+
+    const preparedProducts = await Promise.all(productsData.map(async (item) => {
+      const name = item.name.trim() || "Producto Sin Nombre";
+      const baseSlug = slugify(name);
+      const randomSuffix = Math.floor(Math.random() * 10000);
+      const existingProduct = await Product.findOne({ slug: baseSlug });
+      const slug = existingProduct
+        ? slugify(`${name}-${randomSuffix}`)
+        : baseSlug;
+
+      const cleanedNameAlpha = name.replace(/[^a-zA-Z0-9]/g, "").substring(0, 4).toUpperCase();
+      const generatedSku = `SKU-${cleanedNameAlpha || 'PROD'}-${randomSuffix}`;
+      const sku = item.sku && item.sku.trim() !== "" ? item.sku.trim() : generatedSku;
+
+      return {
+        name,
+        price: typeof item.price === 'number' && !isNaN(item.price) ? item.price : 0,
+        category: item.category?.trim() || "General",
+        description: item.description?.trim() || `Hermoso arreglo de ${name} elaborado con flores frescas de la más alta calidad en Gabriela's Flowers.`,
+        images: item.images && item.images.length > 0 ? item.images : ["https://images.unsplash.com/photo-1563241527-3004b7be0ffd?w=800"],
+        stock: typeof item.stock === 'number' && !isNaN(item.stock) ? item.stock : 10,
+        sku,
+        slug,
+        flowerCount: item.flowerCount || 0,
+        bouquetType: item.bouquetType || "",
+        badge: item.badge || "",
+        addons: item.addons || [],
+        isActive: publishImmediately,
+        createdAt: batchCreatedAt
+      };
+    }));
+
+    const inserted = await Product.insertMany(preparedProducts);
+    revalidatePath("/admin/productos");
+    revalidatePath("/");
+    return { success: true, count: inserted.length };
+  } catch (error) {
+    console.error("Error en carga masiva de productos:", error);
+    return { success: false, error: error instanceof Error ? error.message : "Error al procesar la carga en masa." };
+  }
+}
+
+export async function updateBulkBatch(
+  productIds: string[],
+  updates: {
+    category?: string;
+    flowerCount?: number;
+    bouquetType?: string;
+    price?: number;
+    stock?: number;
+    badge?: string;
+    description?: string;
+    addons?: string[];
+  }
+) {
+  try {
+    await dbConnect();
+    if (!productIds || productIds.length === 0) {
+      return { success: false, error: "No se seleccionaron productos para actualizar." };
+    }
+
+    const updateFields: any = {};
+    if (updates.category !== undefined && updates.category.trim() !== "") updateFields.category = updates.category.trim();
+    if (updates.flowerCount !== undefined && updates.flowerCount >= 0) updateFields.flowerCount = updates.flowerCount;
+    if (updates.bouquetType !== undefined && updates.bouquetType.trim() !== "") updateFields.bouquetType = updates.bouquetType.trim();
+    if (updates.price !== undefined && updates.price >= 0) updateFields.price = updates.price;
+    if (updates.stock !== undefined && updates.stock >= 0) updateFields.stock = updates.stock;
+    if (updates.badge !== undefined) updateFields.badge = updates.badge;
+    if (updates.description !== undefined && updates.description.trim() !== "") updateFields.description = updates.description.trim();
+    if (updates.addons !== undefined) updateFields.addons = updates.addons;
+
+    await Product.updateMany(
+      { _id: { $in: productIds } },
+      { $set: updateFields }
+    );
+
+    revalidatePath("/admin/productos");
+    revalidatePath("/");
+    return { success: true, count: productIds.length };
+  } catch (error) {
+    console.error("Error al actualizar lote en masa:", error);
+    return { success: false, error: "Error al aplicar cambios masivos." };
+  }
+}
+
+export async function publishBulkBatch(productIds: string[]) {
+  try {
+    await dbConnect();
+    if (!productIds || productIds.length === 0) {
+      return { success: false, error: "No se seleccionaron productos para publicar." };
+    }
+
+    await Product.updateMany(
+      { _id: { $in: productIds } },
+      { $set: { isActive: true } }
+    );
+
+    revalidatePath("/admin/productos");
+    revalidatePath("/");
+    return { success: true, count: productIds.length };
+  } catch (error) {
+    console.error("Error al publicar lote de productos:", error);
+    return { success: false, error: "Error al activar productos en tienda." };
+  }
+}
+
+export async function fetchAddonsList() {
+  try {
+    await dbConnect();
+    const { Addon } = await import("@/lib/models/Addon");
+    const addons = await Addon.find({ isActive: true }).lean();
+    return { success: true, addons: JSON.parse(JSON.stringify(addons)) };
+  } catch (error) {
+    console.error("Error al cargar adicionales:", error);
+    return { success: false, addons: [] };
+  }
+}
+
+
+
 export async function updateProduct(id: string, formData: FormData) {
   try {
     await dbConnect();
