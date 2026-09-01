@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { IKContext, IKUpload } from "imagekitio-react";
 import {
   createBulkProducts,
   updateBulkBatch,
@@ -34,30 +33,10 @@ import {
   Tag,
   Gift,
   DollarSign,
-  Edit3
+  AlertCircle
 } from "lucide-react";
 
-const urlEndpoint = process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT || "https://ik.imagekit.io/nzjtc1avv";
 const publicKey = process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY || "public_huW/0HuThqhQncgbm14znTZHVpk=";
-
-const authenticator = async () => {
-  try {
-    const response = await fetch("/api/imagekit-auth");
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Error en auth API: ${response.status} - ${errorText}`);
-    }
-    const data = await response.json();
-    return {
-      signature: data.signature,
-      expire: data.expire,
-      token: data.token,
-    };
-  } catch (error: any) {
-    console.error("Error al autenticar ImageKit:", error);
-    throw error;
-  }
-};
 
 const CATEGORIES = [
   "Rosas de Lujo",
@@ -97,12 +76,20 @@ interface UploadDraftItem {
   bouquetType: string;
 }
 
+interface UploadQueueItem {
+  id: string;
+  fileName: string;
+  progress: number;
+  status: "uploading" | "completed" | "error";
+}
+
 export default function CargaEnMasaAdmin() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<"step1" | "step2">("step1");
 
-  // Step 1 State: Subida masiva de imágenes
+  // Step 1 State: Subida masiva de imágenes y cola de progreso
   const [draftItems, setDraftItems] = useState<UploadDraftItem[]>([]);
+  const [uploadQueue, setUploadQueue] = useState<UploadQueueItem[]>([]);
   const [uploading, setUploading] = useState(false);
   const [isSavingPreAgregated, setIsSavingPreAgregated] = useState(false);
   const [manualUrl, setManualUrl] = useState("");
@@ -124,7 +111,7 @@ export default function CargaEnMasaAdmin() {
   const [batchBadge, setBatchBadge] = useState("Bestsellers");
   const [batchAddons, setBatchAddons] = useState<string[]>([]);
 
-  const ikUploadRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetchPreProductsData();
@@ -155,7 +142,7 @@ export default function CargaEnMasaAdmin() {
     }
   }
 
-  // Extracción de nombre limpio
+  // Extracción de nombre limpio desde el nombre de archivo
   const cleanFilenameToName = (filename: string): string => {
     let clean = filename.replace(/\.[^/.]+$/, "");
     clean = clean.replace(/[-_]/g, " ");
@@ -163,41 +150,133 @@ export default function CargaEnMasaAdmin() {
     return clean.trim() || "Arreglo Floral Exclusivo";
   };
 
-  const handleUploadStart = () => {
+  // Manejador de selección múltiple de archivos con carga asíncrona y barra de progreso por imagen
+  const handleFilesSelected = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
     setUploading(true);
-  };
 
-  const handleUploadError = (err: any) => {
-    console.error("Error en ImageKit:", err);
-    alert("Ocurrió un error al cargar la imagen en ImageKit.");
-    setUploading(false);
-  };
-
-  const handleUploadSuccess = (res: any) => {
-    setUploading(false);
-    if (res && res.url) {
-      const extractedName = cleanFilenameToName(res.name || "Nuevo Producto");
-      const newItem: UploadDraftItem = {
-        id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        name: extractedName,
-        price: 50,
-        category: "Rosas de Lujo",
-        isCustomCategory: false,
-        description: "Hermoso arreglo elaborado con flores frescas de la más alta calidad en Gabriela's Flowers.",
-        stock: 10,
-        images: [res.url],
-        badge: "",
-        flowerCount: 0,
-        bouquetType: "",
-      };
-      setDraftItems((prev) => [...prev, newItem]);
+    let authData: any = null;
+    try {
+      const authRes = await fetch("/api/imagekit-auth");
+      if (!authRes.ok) throw new Error("Error obteniendo credenciales de ImageKit");
+      authData = await authRes.json();
+    } catch (err) {
+      console.error("Error auth ImageKit:", err);
+      alert("No se pudieron obtener las credenciales para subir a ImageKit.");
+      setUploading(false);
+      return;
     }
+
+    const fileList = Array.from(files);
+
+    const initialQueueItems: UploadQueueItem[] = fileList.map((file) => ({
+      id: `${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      fileName: file.name,
+      progress: 0,
+      status: "uploading",
+    }));
+
+    setUploadQueue((prev) => [...initialQueueItems, ...prev]);
+
+    // Subir cada archivo de forma asíncrona en paralelo con seguimiento de progreso XHR
+    fileList.forEach((file, index) => {
+      const queueId = initialQueueItems[index].id;
+      uploadSingleFileWithProgress(file, queueId, authData);
+    });
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const uploadSingleFileWithProgress = (file: File, queueId: string, authData: any) => {
+    const xhr = new XMLHttpRequest();
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("fileName", file.name);
+    formData.append("publicKey", publicKey);
+    formData.append("signature", authData.signature);
+    formData.append("expire", authData.expire);
+    formData.append("token", authData.token);
+    formData.append("folder", "/products");
+
+    xhr.upload.onprogress = (event) => {
+      if (event.lengthComputable) {
+        const percent = Math.round((event.loaded / event.total) * 100);
+        setUploadQueue((prev) =>
+          prev.map((q) => (q.id === queueId ? { ...q, progress: percent } : q))
+        );
+      }
+    };
+
+    xhr.onload = () => {
+      if (xhr.status === 200) {
+        try {
+          const response = JSON.parse(xhr.responseText);
+          const imageUrl = response.url;
+
+          setUploadQueue((prev) =>
+            prev.map((q) => (q.id === queueId ? { ...q, progress: 100, status: "completed" } : q))
+          );
+
+          // Generar inmediatamente la tarjeta de producto en pantalla
+          const extractedName = cleanFilenameToName(file.name);
+          const newItem: UploadDraftItem = {
+            id: `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+            name: extractedName,
+            price: 50,
+            category: "Rosas de Lujo",
+            isCustomCategory: false,
+            description: "Hermoso arreglo elaborado con flores frescas de la más alta calidad en Gabriela's Flowers.",
+            stock: 10,
+            images: [imageUrl],
+            badge: "",
+            flowerCount: 0,
+            bouquetType: "",
+          };
+
+          setDraftItems((prev) => [...prev, newItem]);
+        } catch (err) {
+          console.error("Error procesando respuesta ImageKit:", err);
+          setUploadQueue((prev) =>
+            prev.map((q) => (q.id === queueId ? { ...q, status: "error" } : q))
+          );
+        }
+      } else {
+        setUploadQueue((prev) =>
+          prev.map((q) => (q.id === queueId ? { ...q, status: "error" } : q))
+        );
+      }
+      checkUploadsStatus();
+    };
+
+    xhr.onerror = () => {
+      setUploadQueue((prev) =>
+        prev.map((q) => (q.id === queueId ? { ...q, status: "error" } : q))
+      );
+      checkUploadsStatus();
+    };
+
+    xhr.open("POST", "https://upload.imagekit.io/api/v1/files/upload");
+    xhr.send(formData);
+  };
+
+  const checkUploadsStatus = () => {
+    setUploadQueue((prev) => {
+      const stillUploading = prev.some((q) => q.status === "uploading");
+      if (!stillUploading) {
+        setUploading(false);
+      }
+      return prev;
+    });
   };
 
   const handleAddManualUrl = () => {
     if (!manualUrl.trim()) return;
     const newItem: UploadDraftItem = {
-      id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
       name: "Producto Importado por URL",
       price: 50,
       category: "Rosas de Lujo",
@@ -216,7 +295,7 @@ export default function CargaEnMasaAdmin() {
 
   const handleAddBlankCard = () => {
     const newItem: UploadDraftItem = {
-      id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
       name: "Nuevo Arreglo Floral",
       price: 50,
       category: "Rosas de Lujo",
@@ -258,6 +337,7 @@ export default function CargaEnMasaAdmin() {
       const res = await createBulkProducts(payload, false); // publishImmediately = false
       if (res.success) {
         setDraftItems([]);
+        setUploadQueue([]);
         await fetchPreProductsData();
         setActiveTab("step2");
         alert(`¡Éxito! Se enviaron ${res.count} productos al Pre-Agregador. Ahora puedes visualizarlos y publicarlos.`);
@@ -378,7 +458,7 @@ export default function CargaEnMasaAdmin() {
             Módulo de Carga en Masa y Pre-Agregador
           </h1>
           <p className="text-xs text-gray-400">
-            Carga fotos a ImageKit, edita individualmente o por lote los parámetros por tarjeta y publícalos cuando estén listos.
+            Sube múltiples fotos asíncronamente con seguimiento de progreso por imagen y edita sus atributos por tarjeta.
           </p>
         </div>
 
@@ -426,69 +506,129 @@ export default function CargaEnMasaAdmin() {
       </div>
 
       {/* ========================================================================= */}
-      {/* PASO 1: SUBIDA MASIVA Y GENERACIÓN DE BORRADORES CON BLOQUES INDIVIDUALES */}
+      {/* PASO 1: SUBIDA MASIVA ASÍNCRONA CON BARRA DE CARGA INDIVIDUAL */}
       {/* ========================================================================= */}
       {activeTab === "step1" && (
         <div className="space-y-6 animate-in fade-in duration-300">
           
-          {/* Uploader ImageKit */}
-          <IKContext publicKey={publicKey} urlEndpoint={urlEndpoint} authenticator={authenticator}>
-            <IKUpload
-              ref={ikUploadRef}
-              onError={handleUploadError}
-              onSuccess={handleUploadSuccess}
-              onUploadStart={handleUploadStart}
-              style={{ display: "none" }}
-              folder="/products"
-              accept="image/*"
-              multiple
-            />
+          {/* Subidor Múltiple con Input File Nativo */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            multiple
+            accept="image/*"
+            onChange={handleFilesSelected}
+            style={{ display: "none" }}
+          />
 
-            <div className="bg-white p-8 rounded-2xl border-2 border-dashed border-[#8B0024]/40 bg-[#8B0024]/5 hover:bg-[#8B0024]/10 transition-all text-center space-y-4 shadow-sm">
-              <div className="w-14 h-14 bg-white rounded-2xl mx-auto flex items-center justify-center text-[#8B0024] shadow-md border border-pink-100">
-                {uploading ? <Loader2 className="animate-spin" size={28} /> : <Upload size={28} />}
+          <div className="bg-white p-8 rounded-2xl border-2 border-dashed border-[#8B0024]/40 bg-[#8B0024]/5 hover:bg-[#8B0024]/10 transition-all text-center space-y-4 shadow-sm">
+            <div className="w-14 h-14 bg-white rounded-2xl mx-auto flex items-center justify-center text-[#8B0024] shadow-md border border-pink-100">
+              {uploading ? <Loader2 className="animate-spin" size={28} /> : <Upload size={28} />}
+            </div>
+
+            <div>
+              <h3 className="font-black text-lg text-gray-900">
+                {uploading ? "Subiendo imágenes asíncronamente a ImageKit..." : "Selecciona Múltiples Imágenes de Productos"}
+              </h3>
+              <p className="text-xs text-gray-500 mt-1 max-w-lg mx-auto">
+                Selecciona decenas de fotos a la vez. Cada imagen mostrará su propia barra de progreso de carga en tiempo real y generará su tarjeta de producto en pantalla.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap justify-center items-center gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading}
+                className="bg-[#8B0024] hover:bg-[#70001d] text-white px-6 py-2.5 rounded-xl font-bold text-xs shadow-md transition-all flex items-center gap-2 active:scale-95 disabled:opacity-50"
+              >
+                <Upload size={14} />
+                <span>{uploading ? "Cargando Fotos..." : "Seleccionar Fotos Múltiples"}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setShowManualUrlModal(true)}
+                className="bg-white text-gray-800 border border-gray-200 hover:bg-gray-50 px-4 py-2.5 rounded-xl font-bold text-xs transition-colors flex items-center gap-1.5"
+              >
+                <LinkIcon size={14} />
+                <span>Añadir por URL</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleAddBlankCard}
+                className="bg-white text-gray-800 border border-gray-200 hover:bg-gray-50 px-4 py-2.5 rounded-xl font-bold text-xs transition-colors flex items-center gap-1.5"
+              >
+                <Plus size={14} />
+                <span>Agregar Fila Vacía</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Sección de Cola con Barras de Carga Individuales por Archivo */}
+          {uploadQueue.length > 0 && (
+            <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm space-y-3">
+              <div className="flex justify-between items-center border-b pb-2">
+                <h4 className="text-xs font-black uppercase tracking-wider text-gray-800 flex items-center gap-2">
+                  <Clock size={14} className="text-[#8B0024]" />
+                  Cola de Subida a ImageKit ({uploadQueue.filter(q => q.status === "completed").length} / {uploadQueue.length} completados)
+                </h4>
+                {uploadQueue.some(q => q.status === "completed") && (
+                  <button
+                    type="button"
+                    onClick={() => setUploadQueue(prev => prev.filter(q => q.status === "uploading"))}
+                    className="text-[11px] text-gray-400 hover:text-gray-600 font-bold"
+                  >
+                    Limpiar lista completada
+                  </button>
+                )}
               </div>
 
-              <div>
-                <h3 className="font-black text-lg text-gray-900">
-                  {uploading ? "Subiendo fotos a ImageKit..." : "Selecciona o Arrastra Múltiples Fotos de Productos"}
-                </h3>
-                <p className="text-xs text-gray-500 mt-1 max-w-lg mx-auto">
-                  Cada imagen subida a ImageKit (`/products`) creará su propia tarjeta con bloques editables de Precio, Categoría (+ Nueva Categoría), Rosas, Stock y Estilo.
-                </p>
-              </div>
+              <div className="space-y-2.5 max-h-60 overflow-y-auto pr-1">
+                {uploadQueue.map((item) => (
+                  <div key={item.id} className="p-3 bg-gray-50 rounded-xl border border-gray-100 space-y-1.5 text-xs">
+                    <div className="flex justify-between items-center">
+                      <span className="font-bold text-gray-800 truncate max-w-[240px] sm:max-w-xs">
+                        {item.fileName}
+                      </span>
+                      <div className="flex items-center gap-2">
+                        {item.status === "uploading" && (
+                          <span className="font-extrabold text-[#8B0024] flex items-center gap-1">
+                            <Loader2 size={12} className="animate-spin" /> {item.progress}%
+                          </span>
+                        )}
+                        {item.status === "completed" && (
+                          <span className="font-extrabold text-emerald-600 flex items-center gap-1">
+                            <CheckCircle2 size={14} /> ¡100% Completado!
+                          </span>
+                        )}
+                        {item.status === "error" && (
+                          <span className="font-extrabold text-red-600 flex items-center gap-1">
+                            <AlertCircle size={14} /> Error de carga
+                          </span>
+                        )}
+                      </div>
+                    </div>
 
-              <div className="flex flex-wrap justify-center items-center gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={() => !uploading && ikUploadRef.current?.click()}
-                  disabled={uploading}
-                  className="bg-[#8B0024] hover:bg-[#70001d] text-white px-6 py-2.5 rounded-xl font-bold text-xs shadow-md transition-all flex items-center gap-2 active:scale-95 disabled:opacity-50"
-                >
-                  <Upload size={14} />
-                  <span>{uploading ? "Cargando en ImageKit..." : "Subir Fotos en Masa"}</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setShowManualUrlModal(true)}
-                  className="bg-white text-gray-800 border border-gray-200 hover:bg-gray-50 px-4 py-2.5 rounded-xl font-bold text-xs transition-colors flex items-center gap-1.5"
-                >
-                  <LinkIcon size={14} />
-                  <span>Añadir por URL</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={handleAddBlankCard}
-                  className="bg-white text-gray-800 border border-gray-200 hover:bg-gray-50 px-4 py-2.5 rounded-xl font-bold text-xs transition-colors flex items-center gap-1.5"
-                >
-                  <Plus size={14} />
-                  <span>Agregar Fila Vacía</span>
-                </button>
+                    {/* Barra de Progreso Individual */}
+                    <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full transition-all duration-200 ${
+                          item.status === "completed"
+                            ? "bg-emerald-500"
+                            : item.status === "error"
+                            ? "bg-red-500"
+                            : "bg-[#8B0024]"
+                        }`}
+                        style={{ width: `${item.progress}%` }}
+                      />
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-          </IKContext>
+          )}
 
           {/* Modal de URL Manual */}
           {showManualUrlModal && (
@@ -518,14 +658,14 @@ export default function CargaEnMasaAdmin() {
             </div>
           )}
 
-          {/* Lista de Tarjetas con Bloques de Selección e Inputs Editables por Producto */}
+          {/* Lista de Tarjetas de Productos Generadas en Tiempo Real */}
           {draftItems.length > 0 && (
             <div className="space-y-4 pt-4">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
                 <div>
                   <h3 className="font-extrabold text-base text-gray-900 flex items-center gap-2">
                     <Package size={18} className="text-[#8B0024]" />
-                    Tarjetas de Productos ({draftItems.length})
+                    Tarjetas de Productos Generadas ({draftItems.length})
                   </h3>
                   <p className="text-xs text-gray-400">Edita los bloques de cada producto antes de enviarlos al Pre-Agregador.</p>
                 </div>
@@ -558,7 +698,7 @@ export default function CargaEnMasaAdmin() {
                 {draftItems.map((item, idx) => (
                   <div
                     key={item.id}
-                    className="bg-white rounded-2xl border-2 border-gray-200 shadow-sm overflow-hidden flex flex-col justify-between hover:border-[#8B0024]/40 transition-all"
+                    className="bg-white rounded-2xl border-2 border-gray-200 shadow-sm overflow-hidden flex flex-col justify-between hover:border-[#8B0024]/40 transition-all animate-in fade-in slide-in-from-bottom-2 duration-300"
                   >
                     {/* Header de la Tarjeta */}
                     <div className="bg-gradient-to-r from-gray-900 to-[#12131A] text-white px-4 py-2.5 flex items-center justify-between">
