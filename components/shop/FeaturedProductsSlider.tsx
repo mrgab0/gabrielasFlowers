@@ -29,6 +29,49 @@ export function FeaturedProductsSlider({ products }: FeaturedProductsSliderProps
     filteredProducts = products; // Fallback para mostrar siempre productos
   }
 
+  const isMouseDown = useRef(false);
+  const startX = useRef(0);
+  const scrollLeftPos = useRef(0);
+  const isDragging = useRef(false);
+
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!scrollContainerRef.current) return;
+    isMouseDown.current = true;
+    isDragging.current = false;
+    startX.current = e.pageX - scrollContainerRef.current.offsetLeft;
+    scrollLeftPos.current = scrollContainerRef.current.scrollLeft;
+    scrollContainerRef.current.style.scrollSnapType = "none";
+    scrollContainerRef.current.style.scrollBehavior = "auto";
+  };
+
+  const handleMouseLeaveOrUp = () => {
+    if (!isMouseDown.current) return;
+    isMouseDown.current = false;
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.style.scrollSnapType = "";
+      scrollContainerRef.current.style.scrollBehavior = "";
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!isMouseDown.current || !scrollContainerRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - scrollContainerRef.current.offsetLeft;
+    const walk = x - startX.current;
+    if (Math.abs(walk) > 5) {
+      isDragging.current = true;
+    }
+    scrollContainerRef.current.scrollLeft = scrollLeftPos.current - walk;
+  };
+
+  const handleClickCapture = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (isDragging.current) {
+      e.preventDefault();
+      e.stopPropagation();
+      isDragging.current = false;
+    }
+  };
+
   const handleScroll = (direction: "left" | "right") => {
     if (scrollContainerRef.current) {
       const scrollAmount = direction === "left" ? -350 : 350;
@@ -95,6 +138,11 @@ export function FeaturedProductsSlider({ products }: FeaturedProductsSliderProps
         {/* Carrusel Deslizable */}
         <div
           ref={scrollContainerRef}
+          onMouseDown={handleMouseDown}
+          onMouseLeave={handleMouseLeaveOrUp}
+          onMouseUp={handleMouseLeaveOrUp}
+          onMouseMove={handleMouseMove}
+          onClickCapture={handleClickCapture}
           className="flex items-stretch gap-6 overflow-x-auto pb-6 pt-2 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden"
           style={{ scrollbarWidth: "none" }}
         >

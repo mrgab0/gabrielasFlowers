@@ -205,10 +205,10 @@ export const ChatbotModal = () => {
             {/* Texto y Ticker Dinámico estilo Mini-Player */}
             <div className="flex flex-col text-left overflow-hidden min-w-[155px] sm:min-w-[200px]">
               <div className="flex items-center gap-1.5 leading-none mb-1">
-                <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-[#8B0024] dark:text-pink-400">
+                <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-black dark:text-pink-400">
                   GABRIELA • ASESORA IA
                 </span>
-                <span className="flex items-center gap-0.5 text-[8px] bg-green-100 dark:bg-green-950/60 text-green-700 dark:text-green-300 font-bold px-1.5 py-0.5 rounded-full">
+                <span className="flex items-center gap-0.5 text-[8px] bg-green-100 dark:bg-green-950/60 text-green-900 dark:text-green-300 font-extrabold px-1.5 py-0.5 rounded-full">
                   <span className="w-1 h-1 bg-green-500 rounded-full animate-ping"></span>
                   EN VIVO
                 </span>
@@ -218,7 +218,7 @@ export const ChatbotModal = () => {
               <div className="h-4 overflow-hidden relative">
                 <p 
                   key={tickerIndex} 
-                  className="text-[11px] sm:text-xs font-semibold text-gray-800 dark:text-gray-200 truncate animate-in fade-in slide-in-from-bottom-2 duration-300"
+                  className="text-[11px] sm:text-xs font-bold text-black dark:text-gray-200 truncate animate-in fade-in slide-in-from-bottom-2 duration-300"
                 >
                   {PREVIEW_TICKERS[tickerIndex]}
                 </p>
