@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageCircle, X, Send, Sparkles, RefreshCw, PhoneCall, ExternalLink, Bot, ChevronRight, MessageSquareHeart } from 'lucide-react';
+import { MessageCircle, X, Send, Sparkles, RefreshCw, PhoneCall, ExternalLink, Bot, ChevronRight, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
 
 interface Message {
@@ -227,7 +227,7 @@ export const ChatbotModal = () => {
 
             {/* Botón Acción Mini-Player (Ícono de Chat / Play) */}
             <div className="flex-shrink-0 bg-gradient-to-r from-[#8B0024] to-[#a81436] text-white p-2 rounded-xl shadow-md group-hover:bg-[#70001d] transition-colors flex items-center justify-center">
-              <MessageSquareHeart size={16} className="text-white group-hover:scale-110 transition-transform" />
+              <MessageSquare size={16} className="text-white group-hover:scale-110 transition-transform" />
             </div>
 
           </div>
