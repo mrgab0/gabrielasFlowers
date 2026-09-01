@@ -33,7 +33,8 @@ import {
   Tag,
   Gift,
   DollarSign,
-  AlertCircle
+  AlertCircle,
+  RefreshCw
 } from "lucide-react";
 
 const publicKey = process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY || "public_huW/0HuThqhQncgbm14znTZHVpk=";
@@ -80,7 +81,8 @@ interface UploadQueueItem {
   id: string;
   fileName: string;
   progress: number;
-  status: "uploading" | "completed" | "error";
+  status: "pending" | "uploading" | "completed" | "error";
+  errorMessage?: string;
 }
 
 export default function CargaEnMasaAdmin() {
@@ -94,6 +96,7 @@ export default function CargaEnMasaAdmin() {
   const [isSavingPreAgregated, setIsSavingPreAgregated] = useState(false);
   const [manualUrl, setManualUrl] = useState("");
   const [showManualUrlModal, setShowManualUrlModal] = useState(false);
+  const filesMapRef = useRef<Map<string, File>>(new Map());
 
   // Step 2 State: Pre-Agregador Dashboard (DB Products with isActive: false)
   const [dbPreProducts, setDbPreProducts] = useState<any[]>([]);
@@ -150,127 +153,208 @@ export default function CargaEnMasaAdmin() {
     return clean.trim() || "Arreglo Floral Exclusivo";
   };
 
-  // Manejador de selección múltiple de archivos con carga asíncrona y barra de progreso por imagen
+  // Manejador de selección múltiple de archivos con subida concurrente y tokens individuales
   const handleFilesSelected = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
-    setUploading(true);
-
-    let authData: any = null;
-    try {
-      const authRes = await fetch("/api/imagekit-auth");
-      if (!authRes.ok) throw new Error("Error obteniendo credenciales de ImageKit");
-      authData = await authRes.json();
-    } catch (err) {
-      console.error("Error auth ImageKit:", err);
-      alert("No se pudieron obtener las credenciales para subir a ImageKit.");
-      setUploading(false);
-      return;
-    }
-
     const fileList = Array.from(files);
 
-    const initialQueueItems: UploadQueueItem[] = fileList.map((file) => ({
-      id: `${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
-      fileName: file.name,
-      progress: 0,
-      status: "uploading",
-    }));
+    const initialQueueItems: UploadQueueItem[] = fileList.map((file) => {
+      const queueId = `${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+      filesMapRef.current.set(queueId, file);
+      return {
+        id: queueId,
+        fileName: file.name,
+        progress: 0,
+        status: "pending",
+      };
+    });
 
     setUploadQueue((prev) => [...initialQueueItems, ...prev]);
-
-    // Subir cada archivo de forma asíncrona en paralelo con seguimiento de progreso XHR
-    fileList.forEach((file, index) => {
-      const queueId = initialQueueItems[index].id;
-      uploadSingleFileWithProgress(file, queueId, authData);
-    });
 
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
+
+    const itemsToProcess = initialQueueItems.map((item) => ({
+      queueId: item.id,
+      file: filesMapRef.current.get(item.id)!,
+    }));
+
+    await processUploadQueue(itemsToProcess);
   };
 
-  const uploadSingleFileWithProgress = (file: File, queueId: string, authData: any) => {
-    const xhr = new XMLHttpRequest();
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("fileName", file.name);
-    formData.append("publicKey", publicKey);
-    formData.append("signature", authData.signature);
-    formData.append("expire", authData.expire);
-    formData.append("token", authData.token);
-    formData.append("folder", "/products");
+  const processUploadQueue = async (items: { file: File; queueId: string }[]) => {
+    setUploading(true);
+    const CONCURRENCY = 3;
+    let index = 0;
 
-    xhr.upload.onprogress = (event) => {
-      if (event.lengthComputable) {
-        const percent = Math.round((event.loaded / event.total) * 100);
-        setUploadQueue((prev) =>
-          prev.map((q) => (q.id === queueId ? { ...q, progress: percent } : q))
-        );
-      }
-    };
-
-    xhr.onload = () => {
-      if (xhr.status === 200) {
-        try {
-          const response = JSON.parse(xhr.responseText);
-          const imageUrl = response.url;
-
-          setUploadQueue((prev) =>
-            prev.map((q) => (q.id === queueId ? { ...q, progress: 100, status: "completed" } : q))
-          );
-
-          // Generar inmediatamente la tarjeta de producto en pantalla
-          const extractedName = cleanFilenameToName(file.name);
-          const newItem: UploadDraftItem = {
-            id: `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
-            name: extractedName,
-            price: 50,
-            category: "Rosas de Lujo",
-            isCustomCategory: false,
-            description: "Hermoso arreglo elaborado con flores frescas de la más alta calidad en Gabriela's Flowers.",
-            stock: 10,
-            images: [imageUrl],
-            badge: "",
-            flowerCount: 0,
-            bouquetType: "",
-          };
-
-          setDraftItems((prev) => [...prev, newItem]);
-        } catch (err) {
-          console.error("Error procesando respuesta ImageKit:", err);
-          setUploadQueue((prev) =>
-            prev.map((q) => (q.id === queueId ? { ...q, status: "error" } : q))
-          );
+    const workers = Array.from({ length: Math.min(CONCURRENCY, items.length) }, async () => {
+      while (index < items.length) {
+        const currentIndex = index++;
+        const item = items[currentIndex];
+        if (item && item.file) {
+          await uploadSingleFile(item.file, item.queueId);
         }
-      } else {
-        setUploadQueue((prev) =>
-          prev.map((q) => (q.id === queueId ? { ...q, status: "error" } : q))
-        );
       }
-      checkUploadsStatus();
-    };
+    });
 
-    xhr.onerror = () => {
-      setUploadQueue((prev) =>
-        prev.map((q) => (q.id === queueId ? { ...q, status: "error" } : q))
-      );
-      checkUploadsStatus();
-    };
-
-    xhr.open("POST", "https://upload.imagekit.io/api/v1/files/upload");
-    xhr.send(formData);
-  };
-
-  const checkUploadsStatus = () => {
+    await Promise.all(workers);
     setUploadQueue((prev) => {
-      const stillUploading = prev.some((q) => q.status === "uploading");
-      if (!stillUploading) {
+      const stillActive = prev.some((q) => q.status === "uploading" || q.status === "pending");
+      if (!stillActive) {
         setUploading(false);
       }
       return prev;
     });
+  };
+
+  const uploadSingleFile = (file: File, queueId: string): Promise<void> => {
+    return new Promise((resolve) => {
+      setUploadQueue((prev) =>
+        prev.map((q) => (q.id === queueId ? { ...q, status: "uploading", progress: 0, errorMessage: undefined } : q))
+      );
+
+      // 1. Obtener autenticación fresca y única para este archivo específico
+      fetch("/api/imagekit-auth")
+        .then(async (authRes) => {
+          if (!authRes.ok) {
+            throw new Error(`Error auth (${authRes.status})`);
+          }
+          return authRes.json();
+        })
+        .then((authData) => {
+          if (!authData.signature || !authData.token || !authData.expire) {
+            throw new Error("Credenciales de ImageKit incompletas");
+          }
+
+          const xhr = new XMLHttpRequest();
+          const formData = new FormData();
+          formData.append("file", file);
+          formData.append("fileName", file.name);
+          formData.append("publicKey", publicKey);
+          formData.append("signature", authData.signature);
+          formData.append("expire", String(authData.expire));
+          formData.append("token", authData.token);
+          formData.append("folder", "/products");
+
+          xhr.upload.onprogress = (event) => {
+            if (event.lengthComputable) {
+              const percent = Math.round((event.loaded / event.total) * 100);
+              setUploadQueue((prev) =>
+                prev.map((q) => (q.id === queueId ? { ...q, progress: percent } : q))
+              );
+            }
+          };
+
+          xhr.onload = () => {
+            if (xhr.status >= 200 && xhr.status < 300) {
+              try {
+                const response = JSON.parse(xhr.responseText);
+                const imageUrl = response.url;
+
+                setUploadQueue((prev) =>
+                  prev.map((q) =>
+                    q.id === queueId ? { ...q, progress: 100, status: "completed", errorMessage: undefined } : q
+                  )
+                );
+
+                // Generar inmediatamente la tarjeta de producto en pantalla
+                const extractedName = cleanFilenameToName(file.name);
+                const newItem: UploadDraftItem = {
+                  id: `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+                  name: extractedName,
+                  price: 50,
+                  category: "Rosas de Lujo",
+                  isCustomCategory: false,
+                  description: "Hermoso arreglo elaborado con flores frescas de la más alta calidad en Gabriela's Flowers.",
+                  stock: 10,
+                  images: [imageUrl],
+                  badge: "",
+                  flowerCount: 0,
+                  bouquetType: "",
+                };
+
+                setDraftItems((prev) => [...prev, newItem]);
+                resolve();
+              } catch (err) {
+                console.error("Error procesando respuesta ImageKit:", err);
+                setUploadQueue((prev) =>
+                  prev.map((q) => (q.id === queueId ? { ...q, status: "error", errorMessage: "Error procesando respuesta" } : q))
+                );
+                resolve();
+              }
+            } else {
+              let errorDetail = `Error ${xhr.status}`;
+              try {
+                const errObj = JSON.parse(xhr.responseText);
+                if (errObj.message) errorDetail = errObj.message;
+              } catch (_) {}
+              console.error("Error subida ImageKit:", xhr.status, xhr.responseText);
+              setUploadQueue((prev) =>
+                prev.map((q) => (q.id === queueId ? { ...q, status: "error", errorMessage: errorDetail } : q))
+              );
+              resolve();
+            }
+          };
+
+          xhr.onerror = () => {
+            setUploadQueue((prev) =>
+              prev.map((q) => (q.id === queueId ? { ...q, status: "error", errorMessage: "Error de conexión de red" } : q))
+            );
+            resolve();
+          };
+
+          xhr.ontimeout = () => {
+            setUploadQueue((prev) =>
+              prev.map((q) => (q.id === queueId ? { ...q, status: "error", errorMessage: "Tiempo de espera agotado" } : q))
+            );
+            resolve();
+          };
+
+          xhr.open("POST", "https://upload.imagekit.io/api/v1/files/upload");
+          xhr.send(formData);
+        })
+        .catch((err) => {
+          console.error("Error obteniendo auth para archivo:", err);
+          setUploadQueue((prev) =>
+            prev.map((q) => (q.id === queueId ? { ...q, status: "error", errorMessage: err?.message || "Error al autenticar" } : q))
+          );
+          resolve();
+        });
+    });
+  };
+
+  const handleRetryItem = async (queueId: string) => {
+    const file = filesMapRef.current.get(queueId);
+    if (!file) {
+      alert("No se encontró el archivo original en memoria para reintentar.");
+      return;
+    }
+    setUploading(true);
+    await uploadSingleFile(file, queueId);
+    setUploadQueue((prev) => {
+      const stillActive = prev.some((q) => q.status === "uploading" || q.status === "pending");
+      if (!stillActive) {
+        setUploading(false);
+      }
+      return prev;
+    });
+  };
+
+  const handleRetryAllFailed = async () => {
+    const failedItems = uploadQueue.filter((q) => q.status === "error");
+    const itemsToRetry: { file: File; queueId: string }[] = [];
+    failedItems.forEach((q) => {
+      const file = filesMapRef.current.get(q.id);
+      if (file) {
+        itemsToRetry.push({ file, queueId: q.id });
+      }
+    });
+    if (itemsToRetry.length > 0) {
+      await processUploadQueue(itemsToRetry);
+    }
   };
 
   const handleAddManualUrl = () => {
@@ -569,30 +653,48 @@ export default function CargaEnMasaAdmin() {
           {/* Sección de Cola con Barras de Carga Individuales por Archivo */}
           {uploadQueue.length > 0 && (
             <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm space-y-3">
-              <div className="flex justify-between items-center border-b pb-2">
+              <div className="flex flex-wrap justify-between items-center border-b pb-2 gap-2">
                 <h4 className="text-xs font-black uppercase tracking-wider text-gray-800 flex items-center gap-2">
                   <Clock size={14} className="text-[#8B0024]" />
                   Cola de Subida a ImageKit ({uploadQueue.filter(q => q.status === "completed").length} / {uploadQueue.length} completados)
                 </h4>
-                {uploadQueue.some(q => q.status === "completed") && (
-                  <button
-                    type="button"
-                    onClick={() => setUploadQueue(prev => prev.filter(q => q.status === "uploading"))}
-                    className="text-[11px] text-gray-400 hover:text-gray-600 font-bold"
-                  >
-                    Limpiar lista completada
-                  </button>
-                )}
+                <div className="flex items-center gap-3">
+                  {uploadQueue.some(q => q.status === "error") && (
+                    <button
+                      type="button"
+                      onClick={handleRetryAllFailed}
+                      disabled={uploading}
+                      className="text-[11px] text-[#8B0024] hover:text-[#70001d] font-bold flex items-center gap-1 disabled:opacity-50"
+                    >
+                      <RefreshCw size={12} className={uploading ? "animate-spin" : ""} />
+                      Reintentar fallidos
+                    </button>
+                  )}
+                  {uploadQueue.some(q => q.status === "completed") && (
+                    <button
+                      type="button"
+                      onClick={() => setUploadQueue(prev => prev.filter(q => q.status !== "completed"))}
+                      className="text-[11px] text-gray-400 hover:text-gray-600 font-bold"
+                    >
+                      Limpiar lista completada
+                    </button>
+                  )}
+                </div>
               </div>
 
               <div className="space-y-2.5 max-h-60 overflow-y-auto pr-1">
                 {uploadQueue.map((item) => (
                   <div key={item.id} className="p-3 bg-gray-50 rounded-xl border border-gray-100 space-y-1.5 text-xs">
-                    <div className="flex justify-between items-center">
-                      <span className="font-bold text-gray-800 truncate max-w-[240px] sm:max-w-xs">
+                    <div className="flex justify-between items-center gap-2">
+                      <span className="font-bold text-gray-800 truncate max-w-[200px] sm:max-w-xs">
                         {item.fileName}
                       </span>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        {item.status === "pending" && (
+                          <span className="font-bold text-gray-400 flex items-center gap-1 text-[11px]">
+                            <Clock size={12} /> En cola...
+                          </span>
+                        )}
                         {item.status === "uploading" && (
                           <span className="font-extrabold text-[#8B0024] flex items-center gap-1">
                             <Loader2 size={12} className="animate-spin" /> {item.progress}%
@@ -604,9 +706,20 @@ export default function CargaEnMasaAdmin() {
                           </span>
                         )}
                         {item.status === "error" && (
-                          <span className="font-extrabold text-red-600 flex items-center gap-1">
-                            <AlertCircle size={14} /> Error de carga
-                          </span>
+                          <div className="flex items-center gap-2">
+                            <span className="font-extrabold text-red-600 flex items-center gap-1" title={item.errorMessage}>
+                              <AlertCircle size={14} /> Error {item.errorMessage ? `(${item.errorMessage})` : ""}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => handleRetryItem(item.id)}
+                              disabled={uploading}
+                              className="bg-red-50 hover:bg-red-100 text-red-700 px-2 py-0.5 rounded text-[10px] font-bold border border-red-200 transition-colors flex items-center gap-1"
+                              title="Reintentar esta imagen"
+                            >
+                              <RefreshCw size={10} /> Reintentar
+                            </button>
+                          </div>
                         )}
                       </div>
                     </div>
@@ -619,9 +732,11 @@ export default function CargaEnMasaAdmin() {
                             ? "bg-emerald-500"
                             : item.status === "error"
                             ? "bg-red-500"
+                            : item.status === "pending"
+                            ? "bg-gray-300"
                             : "bg-[#8B0024]"
                         }`}
-                        style={{ width: `${item.progress}%` }}
+                        style={{ width: `${item.status === "pending" ? 5 : item.progress}%` }}
                       />
                     </div>
                   </div>
