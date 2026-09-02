@@ -32,7 +32,10 @@ export const revalidate = 60;
 export default async function Home() {
   await dbConnect();
   const [productsRaw, siteConfigRes, slidersRes] = await Promise.all([
-    Product.find({ isActive: { $ne: false } }).lean(),
+    Product.find({ isActive: { $ne: false } })
+      .sort({ isFeatured: -1, createdAt: -1 })
+      .limit(16)
+      .lean(),
     getSiteConfig(),
     getSliders(),
   ]);

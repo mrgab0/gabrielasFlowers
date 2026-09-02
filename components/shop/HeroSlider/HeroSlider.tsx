@@ -56,6 +56,19 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({ initialSlides }) => {
     return url;
   };
 
+  const getResponsiveBannerSrcSet = (url: string) => {
+    if (!url) return undefined;
+    if (url.includes("ik.imagekit.io")) {
+      const base = url.split("?")[0];
+      return `${base}?tr=w-480,q-75,f-auto 480w, ${base}?tr=w-800,q-80,f-auto 800w, ${base}?tr=w-1200,q-80,f-auto 1200w`;
+    }
+    if (url.includes("images.unsplash.com")) {
+      const base = url.split("?")[0];
+      return `${base}?w=480&q=75&auto=format 480w, ${base}?w=800&q=80&auto=format 800w, ${base}?w=1200&q=80&auto=format 1200w`;
+    }
+    return undefined;
+  };
+
   return (
     <div className="mt-8 md:mt-12 relative w-full aspect-[16/9] sm:aspect-[16/8] md:aspect-[21/9] lg:aspect-[24/9] max-h-[520px] rounded-3xl shadow-2xl border-2 sm:border-4 border-[#D4AF37]/50 dark:border-gray-800 overflow-hidden bg-[#0F1015] transition-all">
       {slides.map((slide, index) => {
@@ -63,6 +76,7 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({ initialSlides }) => {
         const isVideo = slide.image?.match(/\.(mp4|webm|ogg)$/i);
         const optimizedBanner = getOptimizedBannerUrl(slide.image);
         const thumbBg = getOptimizedBannerUrl(slide.image, true);
+        const bannerSrcSet = getResponsiveBannerSrcSet(slide.image);
 
         return (
           <div
@@ -107,8 +121,9 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({ initialSlides }) => {
                       )}
                       <img 
                         src={optimizedBanner} 
+                        srcSet={bannerSrcSet}
                         alt={slide.title || 'Banner'} 
-                        sizes="(max-width: 768px) 100vw, 1200px"
+                        sizes="(max-width: 640px) 480px, (max-width: 1024px) 800px, 1200px"
                         fetchPriority={index === 0 ? "high" : "auto"}
                         loading={index === 0 ? "eager" : "lazy"}
                         decoding="async"

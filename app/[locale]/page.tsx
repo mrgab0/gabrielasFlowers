@@ -45,7 +45,10 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
 
   const [t, productsRaw, siteConfigRes, slidersRes] = await Promise.all([
     getTranslations({ locale }),
-    Product.find({ isActive: { $ne: false } }).lean(),
+    Product.find({ isActive: { $ne: false } })
+      .sort({ isFeatured: -1, createdAt: -1 })
+      .limit(16)
+      .lean(),
     getSiteConfig(),
     getSliders(),
   ]);
@@ -150,7 +153,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
       </div>
 
       {/* 2. NUEVO: Slider de Productos Destacados con Pestañas de Filtrado */}
-      <FeaturedProductsSlider products={products} />
+      <FeaturedProductsSlider products={products.slice(0, 8)} />
 
       {/* 4. NUEVO: Hub de Colección 2026 & Oferta Flash con Reloj en Vivo */}
       <FlashSaleCollectionsSection />
