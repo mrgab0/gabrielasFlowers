@@ -4,6 +4,12 @@ const withNextIntl = require('next-intl/plugin')(
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Compresión y optimización de paquetes
+  compress: true,
+  experimental: {
+    optimizePackageImports: ['lucide-react', 'framer-motion'],
+  },
+
   // Permitir la IP de tu red local en desarrollo (para probar la web en tu celular sin bloqueos de origen)
   allowedDevOrigins: [
     'localhost',

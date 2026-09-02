@@ -108,6 +108,7 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({ initialSlides }) => {
                       <img 
                         src={optimizedBanner} 
                         alt={slide.title || 'Banner'} 
+                        sizes="(max-width: 768px) 100vw, 1200px"
                         fetchPriority={index === 0 ? "high" : "auto"}
                         loading={index === 0 ? "eager" : "lazy"}
                         decoding="async"

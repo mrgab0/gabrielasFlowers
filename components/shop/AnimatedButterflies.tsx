@@ -55,20 +55,23 @@ export function AnimatedButterflies() {
           50% { transform: rotateY(-24deg); }
         }
 
-        .fly-slow-1 { animation: slowGentleFlight1 65s ease-in-out infinite; }
-        .fly-slow-2 { animation: slowGentleFlight2 85s ease-in-out infinite; }
-        .fly-slow-3 { animation: slowGentleFlight3 75s ease-in-out infinite; }
-        .fly-slow-4 { animation: slowGentleFlight1 95s ease-in-out infinite reverse; }
+        .fly-slow-1 { animation: slowGentleFlight1 65s ease-in-out infinite; will-change: transform; transform: translateZ(0); }
+        .fly-slow-2 { animation: slowGentleFlight2 85s ease-in-out infinite; will-change: transform; transform: translateZ(0); }
+        .fly-slow-3 { animation: slowGentleFlight3 75s ease-in-out infinite; will-change: transform; transform: translateZ(0); }
+        .fly-slow-4 { animation: slowGentleFlight1 95s ease-in-out infinite reverse; will-change: transform; transform: translateZ(0); }
 
         .wing-flap-slow {
           animation: wingFlapSlow 1.05s ease-in-out infinite;
           transform-origin: center center;
+          will-change: transform;
+          backface-visibility: hidden;
+          transform: translateZ(0);
         }
 
-        .sparkle-anim { animation: sparklePulse 2.8s ease-in-out infinite alternate; }
+        .sparkle-anim { animation: sparklePulse 2.8s ease-in-out infinite alternate; will-change: transform, opacity; }
 
-        .trail-h1 { animation: heartTrail1 3.2s linear infinite; }
-        .trail-h2 { animation: heartTrail2 3.6s linear infinite 0.8s; }
+        .trail-h1 { animation: heartTrail1 3.2s linear infinite; will-change: transform, opacity; }
+        .trail-h2 { animation: heartTrail2 3.6s linear infinite 0.8s; will-change: transform, opacity; }
       `}</style>
 
       {/* Símbolos SVG para Corazones y Destellos */}

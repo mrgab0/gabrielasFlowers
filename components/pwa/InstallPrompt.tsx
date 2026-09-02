@@ -36,13 +36,13 @@ export function InstallPrompt() {
 
     if (isIphone && !isStandalone) {
       setIsIOS(true);
-      const timer = setTimeout(() => setShowPrompt(true), 2500);
+      const timer = setTimeout(() => setShowPrompt(true), 7000);
       return () => clearTimeout(timer);
     }
 
     if (isMobile && !isStandalone) {
       // Para Chrome Mobile, Brave Mobile y Android
-      const timer = setTimeout(() => setShowPrompt(true), 2500);
+      const timer = setTimeout(() => setShowPrompt(true), 7000);
     }
 
     const handleBeforeInstallPrompt = (e: Event) => {
