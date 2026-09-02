@@ -4,10 +4,15 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { LanguageSwitcher } from "@/components/shop/LanguageSwitcher";
 import { ThemeToggle } from "@/components/shop/ThemeToggle";
-import { CustomerBiometricModal } from "@/components/auth/CustomerBiometricModal";
+import dynamic from "next/dynamic";
 import { MegaMenuDropdown } from "@/components/shop/MegaMenuDropdown";
 import { Fingerprint, Instagram, Facebook, MessageCircle, ChevronDown, Menu, X } from "lucide-react";
 import { useTranslations } from "next-intl";
+
+const CustomerBiometricModal = dynamic(
+  () => import("@/components/auth/CustomerBiometricModal").then((m) => m.CustomerBiometricModal),
+  { ssr: false }
+);
 
 interface StickyNavProps {
   siteConfig?: any;
@@ -178,10 +183,12 @@ export function StickyNav({ siteConfig }: StickyNavProps) {
         )}
       </nav>
 
-      <CustomerBiometricModal
-        isOpen={isBioModalOpen}
-        onClose={() => setIsBioModalOpen(false)}
-      />
+      {isBioModalOpen && (
+        <CustomerBiometricModal
+          isOpen={isBioModalOpen}
+          onClose={() => setIsBioModalOpen(false)}
+        />
+      )}
     </>
   );
 }

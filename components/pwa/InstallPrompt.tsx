@@ -22,11 +22,18 @@ export function InstallPrompt() {
     const isDismissed = sessionStorage.getItem("pwa_dismissed");
     if (isDismissed) return;
 
-    // Registrar el Service Worker para PWA
+    // Registrar el Service Worker para PWA en tiempo de ocio
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("/sw.js").catch((err) => {
-        console.log("Service Worker registro PWA:", err);
-      });
+      const registerSW = () => {
+        navigator.serviceWorker.register("/sw.js").catch((err) => {
+          console.log("Service Worker registro PWA:", err);
+        });
+      };
+      if ("requestIdleCallback" in window) {
+        (window as any).requestIdleCallback(registerSW, { timeout: 6000 });
+      } else {
+        setTimeout(registerSW, 5000);
+      }
     }
 
     const userAgent = window.navigator.userAgent.toLowerCase();

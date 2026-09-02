@@ -1,8 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { CartProvider } from "@/components/shop/Cart/CartContext";
-import { NextIntlClientProvider } from 'next-intl';
-import esMessages from '@/messages/es.json';
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 import { AnalyticsTracker } from "@/components/analytics/AnalyticsTracker";
@@ -12,7 +10,7 @@ import { Playfair_Display, Montserrat, Plus_Jakarta_Sans, Manrope } from "next/f
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
-  weight: ["400", "600", "700"],
+  weight: ["400", "700"],
   style: ["normal", "italic"],
   variable: "--font-playfair",
   display: "swap",
@@ -20,21 +18,21 @@ const playfair = Playfair_Display({
 
 const montserrat = Montserrat({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["400", "600", "700"],
   variable: "--font-montserrat",
   display: "swap",
 });
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  weight: ["400", "500", "700", "800"],
+  weight: ["500", "700"],
   variable: "--font-plus-jakarta",
   display: "swap",
 });
 
 const manrope = Manrope({
   subsets: ["latin"],
-  weight: ["400", "700", "800"],
+  weight: ["500", "700"],
   variable: "--font-manrope",
   display: "swap",
 });
@@ -86,13 +84,11 @@ export default function RootLayout({
       </head>
       <body className="font-sans antialiased">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <NextIntlClientProvider locale="es" messages={esMessages}>
-            <CartProvider>
-              {children}
-              <AnalyticsTracker />
-              <InstallPrompt />
-            </CartProvider>
-          </NextIntlClientProvider>
+          <CartProvider>
+            {children}
+            <AnalyticsTracker />
+            <InstallPrompt />
+          </CartProvider>
         </ThemeProvider>
       </body>
     </html>
