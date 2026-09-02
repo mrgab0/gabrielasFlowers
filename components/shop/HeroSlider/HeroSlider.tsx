@@ -38,20 +38,21 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({ initialSlides }) => {
 
   const getOptimizedBannerUrl = (url: string, isThumb = false) => {
     if (!url) return url;
+    const base = url.split("?")[0];
     if (isThumb) {
       if (url.includes("ik.imagekit.io")) {
-        return url.includes("?") ? `${url}&tr=w-80,q-25,bl-8` : `${url}?tr=w-80,q-25,bl-8`;
+        return `${base}?tr=w-40,q-20,bl-6`;
       }
       if (url.includes("images.unsplash.com")) {
-        return `${url}${url.includes("?") ? "&" : "?"}w=80&q=25&auto=format`;
+        return `${base}?w=40&q=20&auto=format`;
       }
       return url;
     }
-    if (url.includes("ik.imagekit.io") && !url.includes("tr=")) {
-      return url.includes("?") ? `${url}&tr=w-1000,q-80,f-auto` : `${url}?tr=w-1000,q-80,f-auto`;
+    if (url.includes("ik.imagekit.io")) {
+      return `${base}?tr=w-600,q-75,f-auto`;
     }
-    if (url.includes("images.unsplash.com") && !url.includes("w=")) {
-      return `${url}${url.includes("?") ? "&" : "?"}w=1000&q=80&auto=format`;
+    if (url.includes("images.unsplash.com")) {
+      return `${base}?w=600&q=75&auto=format`;
     }
     return url;
   };
@@ -138,9 +139,9 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({ initialSlides }) => {
                   <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/45 to-transparent flex flex-col items-start justify-center p-6 md:p-12 text-left pointer-events-none">
                     <div className="pointer-events-auto max-w-xl">
                       {slide.title && (
-                        <h3 className="text-2xl sm:text-4xl md:text-5xl font-serif font-bold text-white mb-2 md:mb-3 tracking-tight">
+                        <h2 className="text-2xl sm:text-4xl md:text-5xl font-serif font-bold text-white mb-2 md:mb-3 tracking-tight">
                           {slide.title}
-                        </h3>
+                        </h2>
                       )}
                       {slide.description && (
                         <p className="text-sm sm:text-base md:text-lg text-white/90 mb-4 md:mb-6 line-clamp-3 font-medium">

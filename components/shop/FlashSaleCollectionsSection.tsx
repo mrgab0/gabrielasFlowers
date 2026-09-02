@@ -79,25 +79,25 @@ export function FlashSaleCollectionsSection() {
                   <span className="font-serif font-black text-2xl sm:text-3xl text-[#2B0002] dark:text-white block">
                     {String(timeLeft.days).padStart(2, '0')}
                   </span>
-                  <span className="text-[10px] uppercase font-bold text-gray-500 dark:text-gray-400 tracking-wider">Días</span>
+                  <span className="text-[10px] uppercase font-extrabold text-gray-700 dark:text-gray-200 tracking-wider">Días</span>
                 </div>
                 <div className="bg-white dark:bg-gray-800/80 p-3 rounded-2xl border border-gray-200/80 dark:border-gray-700 shadow-sm">
                   <span className="font-serif font-black text-2xl sm:text-3xl text-[#2B0002] dark:text-white block">
                     {String(timeLeft.hours).padStart(2, '0')}
                   </span>
-                  <span className="text-[10px] uppercase font-bold text-gray-500 dark:text-gray-400 tracking-wider">Horas</span>
+                  <span className="text-[10px] uppercase font-extrabold text-gray-700 dark:text-gray-200 tracking-wider">Horas</span>
                 </div>
                 <div className="bg-white dark:bg-gray-800/80 p-3 rounded-2xl border border-gray-200/80 dark:border-gray-700 shadow-sm">
                   <span className="font-serif font-black text-2xl sm:text-3xl text-[#2B0002] dark:text-white block">
                     {String(timeLeft.minutes).padStart(2, '0')}
                   </span>
-                  <span className="text-[10px] uppercase font-bold text-gray-500 dark:text-gray-400 tracking-wider">Min</span>
+                  <span className="text-[10px] uppercase font-extrabold text-gray-700 dark:text-gray-200 tracking-wider">Min</span>
                 </div>
                 <div className="bg-white dark:bg-gray-800/80 p-3 rounded-2xl border border-gray-200/80 dark:border-gray-700 shadow-sm">
                   <span className="font-serif font-black text-2xl sm:text-3xl text-[#8B0024] dark:text-[#FF97A4] block">
                     {String(timeLeft.seconds).padStart(2, '0')}
                   </span>
-                  <span className="text-[10px] uppercase font-bold text-gray-500 dark:text-gray-400 tracking-wider">Seg</span>
+                  <span className="text-[10px] uppercase font-extrabold text-gray-700 dark:text-gray-200 tracking-wider">Seg</span>
                 </div>
               </div>
             </div>

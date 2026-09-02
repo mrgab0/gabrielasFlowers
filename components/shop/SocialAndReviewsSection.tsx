@@ -273,7 +273,7 @@ export function SocialAndReviewsSection({
 
               {/* Pie con Nota de Confianza */}
               <div className="pt-2 text-center border-t border-gray-100 dark:border-gray-800">
-                <span className="text-xs font-bold text-gray-400">
+                <span className="text-xs font-bold text-gray-600 dark:text-gray-300">
                   ⭐⭐⭐⭐⭐ Calificación promedio de 4.9 basada en clientes de Houston & alrededores.
                 </span>
               </div>
@@ -293,9 +293,9 @@ export function SocialAndReviewsSection({
                     <div>
                       <h4 className="text-sm font-extrabold text-[#1A1C1C] dark:text-white flex items-center gap-1">
                         Instagram Live Feed
-                        <Sparkles size={12} className="text-[#FF97A4]" />
+                        <Sparkles size={12} className="text-[#8B0024] dark:text-[#FF97A4]" />
                       </h4>
-                      <p className="text-[11px] text-gray-400 font-medium">@GabrielasFlowers LLC</p>
+                      <p className="text-[11px] text-gray-600 dark:text-gray-300 font-semibold">@GabrielasFlowers LLC</p>
                     </div>
                   </div>
 
@@ -303,7 +303,7 @@ export function SocialAndReviewsSection({
                     href={instagramUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bg-pink-50 dark:bg-pink-950/60 text-[#FF97A4] border border-pink-200 dark:border-pink-900/50 hover:bg-[#FF97A4] hover:text-white px-3.5 py-1.5 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm"
+                    className="bg-pink-100 dark:bg-pink-950/60 text-[#8B0024] dark:text-pink-300 border border-pink-200 dark:border-pink-900/50 hover:bg-[#8B0024] hover:text-white px-3.5 py-1.5 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm"
                   >
                     <span>Seguir</span>
                     <ExternalLink size={12} />

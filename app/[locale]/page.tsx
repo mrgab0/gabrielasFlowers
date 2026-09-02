@@ -69,13 +69,21 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
     ? initialSlides[0].image
     : null;
 
+  const preloadBannerUrl = firstBannerImage
+    ? (firstBannerImage.includes("images.unsplash.com")
+        ? `${firstBannerImage.split("?")[0]}?w=600&q=75&auto=format`
+        : firstBannerImage.includes("ik.imagekit.io")
+        ? `${firstBannerImage.split("?")[0]}?tr=w-600,q-75,f-auto`
+        : firstBannerImage)
+    : null;
+
   return (
     <main className="min-h-screen bg-[#fff8f7] dark:bg-[#0B0C10] text-[#221a19] dark:text-gray-100 transition-colors duration-300 relative overflow-x-hidden">
-      {firstBannerImage && (
+      {preloadBannerUrl && (
         <link
           rel="preload"
           as="image"
-          href={firstBannerImage}
+          href={preloadBannerUrl}
           fetchPriority="high"
         />
       )}
@@ -97,6 +105,8 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
             <img
               src="/logo.jpg"
               alt="Gabriela's Flowers Logo"
+              width={96}
+              height={96}
               className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover shadow-xl border-2 border-[#D4AF37]/80 transform hover:scale-105 transition-transform duration-300"
             />
           </div>

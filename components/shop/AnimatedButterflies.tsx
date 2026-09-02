@@ -110,6 +110,10 @@ export function AnimatedButterflies() {
             <img
               src="/images/butterflies/gold_jewel_butterfly_trans.webp"
               alt="Mariposa de Oro y Diamantes #1"
+              width={80}
+              height={80}
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-contain filter drop-shadow-[0_4px_12px_rgba(212,175,55,0.5)]"
             />
           </div>
@@ -139,6 +143,10 @@ export function AnimatedButterflies() {
             <img
               src="/images/butterflies/gold_jewel_butterfly_trans.webp"
               alt="Mariposa de Oro y Diamantes #2"
+              width={64}
+              height={64}
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-contain filter drop-shadow-[0_4px_12px_rgba(212,175,55,0.5)]"
             />
           </div>
@@ -152,6 +160,10 @@ export function AnimatedButterflies() {
             <img
               src="/images/butterflies/crystal_butterfly_trans.webp"
               alt="Mariposa de Cristal #1"
+              width={64}
+              height={64}
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-contain filter drop-shadow-[0_4px_10px_rgba(255,255,255,0.65)]"
             />
           </div>
@@ -165,6 +177,10 @@ export function AnimatedButterflies() {
             <img
               src="/images/butterflies/crystal_butterfly_trans.webp"
               alt="Mariposa de Cristal #2"
+              width={52}
+              height={52}
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-contain filter drop-shadow-[0_3px_10px_rgba(255,255,255,0.6)]"
             />
           </div>
@@ -178,6 +194,10 @@ export function AnimatedButterflies() {
             <img
               src="/images/butterflies/gold_aura_butterfly_trans.webp"
               alt="Mariposa Oro Aura #1"
+              width={56}
+              height={56}
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-contain filter drop-shadow-[0_3px_10px_rgba(212,175,55,0.5)]"
             />
           </div>
@@ -191,6 +211,10 @@ export function AnimatedButterflies() {
             <img
               src="/images/butterflies/gold_aura_butterfly_trans.webp"
               alt="Mariposa Oro Aura #2"
+              width={48}
+              height={48}
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-contain filter drop-shadow-[0_3px_10px_rgba(212,175,55,0.5)]"
             />
           </div>

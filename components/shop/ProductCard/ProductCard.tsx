@@ -93,14 +93,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           <h3 className="font-serif font-bold text-base sm:text-lg text-[#2a0002] dark:text-white group-hover:text-[#8B0024] dark:group-hover:text-pink-400 transition-colors mb-1.5 line-clamp-1">
             <Link href={`/productos/${slug}`}>{name}</Link>
           </h3>
-          <p className="text-xs text-gray-400 font-medium line-clamp-1 mb-3">
+          <p className="text-xs text-gray-600 dark:text-gray-300 font-medium line-clamp-1 mb-3">
             Arreglo Floral Boutique • Houston, TX
           </p>
         </div>
 
         <div className="flex justify-between items-center pt-2 border-t border-gray-100 dark:border-gray-800/80">
           <div>
-            <span className="text-xs text-gray-400 block font-medium">Precio</span>
+            <span className="text-xs text-gray-600 dark:text-gray-300 block font-semibold">Precio</span>
             <span className="text-xl font-extrabold text-[#8B0024] dark:text-pink-400 font-serif">${price.toFixed(2)}</span>
           </div>
 

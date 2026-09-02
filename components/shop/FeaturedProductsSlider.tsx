@@ -214,7 +214,7 @@ export function FeaturedProductsSlider({ products }: FeaturedProductsSliderProps
                       {[...Array(5)].map((_, i) => (
                         <Star key={i} size={12} fill="currentColor" stroke="none" />
                       ))}
-                      <span className="text-[10px] text-gray-400 font-bold ml-1">5.0</span>
+                      <span className="text-[10px] text-gray-600 dark:text-gray-300 font-bold ml-1">5.0</span>
                     </div>
 
                     <Link href={`/productos/${product.slug}`}>
@@ -227,7 +227,7 @@ export function FeaturedProductsSlider({ products }: FeaturedProductsSliderProps
                   {/* Precio y Botón de Carrito */}
                   <div className="flex items-center justify-between pt-2 border-t border-gray-100 dark:border-gray-800/80">
                     <div>
-                      <span className="text-[10px] text-gray-400 block font-semibold uppercase tracking-wider">Precio</span>
+                      <span className="text-[10px] text-gray-600 dark:text-gray-300 block font-bold uppercase tracking-wider">Precio</span>
                       <span className="text-lg font-black text-[#8B0024] dark:text-[#FF97A4]">
                         ${product.price ? product.price.toFixed(2) : "0.00"}
                       </span>
