@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { CartProvider } from "@/components/shop/Cart/CartContext";
+import { NextIntlClientProvider } from 'next-intl';
+import esMessages from '@/messages/es.json';
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 import { AnalyticsTracker } from "@/components/analytics/AnalyticsTracker";
@@ -84,11 +86,13 @@ export default function RootLayout({
       </head>
       <body className="font-sans antialiased">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <CartProvider>
-            {children}
-            <AnalyticsTracker />
-            <InstallPrompt />
-          </CartProvider>
+          <NextIntlClientProvider locale="es" messages={esMessages}>
+            <CartProvider>
+              {children}
+              <AnalyticsTracker />
+              <InstallPrompt />
+            </CartProvider>
+          </NextIntlClientProvider>
         </ThemeProvider>
       </body>
     </html>
