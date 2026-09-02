@@ -3,11 +3,19 @@
 import { useState, useEffect } from 'react';
 import { getSliders } from "@/lib/actions/slider";
 
-export const HeroSlider = () => {
-  const [slides, setSlides] = useState<any[]>([]);
+interface HeroSliderProps {
+  initialSlides?: any[];
+}
+
+export const HeroSlider: React.FC<HeroSliderProps> = ({ initialSlides }) => {
+  const [slides, setSlides] = useState<any[]>(initialSlides || []);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
+    if (initialSlides && initialSlides.length > 0) {
+      setSlides(initialSlides);
+      return;
+    }
     async function fetchSliders() {
       const { data } = await getSliders();
       if (data) {
@@ -16,7 +24,7 @@ export const HeroSlider = () => {
       }
     }
     fetchSliders();
-  }, []);
+  }, [initialSlides]);
 
   useEffect(() => {
     if (slides.length === 0) return;
@@ -28,11 +36,33 @@ export const HeroSlider = () => {
 
   if (slides.length === 0) return null;
 
+  const getOptimizedBannerUrl = (url: string, isThumb = false) => {
+    if (!url) return url;
+    if (isThumb) {
+      if (url.includes("ik.imagekit.io")) {
+        return url.includes("?") ? `${url}&tr=w-80,q-25,bl-8` : `${url}?tr=w-80,q-25,bl-8`;
+      }
+      if (url.includes("images.unsplash.com")) {
+        return `${url}${url.includes("?") ? "&" : "?"}w=80&q=25&auto=format`;
+      }
+      return url;
+    }
+    if (url.includes("ik.imagekit.io") && !url.includes("tr=")) {
+      return url.includes("?") ? `${url}&tr=w-1000,q-80,f-auto` : `${url}?tr=w-1000,q-80,f-auto`;
+    }
+    if (url.includes("images.unsplash.com") && !url.includes("w=")) {
+      return `${url}${url.includes("?") ? "&" : "?"}w=1000&q=80&auto=format`;
+    }
+    return url;
+  };
+
   return (
     <div className="mt-8 md:mt-12 relative w-full aspect-[16/9] sm:aspect-[16/8] md:aspect-[21/9] lg:aspect-[24/9] max-h-[520px] rounded-3xl shadow-2xl border-2 sm:border-4 border-[#D4AF37]/50 dark:border-gray-800 overflow-hidden bg-[#0F1015] transition-all">
       {slides.map((slide, index) => {
         const isCurrent = index === currentIndex;
         const isVideo = slide.image?.match(/\.(mp4|webm|ogg)$/i);
+        const optimizedBanner = getOptimizedBannerUrl(slide.image);
+        const thumbBg = getOptimizedBannerUrl(slide.image, true);
 
         return (
           <div
@@ -43,24 +73,16 @@ export const HeroSlider = () => {
           >
             {slide.type === 'banner' ? (
               <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
-                {/* Fondo Difuminado Ambiental */}
+                {/* Fondo Difuminado Ambiental Ultra Liviano */}
                 {!isVideo && (
                   <div className="absolute inset-0 overflow-hidden select-none pointer-events-none">
                     <div className="absolute inset-0 flex items-center justify-center filter blur-md sm:blur-lg opacity-90 scale-105 transform-gpu">
                       <img 
-                        src={slide.image} 
+                        src={thumbBg} 
                         alt="" 
-                        className="h-full w-1/2 object-cover scale-x-[-1] brightness-95 saturate-110"
-                      />
-                      <img 
-                        src={slide.image} 
-                        alt="" 
+                        loading="lazy"
+                        decoding="async"
                         className="h-full w-full object-cover brightness-95 saturate-110"
-                      />
-                      <img 
-                        src={slide.image} 
-                        alt="" 
-                        className="h-full w-1/2 object-cover scale-x-[-1] brightness-95 saturate-110"
                       />
                     </div>
                     <div className="absolute inset-0 bg-black/10" />
@@ -84,8 +106,11 @@ export const HeroSlider = () => {
                         <source media="(max-width: 768px)" srcSet={slide.mobileImage} />
                       )}
                       <img 
-                        src={slide.image} 
+                        src={optimizedBanner} 
                         alt={slide.title || 'Banner'} 
+                        fetchPriority={index === 0 ? "high" : "auto"}
+                        loading={index === 0 ? "eager" : "lazy"}
+                        decoding="async"
                         className="h-full w-full object-cover md:object-contain drop-shadow-xl"
                       />
                     </picture>
@@ -129,18 +154,20 @@ export const HeroSlider = () => {
         );
       })}
 
-      {/* Indicadores de Diapositiva (Dots) */}
+      {/* Indicadores de Diapositiva (Dots) con tamaño táctil accesible */}
       {slides.length > 1 && (
-        <div className="absolute bottom-4 left-0 right-0 z-20 flex justify-center gap-2">
+        <div className="absolute bottom-3 left-0 right-0 z-20 flex justify-center items-center gap-1">
           {slides.map((_, idx) => (
             <button
               key={idx}
               onClick={() => setCurrentIndex(idx)}
-              className={`h-2.5 rounded-full transition-all duration-300 ${
+              aria-label={`Ir al banner ${idx + 1}`}
+              className="p-2 flex items-center justify-center focus:outline-none"
+            >
+              <span className={`h-2.5 rounded-full transition-all duration-300 block ${
                 idx === currentIndex ? "w-8 bg-[#D4AF37]" : "w-2.5 bg-white/60 hover:bg-white"
-              }`}
-              title={`Ir al banner ${idx + 1}`}
-            />
+              }`} />
+            </button>
           ))}
         </div>
       )}

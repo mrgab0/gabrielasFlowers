@@ -27,10 +27,10 @@ module.exports = {
         carbon: '#221a19',
       },
       fontFamily: {
-        sans: ['Montserrat', 'Plus Jakarta Sans', 'sans-serif'],
-        serif: ['Playfair Display', 'Manrope', 'serif'],
-        display: ['Playfair Display', 'serif'],
-        body: ['Montserrat', 'sans-serif'],
+        sans: ['var(--font-montserrat)', 'var(--font-plus-jakarta)', 'Montserrat', 'Plus Jakarta Sans', 'sans-serif'],
+        serif: ['var(--font-playfair)', 'var(--font-manrope)', 'Playfair Display', 'Manrope', 'serif'],
+        display: ['var(--font-playfair)', 'Playfair Display', 'serif'],
+        body: ['var(--font-montserrat)', 'Montserrat', 'sans-serif'],
       },
       boxShadow: {
         'premium': '0px 4px 20px rgba(42,0,2,0.06)',

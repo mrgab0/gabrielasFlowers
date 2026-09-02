@@ -105,7 +105,7 @@ export function AnimatedButterflies() {
         <div className="relative w-16 h-16 sm:w-20 sm:h-20 opacity-75">
           <div className="wing-flap-slow w-full h-full">
             <img
-              src="/images/butterflies/gold_jewel_butterfly_trans.png"
+              src="/images/butterflies/gold_jewel_butterfly_trans.webp"
               alt="Mariposa de Oro y Diamantes #1"
               className="w-full h-full object-contain filter drop-shadow-[0_4px_12px_rgba(212,175,55,0.5)]"
             />
@@ -134,7 +134,7 @@ export function AnimatedButterflies() {
         <div className="relative w-12 h-12 sm:w-16 sm:h-16 opacity-70">
           <div className="wing-flap-slow w-full h-full" style={{ animationDuration: '1.15s' }}>
             <img
-              src="/images/butterflies/gold_jewel_butterfly_trans.png"
+              src="/images/butterflies/gold_jewel_butterfly_trans.webp"
               alt="Mariposa de Oro y Diamantes #2"
               className="w-full h-full object-contain filter drop-shadow-[0_4px_12px_rgba(212,175,55,0.5)]"
             />
@@ -147,7 +147,7 @@ export function AnimatedButterflies() {
         <div className="relative w-12 h-12 sm:w-16 sm:h-16 opacity-75">
           <div className="wing-flap-slow w-full h-full" style={{ animationDuration: '1.2s' }}>
             <img
-              src="/images/butterflies/crystal_butterfly_trans.png"
+              src="/images/butterflies/crystal_butterfly_trans.webp"
               alt="Mariposa de Cristal #1"
               className="w-full h-full object-contain filter drop-shadow-[0_4px_10px_rgba(255,255,255,0.65)]"
             />
@@ -160,7 +160,7 @@ export function AnimatedButterflies() {
         <div className="relative w-10 h-10 sm:w-13 sm:h-13 opacity-70">
           <div className="wing-flap-slow w-full h-full" style={{ animationDuration: '1.1s' }}>
             <img
-              src="/images/butterflies/crystal_butterfly_trans.png"
+              src="/images/butterflies/crystal_butterfly_trans.webp"
               alt="Mariposa de Cristal #2"
               className="w-full h-full object-contain filter drop-shadow-[0_3px_10px_rgba(255,255,255,0.6)]"
             />
@@ -173,7 +173,7 @@ export function AnimatedButterflies() {
         <div className="relative w-11 h-11 sm:w-14 sm:h-14 opacity-70">
           <div className="wing-flap-slow w-full h-full" style={{ animationDuration: '0.98s' }}>
             <img
-              src="/images/butterflies/gold_aura_butterfly_trans.png"
+              src="/images/butterflies/gold_aura_butterfly_trans.webp"
               alt="Mariposa Oro Aura #1"
               className="w-full h-full object-contain filter drop-shadow-[0_3px_10px_rgba(212,175,55,0.5)]"
             />
@@ -186,7 +186,7 @@ export function AnimatedButterflies() {
         <div className="relative w-10 h-10 sm:w-12 sm:h-12 opacity-65">
           <div className="wing-flap-slow w-full h-full" style={{ animationDuration: '1.25s' }}>
             <img
-              src="/images/butterflies/gold_aura_butterfly_trans.png"
+              src="/images/butterflies/gold_aura_butterfly_trans.webp"
               alt="Mariposa Oro Aura #2"
               className="w-full h-full object-contain filter drop-shadow-[0_3px_10px_rgba(212,175,55,0.5)]"
             />

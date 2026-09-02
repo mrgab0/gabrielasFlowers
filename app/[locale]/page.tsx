@@ -1,30 +1,58 @@
 import { getTranslations } from 'next-intl/server';
+import dynamic from 'next/dynamic';
 import { ProductCard } from "@/components/shop/ProductCard/ProductCard";
 import { HeroSlider } from "@/components/shop/HeroSlider/HeroSlider";
 import { StickyNav } from "@/components/shop/StickyNav";
-import { Footer } from "@/components/shop/Footer";
-import { SocialAndReviewsSection } from "@/components/shop/SocialAndReviewsSection";
-import { CustomIframeSection } from "@/components/shop/CustomIframeSection";
-import { AnimatedButterflies } from "@/components/shop/AnimatedButterflies";
 import { FeaturedProductsSlider } from "@/components/shop/FeaturedProductsSlider";
 import { FlashSaleCollectionsSection } from "@/components/shop/FlashSaleCollectionsSection";
-import { DeliveryShowcaseBanners } from "@/components/shop/DeliveryShowcaseBanners";
-import { DialogflowChatbot } from "@/components/shop/DialogflowChatbot";
 import dbConnect from "@/lib/db";
 import { Product } from "@/lib/models/Product";
 import { getSiteConfig } from "@/lib/actions/siteConfig";
+import { getSliders } from "@/lib/actions/slider";
 import { PhoneCall, Sparkles, MapPin, Truck, Globe2 } from "lucide-react";
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// Code splitting dinámico para componentes bajo el pliegue (Below the fold)
+const SocialAndReviewsSection = dynamic(
+  () => import("@/components/shop/SocialAndReviewsSection").then((m) => m.SocialAndReviewsSection),
+  { ssr: true }
+);
+
+const CustomIframeSection = dynamic(
+  () => import("@/components/shop/CustomIframeSection").then((m) => m.CustomIframeSection),
+  { ssr: true }
+);
+
+const AnimatedButterflies = dynamic(
+  () => import("@/components/shop/AnimatedButterflies").then((m) => m.AnimatedButterflies)
+);
+
+const DeliveryShowcaseBanners = dynamic(
+  () => import("@/components/shop/DeliveryShowcaseBanners").then((m) => m.DeliveryShowcaseBanners),
+  { ssr: true }
+);
+
+const Footer = dynamic(
+  () => import("@/components/shop/Footer").then((m) => m.Footer),
+  { ssr: true }
+);
+
+// Incremental Static Revalidation (ISR) a 60 segundos para respuesta perimetral instantánea
+export const revalidate = 60;
 
 export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  const t = await getTranslations({ locale });
   await dbConnect();
-  const productsRaw = await Product.find({ isActive: { $ne: false } }).lean();
+
+  const [t, productsRaw, siteConfigRes, slidersRes] = await Promise.all([
+    getTranslations({ locale }),
+    Product.find({ isActive: { $ne: false } }).lean(),
+    getSiteConfig(),
+    getSliders(),
+  ]);
+
   const products = JSON.parse(JSON.stringify(productsRaw));
-  const { data: siteConfig } = await getSiteConfig();
+  const siteConfig = siteConfigRes?.data;
+  const initialSlides = slidersRes?.data ? [...slidersRes.data].sort((a, b) => (a.order || 0) - (b.order || 0)) : [];
 
   const desktopCols = siteConfig?.productColumnsDesktop || 3;
   let gridColsClass = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8";
@@ -106,7 +134,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
 
       {/* Slider Section */}
       <div className="container mx-auto px-4 sm:px-6 -mt-8 sm:-mt-10 relative z-20">
-        <HeroSlider />
+        <HeroSlider initialSlides={initialSlides} />
       </div>
 
       {/* 2. NUEVO: Slider de Productos Destacados con Pestañas de Filtrado */}

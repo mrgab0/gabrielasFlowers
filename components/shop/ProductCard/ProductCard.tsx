@@ -30,22 +30,40 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   const { addToCart } = useCart();
   const t = useTranslations("common");
 
+  const optimizeImageUrl = (url: string) => {
+    if (!url) return "https://images.unsplash.com/photo-1563241527-3004b7be0ffd?w=400&q=80&auto=format";
+    if (url.includes("ik.imagekit.io") && !url.includes("tr=")) {
+      return url.includes("?") ? `${url}&tr=w-400,q-80,f-auto` : `${url}?tr=w-400,q-80,f-auto`;
+    }
+    if (url.includes("images.unsplash.com") && !url.includes("w=")) {
+      return `${url}${url.includes("?") ? "&" : "?"}w=400&q=80&auto=format`;
+    }
+    return url;
+  };
+
+  const optimizedMainImage = optimizeImageUrl(image);
+  const optimizedSecondaryImage = secondaryImage ? optimizeImageUrl(secondaryImage) : undefined;
+
   return (
     <div className="group relative bg-white dark:bg-[#12131A] rounded-2xl transition-all duration-500 overflow-hidden border border-gray-100 dark:border-gray-800 shadow-[0px_4px_20px_rgba(42,0,2,0.04)] hover:shadow-[0px_16px_36px_rgba(42,0,2,0.12)] hover:-translate-y-1 flex flex-col justify-between">
       <Link href={`/productos/${slug}`} className="block relative">
         {/* Contenedor de Imagen con Zoom suave */}
         <div className="relative aspect-square overflow-hidden bg-gray-50 dark:bg-gray-900">
           <img
-            src={image || "https://images.unsplash.com/photo-1563241527-3004b7be0ffd?w=800"}
+            src={optimizedMainImage}
             alt={name}
+            loading="lazy"
+            decoding="async"
             className={`w-full h-full object-contain p-1 transform group-hover:scale-105 transition-all duration-700 ease-out ${
-              secondaryImage ? 'group-hover:opacity-0' : ''
+              optimizedSecondaryImage ? 'group-hover:opacity-0' : ''
             }`}
           />
-          {secondaryImage && (
+          {optimizedSecondaryImage && (
             <img
-              src={secondaryImage}
+              src={optimizedSecondaryImage}
               alt={`${name} - alternativa`}
+              loading="lazy"
+              decoding="async"
               className="absolute inset-0 w-full h-full object-contain p-1 transform scale-100 group-hover:scale-105 transition-all duration-700 ease-out opacity-0 group-hover:opacity-100"
             />
           )}

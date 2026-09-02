@@ -1,22 +1,44 @@
+import dynamic from 'next/dynamic';
 import { ProductCard } from "@/components/shop/ProductCard/ProductCard";
 import { HeroSlider } from "@/components/shop/HeroSlider/HeroSlider";
 import { StickyNav } from "@/components/shop/StickyNav";
-import { Footer } from "@/components/shop/Footer";
-import { SocialAndReviewsSection } from "@/components/shop/SocialAndReviewsSection";
-import { CustomIframeSection } from "@/components/shop/CustomIframeSection";
-import { AnimatedButterflies } from "@/components/shop/AnimatedButterflies";
 import dbConnect from "@/lib/db";
 import { Product } from "@/lib/models/Product";
 import { getSiteConfig } from "@/lib/actions/siteConfig";
+import { getSliders } from "@/lib/actions/slider";
 import { PhoneCall, Sparkles, MapPin, Truck, Globe2 } from "lucide-react";
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+const SocialAndReviewsSection = dynamic(
+  () => import("@/components/shop/SocialAndReviewsSection").then((m) => m.SocialAndReviewsSection),
+  { ssr: true }
+);
+
+const CustomIframeSection = dynamic(
+  () => import("@/components/shop/CustomIframeSection").then((m) => m.CustomIframeSection),
+  { ssr: true }
+);
+
+const AnimatedButterflies = dynamic(
+  () => import("@/components/shop/AnimatedButterflies").then((m) => m.AnimatedButterflies)
+);
+
+const Footer = dynamic(
+  () => import("@/components/shop/Footer").then((m) => m.Footer),
+  { ssr: true }
+);
+
+export const revalidate = 60;
 
 export default async function Home() {
   await dbConnect();
-  const products = await Product.find({ isActive: { $ne: false } }).lean();
-  const { data: siteConfig } = await getSiteConfig();
+  const [productsRaw, siteConfigRes, slidersRes] = await Promise.all([
+    Product.find({ isActive: { $ne: false } }).lean(),
+    getSiteConfig(),
+    getSliders(),
+  ]);
+  const products = JSON.parse(JSON.stringify(productsRaw));
+  const siteConfig = siteConfigRes?.data;
+  const initialSlides = slidersRes?.data ? [...slidersRes.data].sort((a, b) => (a.order || 0) - (b.order || 0)) : [];
 
   const desktopCols = siteConfig?.productColumnsDesktop || 3;
   let gridColsClass = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8";
@@ -110,7 +132,7 @@ export default async function Home() {
 
       {/* Slider Section */}
       <div className="container mx-auto px-4 sm:px-6 -mt-8 sm:-mt-10 relative z-20">
-        <HeroSlider />
+        <HeroSlider initialSlides={initialSlides} />
       </div>
 
       {/* Módulo iFrame Personalizado (si está activo en el Editor del Home) */}

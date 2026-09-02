@@ -106,8 +106,10 @@ export function FlashSaleCollectionsSection() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-center my-2">
               <div className="relative aspect-square rounded-2xl overflow-hidden shadow-lg border border-white dark:border-gray-700 group">
                 <img
-                  src="https://images.unsplash.com/photo-1563241527-3004b7be0ffd?w=800&auto=format&fit=crop&q=80"
+                  src="https://images.unsplash.com/photo-1563241527-3004b7be0ffd?w=500&auto=format&fit=crop&q=80"
                   alt="Ramo Estrella en Descuento"
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
                 <span className="absolute top-2 left-2 bg-[#80273B] text-white text-[10px] font-black px-2.5 py-0.5 rounded-full">
@@ -116,9 +118,9 @@ export function FlashSaleCollectionsSection() {
               </div>
 
               <div className="space-y-3">
-                <h4 className="font-serif font-black text-xl text-[#2B0002] dark:text-white">
+                <h3 className="font-serif font-black text-xl text-[#2B0002] dark:text-white">
                   Caja Velvet con 50 Rosas Rojas & Ferrero
-                </h4>
+                </h3>
                 <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed font-medium">
                   Rosas rojas premium de exportación ecuatoriana en caja aterciopelada de lujo con lazo de seda.
                 </p>
@@ -136,7 +138,7 @@ export function FlashSaleCollectionsSection() {
                   id: "flash-sale-50-roses",
                   name: "Caja Velvet con 50 Rosas Rojas & Ferrero",
                   price: 119.99,
-                  image: "https://images.unsplash.com/photo-1563241527-3004b7be0ffd?w=800"
+                  image: "https://images.unsplash.com/photo-1563241527-3004b7be0ffd?w=500&auto=format&fit=crop&q=80"
                 })}
                 className="w-full inline-flex items-center justify-center gap-2 bg-[#80273B] hover:bg-[#2B0002] text-white py-3.5 px-6 rounded-2xl font-black text-xs uppercase tracking-wider transition-all duration-300 shadow-lg active:scale-95"
               >
@@ -152,8 +154,10 @@ export function FlashSaleCollectionsSection() {
             {/* Colección 1: Ramos de Lujo */}
             <div className="group relative rounded-3xl overflow-hidden min-h-[260px] flex items-center justify-center shadow-lg border border-white/20">
               <img
-                src="https://images.unsplash.com/photo-1526047932273-341f2a7631f9?w=800&auto=format&fit=crop&q=80"
+                src="https://images.unsplash.com/photo-1526047932273-341f2a7631f9?w=500&auto=format&fit=crop&q=80"
                 alt="Colección Ramos de Lujo"
+                loading="lazy"
+                decoding="async"
                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
               />
               <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors" />
@@ -168,8 +172,10 @@ export function FlashSaleCollectionsSection() {
             {/* Colección 2: Bouquets Silvestres */}
             <div className="group relative rounded-3xl overflow-hidden min-h-[260px] flex items-center justify-center shadow-lg border border-white/20">
               <img
-                src="https://images.unsplash.com/photo-1520763185298-1b434c919102?w=800&auto=format&fit=crop&q=80"
+                src="https://images.unsplash.com/photo-1520763185298-1b434c919102?w=500&auto=format&fit=crop&q=80"
                 alt="Colección Bouquets Mixtos"
+                loading="lazy"
+                decoding="async"
                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
               />
               <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors" />
@@ -184,8 +190,10 @@ export function FlashSaleCollectionsSection() {
             {/* Colección 3: Cajas Velvet & Cúpulas */}
             <div className="group relative rounded-3xl overflow-hidden min-h-[260px] flex items-center justify-center shadow-lg border border-white/20">
               <img
-                src="https://images.unsplash.com/photo-1508610048659-a06b669e3321?w=800&auto=format&fit=crop&q=80"
+                src="https://images.unsplash.com/photo-1508610048659-a06b669e3321?w=500&auto=format&fit=crop&q=80"
                 alt="Colección Cajas Velvet"
+                loading="lazy"
+                decoding="async"
                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
               />
               <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors" />
@@ -200,8 +208,10 @@ export function FlashSaleCollectionsSection() {
             {/* Colección 4: Adicionales & Detalles */}
             <div className="group relative rounded-3xl overflow-hidden min-h-[260px] flex items-center justify-center shadow-lg border border-white/20">
               <img
-                src="https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=800&auto=format&fit=crop&q=80"
+                src="https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=500&auto=format&fit=crop&q=80"
                 alt="Colección Complementos & Regalos"
+                loading="lazy"
+                decoding="async"
                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
               />
               <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors" />

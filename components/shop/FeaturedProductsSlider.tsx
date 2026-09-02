@@ -23,6 +23,17 @@ export function FeaturedProductsSlider({ products }: FeaturedProductsSliderProps
     { id: "BOUQUETS", label: "Bouquets & Cajas", filter: (p: any) => p.category?.toLowerCase().includes("bouquet") || p.category?.toLowerCase().includes("caja") },
   ];
 
+  const optimizeImageUrl = (url: string) => {
+    if (!url) return "https://images.unsplash.com/photo-1563241527-3004b7be0ffd?w=400&q=80&auto=format";
+    if (url.includes("ik.imagekit.io") && !url.includes("tr=")) {
+      return url.includes("?") ? `${url}&tr=w-400,q-80,f-auto` : `${url}?tr=w-400,q-80,f-auto`;
+    }
+    if (url.includes("images.unsplash.com") && !url.includes("w=")) {
+      return `${url}${url.includes("?") ? "&" : "?"}w=400&q=80&auto=format`;
+    }
+    return url;
+  };
+
   const activeFilter = tabs.find(tab => tab.id === activeTab)?.filter || (() => true);
   let filteredProducts = products.filter(activeFilter);
   if (filteredProducts.length === 0) {
@@ -147,8 +158,10 @@ export function FeaturedProductsSlider({ products }: FeaturedProductsSliderProps
           style={{ scrollbarWidth: "none" }}
         >
           {filteredProducts.map((product: any) => {
-            const image = product.images && product.images.length > 0 ? product.images[0] : "https://images.unsplash.com/photo-1563241527-3004b7be0ffd?w=800";
-            const secondaryImage = product.images && product.images.length > 1 ? product.images[1] : undefined;
+            const rawImage = product.images && product.images.length > 0 ? product.images[0] : "https://images.unsplash.com/photo-1563241527-3004b7be0ffd?w=400";
+            const rawSecondary = product.images && product.images.length > 1 ? product.images[1] : undefined;
+            const image = optimizeImageUrl(rawImage);
+            const secondaryImage = rawSecondary ? optimizeImageUrl(rawSecondary) : undefined;
             return (
               <div
                 key={product._id.toString()}
@@ -159,6 +172,8 @@ export function FeaturedProductsSlider({ products }: FeaturedProductsSliderProps
                   <img
                     src={image}
                     alt={product.name}
+                    loading="lazy"
+                    decoding="async"
                     className={`w-full h-full object-contain p-1 group-hover:scale-105 transition-all duration-700 ${
                       secondaryImage ? 'group-hover:opacity-0' : ''
                     }`}
@@ -167,6 +182,8 @@ export function FeaturedProductsSlider({ products }: FeaturedProductsSliderProps
                     <img
                       src={secondaryImage}
                       alt={`${product.name} - alternativa`}
+                      loading="lazy"
+                      decoding="async"
                       className="absolute inset-0 w-full h-full object-contain p-1 transform scale-100 group-hover:scale-105 transition-all duration-700 ease-out opacity-0 group-hover:opacity-100"
                     />
                   )}
