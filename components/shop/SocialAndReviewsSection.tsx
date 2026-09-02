@@ -49,14 +49,33 @@ export function SocialAndReviewsSection({
   instagramUrl = "https://instagram.com",
 }: SocialAndReviewsSectionProps) {
   const t = useTranslations("Reviews");
+  const sectionRef = useRef<HTMLDivElement>(null);
   const widgetRef = useRef<HTMLDivElement>(null);
+  const [isSectionVisible, setIsSectionVisible] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const embedList = parseEmbeds(embedHtml);
   const hasEmbeds = embedList.length > 0;
 
+  // Detección de visibilidad para carga diferida de scripts pesados
   useEffect(() => {
-    if (!trustpilotWidgetHtml || !widgetRef.current) return;
+    if (!sectionRef.current) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setIsSectionVisible(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "300px" }
+    );
+    observer.observe(sectionRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  // Cargar Trustpilot sólo cuando el usuario hace scroll hacia la sección
+  useEffect(() => {
+    if (!isSectionVisible || !trustpilotWidgetHtml || !widgetRef.current) return;
     const container = widgetRef.current;
     container.innerHTML = trustpilotWidgetHtml;
 
@@ -69,11 +88,11 @@ export function SocialAndReviewsSection({
       newScript.appendChild(document.createTextNode(oldScript.innerHTML));
       oldScript.parentNode?.replaceChild(newScript, oldScript);
     });
-  }, [trustpilotWidgetHtml]);
+  }, [trustpilotWidgetHtml, isSectionVisible]);
 
-  // Cargar y procesar script oficial de Instagram Embeds
+  // Cargar y procesar script oficial de Instagram Embeds sólo al acercarse
   useEffect(() => {
-    if (hasEmbeds && typeof window !== "undefined") {
+    if (isSectionVisible && hasEmbeds && typeof window !== "undefined") {
       if ((window as any).instgrm) {
         (window as any).instgrm.Embeds?.process();
       } else {
@@ -87,7 +106,7 @@ export function SocialAndReviewsSection({
         }
       }
     }
-  }, [embedHtml, currentSlide, hasEmbeds]);
+  }, [embedHtml, currentSlide, hasEmbeds, isSectionVisible]);
 
   const reviewsList = [
     {
@@ -171,7 +190,7 @@ export function SocialAndReviewsSection({
   if (!enableReviews && !enableSocialFeed) return null;
 
   return (
-    <section className="relative z-20 py-16 bg-[#fff8f7]/90 dark:bg-[#0B0C10]/90 backdrop-blur-sm border-t border-[#D4AF37]/20 transition-colors duration-300">
+    <section ref={sectionRef} className="relative z-20 py-16 bg-[#fff8f7]/90 dark:bg-[#0B0C10]/90 backdrop-blur-sm border-t border-[#D4AF37]/20 transition-colors duration-300">
       <div className="container mx-auto px-4 max-w-7xl relative z-20">
         <div className={`grid grid-cols-1 ${enableReviews && enableSocialFeed ? "lg:grid-cols-12" : "max-w-4xl mx-auto"} gap-8 items-stretch`}>
 

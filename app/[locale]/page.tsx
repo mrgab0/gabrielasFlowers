@@ -62,8 +62,20 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
     gridColsClass = "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6";
   }
 
+  const firstBannerImage = initialSlides.length > 0 && initialSlides[0].type === 'banner' && !initialSlides[0].image?.match(/\.(mp4|webm|ogg)$/i)
+    ? initialSlides[0].image
+    : null;
+
   return (
     <main className="min-h-screen bg-[#fff8f7] dark:bg-[#0B0C10] text-[#221a19] dark:text-gray-100 transition-colors duration-300 relative overflow-x-hidden">
+      {firstBannerImage && (
+        <link
+          rel="preload"
+          as="image"
+          href={firstBannerImage}
+          fetchPriority="high"
+        />
+      )}
       
       {/* Componente de Mariposas Animadas con Aleteo 3D (Ultra ligero 1.5KB) */}
       <AnimatedButterflies />

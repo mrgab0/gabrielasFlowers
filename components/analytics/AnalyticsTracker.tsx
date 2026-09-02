@@ -34,14 +34,22 @@ export function AnalyticsTracker() {
       productName = slugParts[slugParts.length - 1].replace(/-/g, " ");
     }
 
-    // Registrar de forma asíncrona sin bloquear la UI
-    logAnalyticsEventAction({
-      type,
-      path: pathname,
-      productName,
-      referrer,
-      device
-    });
+    // Registrar de forma diferida en tiempo de ocio del CPU para evitar TBT
+    const track = () => {
+      logAnalyticsEventAction({
+        type,
+        path: pathname,
+        productName,
+        referrer,
+        device
+      });
+    };
+
+    if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+      (window as any).requestIdleCallback(track, { timeout: 2000 });
+    } else {
+      setTimeout(track, 1200);
+    }
   }, [pathname]);
 
   return null;

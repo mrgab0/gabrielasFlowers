@@ -29,7 +29,7 @@ export function LanguageSwitcher() {
         className={`px-2.5 py-1 rounded-full transition-all flex items-center gap-1 ${
           !isEnglish
             ? "bg-white text-[#2B0002] shadow-sm font-black"
-            : "text-slate-500 hover:text-[#2B0002]"
+            : "text-gray-700 hover:text-[#2B0002] font-bold"
         }`}
         title="Cambiar a Español"
       >
@@ -42,7 +42,7 @@ export function LanguageSwitcher() {
         className={`px-2.5 py-1 rounded-full transition-all flex items-center gap-1 ${
           isEnglish
             ? "bg-white text-[#2B0002] shadow-sm font-black"
-            : "text-slate-500 hover:text-[#2B0002]"
+            : "text-gray-700 hover:text-[#2B0002] font-bold"
         }`}
         title="Switch to English"
       >
