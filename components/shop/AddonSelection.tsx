@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { IAddon } from "@/lib/models/Addon";
 import { Sparkles, Check, MessageSquare, ChevronDown, ChevronUp, Gift, Heart, Palette, Feather, Edit3 } from "lucide-react";
 
@@ -25,39 +25,39 @@ const categoryIcons: Record<string, any> = {
   "Colores & Papeles": Palette,
 };
 
-export const AddonSelection = ({ addons, onSelectionChange }: AddonSelectionProps) => {
+export const AddonSelection = React.memo(({ addons, onSelectionChange }: AddonSelectionProps) => {
   const [selected, setSelected] = useState<SelectedAddonState[]>([]);
   
-  // Agrupar adicionales por categoría interna
-  const groupedAddons = addons.reduce((acc, addon) => {
-    const category = addon.category || "Otros Complementos";
-    if (!acc[category]) acc[category] = [];
-    acc[category].push(addon);
-    return acc;
-  }, {} as Record<string, IAddon[]>);
+  // Agrupar adicionales por categoría interna (memoizado)
+  const groupedAddons = useMemo(() => {
+    return addons.reduce((acc, addon) => {
+      const category = addon.category || "Otros Complementos";
+      if (!acc[category]) acc[category] = [];
+      acc[category].push(addon);
+      return acc;
+    }, {} as Record<string, IAddon[]>);
+  }, [addons]);
 
   // Pestañas / Acordeones abiertos (por defecto abrimos el primero)
-  const initialOpenCategories = Object.keys(groupedAddons).slice(0, 1);
-  const [openCategories, setOpenCategories] = useState<string[]>(initialOpenCategories);
+  const [openCategories, setOpenCategories] = useState<string[]>(() => Object.keys(groupedAddons).slice(0, 1));
 
-  const toggleCategoryAccordion = (cat: string) => {
-    if (openCategories.includes(cat)) {
-      setOpenCategories(openCategories.filter((c) => c !== cat));
-    } else {
-      setOpenCategories([...openCategories, cat]);
-    }
-  };
+  const toggleCategoryAccordion = useCallback((cat: string) => {
+    setOpenCategories((prev) => 
+      prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]
+    );
+  }, []);
 
-  const toggleCheckbox = (addon: IAddon) => {
+  const toggleCheckbox = useCallback((addon: IAddon) => {
     const addonIdStr = addon._id.toString();
-    const exists = selected.find((s) => s.addonId === addonIdStr);
-    const nextSelection = exists
-      ? selected.filter((s) => s.addonId !== addonIdStr)
-      : [...selected, { addonId: addonIdStr, name: addon.name, price: addon.price, customText: "" }];
-    
-    setSelected(nextSelection);
-    onSelectionChange(nextSelection);
-  };
+    setSelected((prev) => {
+      const exists = prev.find((s) => s.addonId === addonIdStr);
+      const nextSelection = exists
+        ? prev.filter((s) => s.addonId !== addonIdStr)
+        : [...prev, { addonId: addonIdStr, name: addon.name, price: addon.price, customText: "" }];
+      onSelectionChange(nextSelection);
+      return nextSelection;
+    });
+  }, [onSelectionChange]);
 
   const handleCustomTextChange = (addonIdStr: string, customText: string) => {
     const nextSelection = selected.map((s) =>
@@ -287,4 +287,4 @@ export const AddonSelection = ({ addons, onSelectionChange }: AddonSelectionProp
       })}
     </div>
   );
-};
+});

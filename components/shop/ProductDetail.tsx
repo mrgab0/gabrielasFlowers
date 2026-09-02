@@ -1,10 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback, useMemo, startTransition } from "react";
 import { AddToCartButton } from "@/components/shop/AddToCartButton";
 import { AddonSelection } from "@/components/shop/AddonSelection";
 import { ShopHeader } from "@/components/shop/ShopHeader";
-import { ShoppingCartComponent } from "@/components/shop/Cart/ShoppingCart";
 import { CheckCircle2, Flower2, Package, Sparkles, ShieldCheck, Truck, Tag, ArrowDown, Gamepad2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 
@@ -13,39 +12,54 @@ export const ProductDetail = ({ product }: { product: any }) => {
   const [selectedAddons, setSelectedAddons] = useState<{ addonId: string; value?: string; price?: number; name?: string }[]>([]);
   const [lastAddonToast, setLastAddonToast] = useState<{ name: string; price: number } | null>(null);
 
-  const images = product.images && product.images.length > 0 ? product.images : ["https://images.unsplash.com/photo-1582794543139-8ac9cb0f7b11?auto=format&fit=crop&q=80&w=800"];
+  const images = useMemo(() => (
+    product.images && product.images.length > 0
+      ? product.images
+      : ["https://images.unsplash.com/photo-1582794543139-8ac9cb0f7b11?auto=format&fit=crop&q=80&w=800"]
+  ), [product.images]);
+
   const [activeImage, setActiveImage] = useState(images[0]);
 
   // Formateador de viñetas para la descripción
-  const descriptionBullets = (product.description || "")
-    .split("\n")
-    .map((line: string) => line.trim())
-    .filter((line: string) => line.length > 0);
+  const descriptionBullets = useMemo(() => (
+    (product.description || "")
+      .split("\n")
+      .map((line: string) => line.trim())
+      .filter((line: string) => line.length > 0)
+  ), [product.description]);
 
   // Cálculo Dinámico del Precio Combinado (Base + Adicionales)
-  const addonsTotalPrice = selectedAddons.reduce((acc, curr) => acc + (curr.price || 0), 0);
   const basePrice = Number(product.price || 0);
-  const combinedTotalPrice = basePrice + addonsTotalPrice;
+  const { addonsTotalPrice, combinedTotalPrice } = useMemo(() => {
+    const addonsTotal = selectedAddons.reduce((acc, curr) => acc + (curr.price || 0), 0);
+    return {
+      addonsTotalPrice: addonsTotal,
+      combinedTotalPrice: basePrice + addonsTotal
+    };
+  }, [selectedAddons, basePrice]);
 
-  const handleSelectionChange = (newSelection: { addonId: string; value?: string; price?: number; name?: string }[]) => {
-    // Si se añadió un nuevo adicional, disparamos el tooltip de notificación
+  const handleSelectionChange = useCallback((newSelection: { addonId: string; value?: string; price?: number; name?: string }[]) => {
+    setSelectedAddons(newSelection);
+    // Si se añadió un nuevo adicional, disparamos el tooltip de forma no bloqueante con startTransition
     if (newSelection.length > selectedAddons.length) {
       const added = newSelection[newSelection.length - 1];
       if (added && added.name) {
-        setLastAddonToast({ name: added.name, price: added.price || 0 });
-        setTimeout(() => setLastAddonToast(null), 4500);
+        startTransition(() => {
+          setLastAddonToast({ name: added.name || "Adicional", price: added.price || 0 });
+        });
+        setTimeout(() => {
+          startTransition(() => {
+            setLastAddonToast(null);
+          });
+        }, 4500);
       }
     }
-    setSelectedAddons(newSelection);
-  };
+  }, [selectedAddons.length]);
 
   return (
     <div className="min-h-screen bg-[#F9F9F9] dark:bg-[#0F1015] flex flex-col font-sans">
       {/* Header Visible con Logo al Home y Carrito */}
       <ShopHeader />
-
-      {/* Carrito Flotante de la Tienda */}
-      <ShoppingCartComponent />
 
       {/* Contenido Principal */}
       <main className="flex-1 py-10 md:py-16">
