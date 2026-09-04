@@ -45,8 +45,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   const optimizedSecondaryImage = secondaryImage ? optimizeImageUrl(secondaryImage) : undefined;
 
   return (
-    <div className="group relative bg-white dark:bg-[#12131A] rounded-2xl transition-all duration-500 overflow-hidden border border-gray-100 dark:border-gray-800 shadow-[0px_4px_20px_rgba(42,0,2,0.04)] hover:shadow-[0px_16px_36px_rgba(42,0,2,0.12)] hover:-translate-y-1 flex flex-col justify-between">
-      <Link href={`/productos/${slug}`} className="block relative">
+    <div className="group relative bg-white dark:bg-[#12131A] rounded-2xl transition-all duration-500 overflow-hidden border border-gray-100 dark:border-gray-800 shadow-[0px_4px_20px_rgba(42,0,2,0.04)] hover:shadow-[0px_16px_36px_rgba(42,0,2,0.12)] hover:-translate-y-1 flex flex-col justify-between select-none">
+      <Link
+        href={`/productos/${slug}`}
+        draggable={false}
+        onDragStart={(e) => e.preventDefault()}
+        className="block relative select-none"
+      >
         {/* Contenedor de Imagen con Zoom suave */}
         <div className="relative aspect-square overflow-hidden bg-gray-50 dark:bg-gray-900">
           <img
@@ -95,7 +100,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       <div className="p-5 flex flex-col justify-between flex-grow">
         <div>
           <h3 className="font-serif font-bold text-base sm:text-lg text-[#2a0002] dark:text-white group-hover:text-[#8B0024] dark:group-hover:text-pink-400 transition-colors mb-1.5 line-clamp-1">
-            <Link href={`/productos/${slug}`}>{name}</Link>
+            <Link
+              href={`/productos/${slug}`}
+              draggable={false}
+              onDragStart={(e) => e.preventDefault()}
+            >
+              {name}
+            </Link>
           </h3>
           <p className="text-xs text-gray-600 dark:text-gray-300 font-medium line-clamp-1 mb-3">
             Arreglo Floral Boutique • Houston, TX

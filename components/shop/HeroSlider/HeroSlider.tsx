@@ -115,7 +115,12 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({ initialSlides }) => {
                     className="h-full w-full object-cover"
                   />
                 ) : (
-                  <a href={slide.link || '#'} className={`w-full h-full flex items-center justify-center relative z-10 ${slide.link ? "cursor-pointer" : "cursor-default"}`}>
+                  <a
+                    href={slide.link || '#'}
+                    draggable={false}
+                    onDragStart={(e) => e.preventDefault()}
+                    className={`w-full h-full flex items-center justify-center relative z-10 select-none ${slide.link ? "cursor-pointer" : "cursor-default"}`}
+                  >
                     <picture className="w-full h-full block">
                       {slide.mobileImage && (
                         <source media="(max-width: 768px)" srcSet={slide.mobileImage} />
@@ -153,7 +158,9 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({ initialSlides }) => {
                       {slide.link && (
                         <a 
                           href={slide.link} 
-                          className="inline-block bg-[#8B0024] hover:bg-[#2a0002] text-white px-6 md:px-8 py-2.5 md:py-3 rounded-xl font-bold text-xs sm:text-sm md:text-base transition-all shadow-xl shadow-pink-950/30 border border-[#D4AF37]/60 hover:scale-105 active:scale-95"
+                          draggable={false}
+                          onDragStart={(e) => e.preventDefault()}
+                          className="inline-block bg-[#8B0024] hover:bg-[#2a0002] text-white px-6 md:px-8 py-2.5 md:py-3 rounded-xl font-bold text-xs sm:text-sm md:text-base transition-all shadow-xl shadow-pink-950/30 border border-[#D4AF37]/60 hover:scale-105 active:scale-95 select-none"
                         >
                           {slide.ctaText || "Ver Oferta"}
                         </a>

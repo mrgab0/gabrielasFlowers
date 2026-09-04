@@ -154,6 +154,7 @@ export function FeaturedProductsSlider({ products }: FeaturedProductsSliderProps
           onMouseUp={handleMouseLeaveOrUp}
           onMouseMove={handleMouseMove}
           onClickCapture={handleClickCapture}
+          onDragStart={(e) => e.preventDefault()}
           className="flex items-stretch gap-6 overflow-x-auto pb-6 pt-2 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden select-none"
           style={{ scrollbarWidth: "none" }}
         >
@@ -168,7 +169,12 @@ export function FeaturedProductsSlider({ products }: FeaturedProductsSliderProps
                 className="w-[280px] sm:w-[320px] flex-shrink-0 snap-start group relative bg-white dark:bg-[#12131A] rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 shadow-[0_6px_20px_rgba(42,0,2,0.06)] dark:shadow-[0_6px_20px_rgba(0,0,0,0.4)] hover:shadow-[0_16px_36px_rgba(42,0,2,0.15)] hover:-translate-y-1.5 transition-all duration-500 flex flex-col justify-between"
               >
                 {/* Imagen del Producto */}
-                <Link href={`/productos/${product.slug}`} className="block relative aspect-square overflow-hidden bg-gray-50 dark:bg-gray-900">
+                <Link
+                  href={`/productos/${product.slug}`}
+                  draggable={false}
+                  onDragStart={(e) => e.preventDefault()}
+                  className="block relative aspect-square overflow-hidden bg-gray-50 dark:bg-gray-900 select-none"
+                >
                   <img
                     src={image}
                     alt={product.name}
@@ -221,8 +227,12 @@ export function FeaturedProductsSlider({ products }: FeaturedProductsSliderProps
                       <span className="text-[10px] text-gray-600 dark:text-gray-300 font-bold ml-1">5.0</span>
                     </div>
 
-                    <Link href={`/productos/${product.slug}`}>
-                      <h3 className="font-serif font-bold text-base text-[#1A1C1C] dark:text-white line-clamp-1 group-hover:text-[#80273B] dark:group-hover:text-[#FF97A4] transition-colors">
+                    <Link
+                      href={`/productos/${product.slug}`}
+                      draggable={false}
+                      onDragStart={(e) => e.preventDefault()}
+                    >
+                      <h3 className="font-serif font-bold text-base text-[#1A1C1C] dark:text-white line-clamp-1 group-hover:text-[#80273B] dark:group-hover:text-[#FF97A4] transition-colors select-none">
                         {product.name}
                       </h3>
                     </Link>
