@@ -54,7 +54,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             alt={name}
             loading="lazy"
             decoding="async"
-            className={`w-full h-full object-cover transform group-hover:scale-105 transition-all duration-700 ease-out ${
+            draggable={false}
+            onDragStart={(e) => e.preventDefault()}
+            className={`w-full h-full object-cover select-none pointer-events-none transform group-hover:scale-105 transition-all duration-700 ease-out ${
               optimizedSecondaryImage ? 'group-hover:opacity-0' : ''
             }`}
           />
@@ -64,7 +66,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               alt={`${name} - alternativa`}
               loading="lazy"
               decoding="async"
-              className="absolute inset-0 w-full h-full object-cover transform scale-100 group-hover:scale-105 transition-all duration-700 ease-out opacity-0 group-hover:opacity-100"
+              draggable={false}
+              onDragStart={(e) => e.preventDefault()}
+              className="absolute inset-0 w-full h-full object-cover select-none pointer-events-none transform scale-100 group-hover:scale-105 transition-all duration-700 ease-out opacity-0 group-hover:opacity-100"
             />
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />

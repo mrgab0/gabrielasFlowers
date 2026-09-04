@@ -128,7 +128,9 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({ initialSlides }) => {
                         fetchPriority={index === 0 ? "high" : "auto"}
                         loading={index === 0 ? "eager" : "lazy"}
                         decoding="async"
-                        className="h-full w-full object-cover md:object-contain drop-shadow-xl"
+                        draggable={false}
+                        onDragStart={(e) => e.preventDefault()}
+                        className="h-full w-full object-cover md:object-contain drop-shadow-xl select-none pointer-events-none"
                       />
                     </picture>
                   </a>
