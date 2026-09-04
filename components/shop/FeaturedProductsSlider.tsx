@@ -174,7 +174,7 @@ export function FeaturedProductsSlider({ products }: FeaturedProductsSliderProps
                     alt={product.name}
                     loading="lazy"
                     decoding="async"
-                    className={`w-full h-full object-contain p-1 group-hover:scale-105 transition-all duration-700 ${
+                    className={`w-full h-full object-cover group-hover:scale-105 transition-all duration-700 ${
                       secondaryImage ? 'group-hover:opacity-0' : ''
                     }`}
                   />
@@ -184,7 +184,7 @@ export function FeaturedProductsSlider({ products }: FeaturedProductsSliderProps
                       alt={`${product.name} - alternativa`}
                       loading="lazy"
                       decoding="async"
-                      className="absolute inset-0 w-full h-full object-contain p-1 transform scale-100 group-hover:scale-105 transition-all duration-700 ease-out opacity-0 group-hover:opacity-100"
+                      className="absolute inset-0 w-full h-full object-cover transform scale-100 group-hover:scale-105 transition-all duration-700 ease-out opacity-0 group-hover:opacity-100"
                     />
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
