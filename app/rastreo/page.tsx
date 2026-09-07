@@ -54,7 +54,7 @@ export default function RastreoPedidoPage() {
             <span className="bg-pink-100 dark:bg-pink-100 text-black dark:text-black text-xs font-black uppercase tracking-[0.2em] px-4 py-1.5 rounded-full border border-pink-200 dark:border-pink-200 inline-block shadow-sm">
               Seguimiento en Tiempo Real
             </span>
-            <h1 className="text-4xl md:text-5xl font-serif font-black text-black dark:text-black">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-sans font-black tracking-tight text-black dark:text-black">
               Rastrear Mi Envío
             </h1>
             <p className="text-sm text-black dark:text-black font-bold max-w-lg mx-auto">
