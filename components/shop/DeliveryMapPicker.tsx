@@ -235,7 +235,7 @@ export function DeliveryMapPicker({
   return (
     <div className="space-y-4 bg-gray-50/70 dark:bg-gray-900/50 p-5 rounded-2xl border border-gray-200 dark:border-gray-800">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b pb-3 border-gray-200 dark:border-gray-800">
-        <label className="text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
+        <label className="text-xs font-extrabold uppercase tracking-wider text-gray-900 dark:text-white flex items-center gap-1.5">
           <MapPin size={16} className="text-[#FF97A4]" /> Dirección y Ubicación en Mapa para Entrega
         </label>
         
@@ -308,13 +308,13 @@ export function DeliveryMapPicker({
           ></iframe>
 
           {/* Badge flotante de millas sobre el mapa */}
-          <div className="absolute top-3 right-3 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md px-3 py-1.5 rounded-full border shadow-md flex items-center gap-1.5 text-xs font-black">
+          <div className="absolute top-3 right-3 bg-white/95 dark:bg-gray-900/95 text-gray-900 dark:text-white backdrop-blur-md px-3 py-1.5 rounded-full border border-gray-200 dark:border-gray-700 shadow-md flex items-center gap-1.5 text-xs font-black">
             <Compass size={14} className="text-[#FF97A4]" />
             <span>{distanceMiles > 0 ? `📍 ${distanceMiles} Millas desde Boutique` : "📍 Escribe la dirección para calcular millas"}</span>
           </div>
         </div>
 
-        <p className="text-[11px] text-gray-500 dark:text-gray-400 italic">
+        <p className="text-[11px] font-semibold text-gray-700 dark:text-gray-200 italic">
           💡 Las millas calculadas se aplican automáticamente al costo de entrega según la opción elegida.
         </p>
       </div>
