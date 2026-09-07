@@ -51,13 +51,13 @@ export default function RastreoPedidoPage() {
         <div className="container mx-auto px-4 md:px-6 max-w-3xl space-y-8">
           {/* Header de Rastreo con Ortografía Perfecta */}
           <div className="text-center space-y-3">
-            <span className="bg-pink-50 dark:bg-pink-950/60 text-[#FF97A4] text-xs font-black uppercase tracking-[0.2em] px-4 py-1.5 rounded-full border border-pink-100 dark:border-pink-900/50 inline-block">
+            <span className="bg-pink-100 dark:bg-pink-950/80 text-gray-900 dark:text-white text-xs font-black uppercase tracking-[0.2em] px-4 py-1.5 rounded-full border border-pink-200 dark:border-pink-900/50 inline-block shadow-sm">
               Seguimiento en Tiempo Real
             </span>
-            <h1 className="text-4xl md:text-5xl font-serif font-black text-[#1A1C1C] dark:text-white">
+            <h1 className="text-4xl md:text-5xl font-serif font-black text-gray-900 dark:text-white">
               Rastrear Mi Envío
             </h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400 max-w-lg mx-auto">
+            <p className="text-sm text-gray-900 dark:text-gray-100 font-bold max-w-lg mx-auto">
               Ingresa el ID de tu Pedido o tu número de teléfono para verificar el estado de preparación y despacho de tu regalo floral.
             </p>
           </div>
@@ -66,13 +66,13 @@ export default function RastreoPedidoPage() {
           <form onSubmit={handleSearch} className="bg-white dark:bg-[#12131A] p-4 md:p-6 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm space-y-3">
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="relative flex-1">
-                <Search className="absolute left-4 top-3.5 text-gray-400" size={18} />
+                <Search className="absolute left-4 top-3.5 text-gray-600 dark:text-gray-300" size={18} />
                 <input
                   type="text"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Ej: FFY-94812-1 o tu número de teléfono"
-                  className="w-full pl-11 pr-4 py-3.5 border rounded-2xl text-sm font-medium dark:bg-gray-900 dark:border-gray-800 focus:outline-none focus:ring-2 focus:ring-[#FF97A4]"
+                  className="w-full pl-11 pr-4 py-3.5 border rounded-2xl text-sm font-bold text-gray-900 dark:text-white bg-white dark:bg-gray-900 placeholder:text-gray-500 dark:placeholder:text-gray-400 border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-[#FF97A4]"
                   required
                 />
               </div>
@@ -144,7 +144,7 @@ export default function RastreoPedidoPage() {
                 {/* Línea de Tiempo / Progreso de 4 Pasos Dinámicos */}
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400">
+                    <h4 className="text-xs font-black uppercase tracking-wider text-gray-700 dark:text-gray-300">
                       Progreso de {isPickup ? "Retiro en Boutique 🏪" : "Envío a Domicilio 🚚"}
                     </h4>
                     <span className="text-xs font-bold text-[#FF97A4]">Paso {currentStep + 1} de 4</span>
@@ -169,11 +169,11 @@ export default function RastreoPedidoPage() {
                           </div>
                           <div>
                             <span className={`text-[11px] font-extrabold block leading-tight ${
-                              isDone ? "text-[#1A1C1C] dark:text-white" : "text-gray-400"
+                              isDone ? "text-[#1A1C1C] dark:text-white" : "text-gray-500 dark:text-gray-400"
                             }`}>
                               {st.label}
                             </span>
-                            <span className="text-[9px] text-gray-400 block hidden sm:block mt-0.5">
+                            <span className="text-[9px] text-gray-600 dark:text-gray-300 font-semibold block hidden sm:block mt-0.5">
                               {st.sub}
                             </span>
                           </div>
@@ -186,10 +186,10 @@ export default function RastreoPedidoPage() {
                 {/* Detalles de la Orden y Arreglos */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
                   <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-2xl space-y-1.5 border border-gray-100 dark:border-gray-800">
-                    <span className="text-[10px] font-bold uppercase text-gray-400 tracking-wider block">
+                    <span className="text-[10px] font-black uppercase text-gray-700 dark:text-gray-300 tracking-wider block">
                       {isPickup ? "Lugar de Retiro:" : "Dirección de Entrega:"}
                     </span>
-                    <p className="text-xs font-bold text-gray-800 dark:text-gray-200 flex items-start gap-1.5">
+                    <p className="text-xs font-bold text-gray-900 dark:text-white flex items-start gap-1.5">
                       {isPickup ? (
                         <Store size={15} className="text-[#FF97A4] flex-shrink-0 mt-0.5" />
                       ) : (
@@ -200,8 +200,8 @@ export default function RastreoPedidoPage() {
                   </div>
 
                   <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-2xl space-y-1.5 border border-gray-100 dark:border-gray-800">
-                    <span className="text-[10px] font-bold uppercase text-gray-400 tracking-wider block">Modalidad & Horario:</span>
-                    <p className="text-xs font-bold text-gray-800 dark:text-gray-200 flex items-start gap-1.5">
+                    <span className="text-[10px] font-black uppercase text-gray-700 dark:text-gray-300 tracking-wider block">Modalidad & Horario:</span>
+                    <p className="text-xs font-bold text-gray-900 dark:text-white flex items-start gap-1.5">
                       <Truck size={15} className="text-purple-500 flex-shrink-0 mt-0.5" />
                       <span>{order.deliveryMethod || "Envío Estándar a Domicilio"}</span>
                     </p>
@@ -211,12 +211,12 @@ export default function RastreoPedidoPage() {
                 {/* Arreglos Florales Solicitados */}
                 {order.items && order.items.length > 0 && (
                   <div className="p-4 bg-gray-50/70 dark:bg-gray-900/60 rounded-2xl border border-gray-100 dark:border-gray-800 space-y-2">
-                    <span className="text-[10px] font-bold uppercase text-gray-400 tracking-wider block flex items-center gap-1">
+                    <span className="text-[10px] font-black uppercase text-gray-700 dark:text-gray-300 tracking-wider block flex items-center gap-1">
                       <Gift size={13} className="text-[#FF97A4]" /> Arreglos e Ítems del Pedido:
                     </span>
                     <div className="space-y-1 text-xs">
                       {order.items.map((it: any, i: number) => (
-                        <div key={i} className="flex justify-between items-center font-bold text-gray-700 dark:text-gray-300">
+                        <div key={i} className="flex justify-between items-center font-bold text-gray-900 dark:text-gray-100">
                           <span>• {it.name} (x{it.quantity})</span>
                           <span>${(it.price * it.quantity).toFixed(2)} USD</span>
                         </div>
