@@ -72,6 +72,12 @@ const NAV_ITEMS = [
     badgeColor: "bg-teal-100 dark:bg-teal-950/80 text-teal-950 dark:text-teal-200 border-teal-300 dark:border-teal-800/80 hover:bg-teal-200"
   },
   {
+    href: "/admin/blog",
+    label: "Blogger",
+    icon: "✍️",
+    badgeColor: "bg-rose-100 dark:bg-rose-950/80 text-rose-950 dark:text-rose-200 border-rose-300 dark:border-rose-800/80 hover:bg-rose-200"
+  },
+  {
     href: "/admin/configuracion",
     label: "Configuración",
     icon: "⚙️",
