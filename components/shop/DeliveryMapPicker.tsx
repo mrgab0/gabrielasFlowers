@@ -262,7 +262,7 @@ export function DeliveryMapPicker({
             }}
             onBlur={() => geocodeAddress()}
             placeholder="Ej: 10827 Kyler Oaks Pl, Houston, TX 77043"
-            className="w-full p-3.5 pr-24 border rounded-2xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#FF97A4] dark:bg-gray-900 dark:text-white"
+            className="w-full p-3.5 pr-24 border border-gray-300 dark:border-gray-700 rounded-2xl text-sm font-semibold text-gray-900 dark:text-white bg-white dark:bg-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#FF97A4]"
             required
           />
           <button

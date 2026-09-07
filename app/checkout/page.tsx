@@ -296,7 +296,7 @@ export default function CheckoutPage() {
                       value={name} 
                       onChange={(e) => setName(e.target.value)} 
                       placeholder="Nombre y Apellido Completo *" 
-                      className="w-full p-3.5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF97A4] font-medium" 
+                      className="w-full p-3.5 border border-gray-300 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF97A4] font-medium text-gray-900 dark:text-white bg-white dark:bg-gray-900 placeholder:text-gray-400" 
                       required 
                     />
                     <input 
@@ -305,7 +305,7 @@ export default function CheckoutPage() {
                       value={email} 
                       onChange={(e) => setEmail(e.target.value)} 
                       placeholder="Correo Electrónico del Cliente *" 
-                      className="w-full p-3.5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF97A4] font-medium" 
+                      className="w-full p-3.5 border border-gray-300 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF97A4] font-medium text-gray-900 dark:text-white bg-white dark:bg-gray-900 placeholder:text-gray-400" 
                       required 
                     />
                     <input 
@@ -313,7 +313,7 @@ export default function CheckoutPage() {
                       value={phone} 
                       onChange={(e) => setPhone(e.target.value)} 
                       placeholder="Teléfono / WhatsApp de Contacto *" 
-                      className="w-full p-3.5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF97A4] font-medium" 
+                      className="w-full p-3.5 border border-gray-300 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF97A4] font-medium text-gray-900 dark:text-white bg-white dark:bg-gray-900 placeholder:text-gray-400" 
                       required 
                     />
                     <DeliveryMapPicker
@@ -344,7 +344,7 @@ export default function CheckoutPage() {
                     value={cardMessage}
                     onChange={(e) => setCardMessage(e.target.value)}
                     placeholder="Ej: ¡Feliz Cumpleaños María! Deseo que este día esté lleno de amor y alegría. Con todo mi cariño, Carlos. ❤️"
-                    className="w-full p-3.5 border border-pink-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#FF97A4] h-24 bg-white text-gray-800"
+                    className="w-full p-3.5 border border-pink-200 dark:border-pink-900/50 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#FF97A4] h-24 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder:text-gray-400"
                   />
                 </div>
 
@@ -527,7 +527,7 @@ export default function CheckoutPage() {
                   <input 
                     name="paymentRef" 
                     placeholder={selectedPayment === 'efectivo' ? "No requerido para pago en efectivo" : "Número o Código de Referencia de Pago *"} 
-                    className="w-full p-3.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#FF97A4] font-medium" 
+                    className="w-full p-3.5 border border-gray-300 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#FF97A4] font-medium text-gray-900 dark:text-white bg-white dark:bg-gray-900 placeholder:text-gray-400" 
                     disabled={selectedPayment === 'efectivo'}
                     required={selectedPayment !== 'efectivo'}
                   />
@@ -617,7 +617,7 @@ export default function CheckoutPage() {
                     value={couponInput}
                     onChange={(e) => setCouponInput(e.target.value)}
                     placeholder="Ej: INAUGURACION, BIENVENIDA"
-                    className="flex-1 p-2.5 border rounded-xl text-xs uppercase font-bold focus:outline-none focus:ring-2 focus:ring-[#FF97A4]"
+                    className="flex-1 p-2.5 border border-gray-300 dark:border-gray-700 rounded-xl text-xs uppercase font-bold focus:outline-none focus:ring-2 focus:ring-[#FF97A4] text-gray-900 dark:text-white bg-white dark:bg-gray-900 placeholder:text-gray-400"
                   />
                   <button
                     type="button"
