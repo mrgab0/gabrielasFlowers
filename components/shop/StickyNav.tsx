@@ -105,7 +105,7 @@ export function StickyNav({ siteConfig }: StickyNavProps) {
           {/* CENTRO: Menú de Navegación en Escritorio */}
           <div 
             ref={scrollRef}
-            className="hidden md:flex flex-1 min-w-0 items-center justify-start lg:justify-center overflow-x-auto whitespace-nowrap [&::-webkit-scrollbar]:hidden font-bold text-[10px] sm:text-xs uppercase tracking-[0.1em] sm:tracking-[0.15em] py-2 gap-2 sm:gap-3 px-2 relative z-0"
+            className="hidden lg:flex flex-1 min-w-0 items-center justify-start xl:justify-center overflow-x-auto whitespace-nowrap [&::-webkit-scrollbar]:hidden font-bold text-[11px] xl:text-xs uppercase tracking-wider xl:tracking-[0.15em] py-2 gap-1.5 xl:gap-3 px-2 relative z-0"
             onMouseLeave={() => setIsMegaMenuOpen(false)}
           >
             {navLinks.map((link, idx) => (
@@ -116,7 +116,7 @@ export function StickyNav({ siteConfig }: StickyNavProps) {
               >
                 <Link 
                   href={link.href} 
-                  className="px-4 py-2.5 rounded-full bg-white/60 dark:bg-gray-800/60 text-[#2B0002] dark:text-gray-200 shadow-[0_4px_12px_rgba(42,0,2,0.15)] dark:shadow-none hover:shadow-[0_8px_20px_rgba(42,0,2,0.25)] hover:bg-white dark:hover:bg-gray-700 hover:text-[#8B0025] hover:-translate-y-0.5 active:scale-95 active:translate-y-0 transition-all duration-300 border border-transparent hover:border-[#FF97A4]/30 inline-flex items-center gap-1"
+                  className="px-3 xl:px-4 py-2 xl:py-2.5 rounded-full bg-white/60 dark:bg-gray-800/60 text-[#2B0002] dark:text-gray-200 shadow-[0_4px_12px_rgba(42,0,2,0.15)] dark:shadow-none hover:shadow-[0_8px_20px_rgba(42,0,2,0.25)] hover:bg-white dark:hover:bg-gray-700 hover:text-[#8B0025] hover:-translate-y-0.5 active:scale-95 active:translate-y-0 transition-all duration-300 border border-transparent hover:border-[#FF97A4]/30 inline-flex items-center gap-1"
                 >
                   {link.label}
                   {link.isMega && <ChevronDown size={12} className={`transition-transform duration-300 ${isMegaMenuOpen ? "rotate-180" : ""}`} />}
@@ -137,11 +137,11 @@ export function StickyNav({ siteConfig }: StickyNavProps) {
           <div className="flex items-center gap-2 flex-shrink-0 relative z-10">
             <button
               onClick={() => setIsBioModalOpen(true)}
-              className="flex items-center gap-1.5 bg-[#fff0ef] dark:bg-pink-950/60 text-[#8B0025] border border-[#FF97A4]/40 px-3 py-2 rounded-full text-xs font-bold shadow-[0_2px_8px_rgba(42,0,2,0.06)] hover:shadow-[0_6px_16px_rgba(42,0,2,0.12)] hover:-translate-y-0.5 active:scale-95 transition-all duration-300"
+              className="flex items-center gap-1.5 bg-[#fff0ef] dark:bg-pink-950/60 text-[#8B0025] border border-[#FF97A4]/40 px-2.5 xl:px-3 py-2 rounded-full text-xs font-bold shadow-[0_2px_8px_rgba(42,0,2,0.06)] hover:shadow-[0_6px_16px_rgba(42,0,2,0.12)] hover:-translate-y-0.5 active:scale-95 transition-all duration-300"
               title="Acceso con Huella / Face ID (Passkeys)"
             >
               <Fingerprint size={14} />
-              <span className="hidden sm:inline text-[11px]">Huella 👆</span>
+              <span className="hidden xl:inline text-[11px]">Huella 👆</span>
             </button>
 
             <div className="hover:-translate-y-0.5 active:scale-95 transition-all duration-300">
@@ -155,7 +155,7 @@ export function StickyNav({ siteConfig }: StickyNavProps) {
             {/* Botón de Menú Móvil (Contraer / Desplegar) */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2.5 rounded-full bg-white/80 dark:bg-gray-800/80 text-[#2B0002] dark:text-gray-200 border border-[#D4AF37]/30 shadow-sm hover:bg-white dark:hover:bg-gray-700 active:scale-95 transition-all"
+              className="lg:hidden p-2.5 rounded-full bg-white/80 dark:bg-gray-800/80 text-[#2B0002] dark:text-gray-200 border border-[#D4AF37]/30 shadow-sm hover:bg-white dark:hover:bg-gray-700 active:scale-95 transition-all"
               aria-label={isMobileMenuOpen ? "Contraer menú" : "Desplegar menú"}
             >
               {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
@@ -165,7 +165,7 @@ export function StickyNav({ siteConfig }: StickyNavProps) {
 
         {/* MENÚ MÓVIL DESPLEGABLE */}
         {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-[#D4AF37]/20 bg-[#fff8f7]/98 dark:bg-[#181922]/98 backdrop-blur-xl px-4 py-4 space-y-2 shadow-lg animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="lg:hidden border-t border-[#D4AF37]/20 bg-[#fff8f7]/98 dark:bg-[#181922]/98 backdrop-blur-xl px-4 py-4 space-y-2 shadow-lg animate-in fade-in slide-in-from-top-2 duration-200">
             <nav className="flex flex-col gap-2">
               {navLinks.map((link, idx) => (
                 <Link
