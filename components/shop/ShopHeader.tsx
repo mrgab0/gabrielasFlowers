@@ -27,9 +27,9 @@ export const ShopHeader = () => {
   return (
     <>
       <header className="sticky top-0 z-40 bg-white/90 dark:bg-[#181922]/90 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 shadow-sm transition-all">
-        <div className="container mx-auto px-4 sm:px-6 h-20 flex items-center justify-between gap-3 sm:gap-6">
+        <div className="container mx-auto px-4 sm:px-6 h-20 flex items-center justify-between gap-3 sm:gap-6 relative">
           {/* Logo Presionable hacia el Home */}
-          <Link href="/" className="flex items-center gap-3 group flex-shrink-0 z-10">
+          <Link href="/" className="flex items-center gap-3 group flex-shrink-0 relative z-10">
             <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden border-2 border-[#D4AF37]/50 shadow-md group-hover:scale-105 group-active:scale-95 transition-transform bg-white p-0.5 flex-shrink-0">
               <img src="/logo.jpg" alt="Gabriela's Flowers Logo" className="w-full h-full object-cover rounded-full" />
             </div>
@@ -44,7 +44,7 @@ export const ShopHeader = () => {
           </Link>
 
           {/* Navegación Central (Escritorio) */}
-          <nav className="hidden md:flex flex-1 min-w-0 items-center justify-start lg:justify-center overflow-x-auto whitespace-nowrap [&::-webkit-scrollbar]:hidden font-bold text-[10px] sm:text-xs uppercase tracking-[0.1em] sm:tracking-[0.15em] px-2 gap-2 sm:gap-3 py-2">
+          <nav className="hidden md:flex flex-1 min-w-0 items-center justify-start lg:justify-center overflow-x-auto whitespace-nowrap [&::-webkit-scrollbar]:hidden font-bold text-[10px] sm:text-xs uppercase tracking-[0.1em] sm:tracking-[0.15em] px-2 gap-2 sm:gap-3 py-2 relative z-0">
             {navLinks.map((link, idx) => (
               <Link 
                 key={idx}
@@ -57,7 +57,7 @@ export const ShopHeader = () => {
           </nav>
 
           {/* Acciones Derecha (Acceso por Huella, Tema, Idioma, Carrito y Toggle Móvil) */}
-          <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="flex items-center gap-2 flex-shrink-0 relative z-10">
             {/* Botón de Acceso Biométrico / Passkeys con Huella */}
             <button
               onClick={() => setIsBioModalOpen(true)}

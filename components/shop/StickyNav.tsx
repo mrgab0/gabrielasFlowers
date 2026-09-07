@@ -62,7 +62,7 @@ export function StickyNav({ siteConfig }: StickyNavProps) {
         <div className="container mx-auto px-4 flex items-center justify-between gap-3 sm:gap-6 relative">
           
           {/* LADO IZQUIERDO: Logo de Gabriela's Flowers SIEMPRE VISIBLE */}
-          <div className="flex items-center gap-4 py-2 flex-shrink-0 z-10">
+          <div className="flex items-center gap-4 py-2 flex-shrink-0 relative z-10">
             <Link href="/" className="flex items-center gap-3 group flex-shrink-0">
               <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden border-2 border-[#D4AF37]/50 shadow-md group-hover:scale-105 group-active:scale-95 transition-transform bg-white flex-shrink-0">
                 <img
@@ -79,12 +79,12 @@ export function StickyNav({ siteConfig }: StickyNavProps) {
             {enableSocials && (
               <div className="hidden 2xl:flex items-center gap-1 ml-4 pl-4 border-l border-[#D4AF37]/30">
                 {instagramUrl && (
-                  <a href={instagramUrl} target="_blank" rel="noopener noreferrer" className="p-2 text-slate-800 dark:text-gray-300 hover:text-[#FF97A4] hover:-translate-y-1 active:scale-95 transition-all bg-white/40 dark:bg-gray-800/40 rounded-full shadow-sm hover:shadow-md" title="Instagram">
+                  <a href={instagramUrl} target="_blank" rel="noopener noreferrer" className="p-2 text-rose-700 dark:text-pink-300 hover:text-[#FF97A4] hover:-translate-y-1 active:scale-95 transition-all bg-white/40 dark:bg-gray-800/40 rounded-full shadow-sm hover:shadow-md" title="Instagram">
                     <Instagram size={15} />
                   </a>
                 )}
                 {facebookUrl && (
-                  <a href={facebookUrl} target="_blank" rel="noopener noreferrer" className="p-2 text-slate-800 dark:text-gray-300 hover:text-[#FF97A4] hover:-translate-y-1 active:scale-95 transition-all bg-white/40 dark:bg-gray-800/40 rounded-full shadow-sm hover:shadow-md" title="Facebook">
+                  <a href={facebookUrl} target="_blank" rel="noopener noreferrer" className="p-2 text-blue-800 dark:text-blue-300 hover:text-[#FF97A4] hover:-translate-y-1 active:scale-95 transition-all bg-white/40 dark:bg-gray-800/40 rounded-full shadow-sm hover:shadow-md" title="Facebook">
                     <Facebook size={15} />
                   </a>
                 )}
@@ -105,7 +105,7 @@ export function StickyNav({ siteConfig }: StickyNavProps) {
           {/* CENTRO: Menú de Navegación en Escritorio */}
           <div 
             ref={scrollRef}
-            className="hidden md:flex flex-1 min-w-0 items-center justify-start lg:justify-center overflow-x-auto whitespace-nowrap [&::-webkit-scrollbar]:hidden font-bold text-[10px] sm:text-xs uppercase tracking-[0.1em] sm:tracking-[0.15em] py-2 gap-2 sm:gap-3 px-2"
+            className="hidden md:flex flex-1 min-w-0 items-center justify-start lg:justify-center overflow-x-auto whitespace-nowrap [&::-webkit-scrollbar]:hidden font-bold text-[10px] sm:text-xs uppercase tracking-[0.1em] sm:tracking-[0.15em] py-2 gap-2 sm:gap-3 px-2 relative z-0"
             onMouseLeave={() => setIsMegaMenuOpen(false)}
           >
             {navLinks.map((link, idx) => (
@@ -134,7 +134,7 @@ export function StickyNav({ siteConfig }: StickyNavProps) {
           </div>
 
           {/* DERECHA: Botones de Control y Toggle Móvil */}
-          <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="flex items-center gap-2 flex-shrink-0 relative z-10">
             <button
               onClick={() => setIsBioModalOpen(true)}
               className="flex items-center gap-1.5 bg-[#fff0ef] dark:bg-pink-950/60 text-[#8B0025] border border-[#FF97A4]/40 px-3 py-2 rounded-full text-xs font-bold shadow-[0_2px_8px_rgba(42,0,2,0.06)] hover:shadow-[0_6px_16px_rgba(42,0,2,0.12)] hover:-translate-y-0.5 active:scale-95 transition-all duration-300"
