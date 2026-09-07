@@ -3,6 +3,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MessageCircle, X, Send, Sparkles, RefreshCw, PhoneCall, ExternalLink, Bot, ChevronRight, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useLocale } from 'next-intl';
 
 interface Message {
   id: string;
@@ -11,21 +13,83 @@ interface Message {
   timestamp: string;
 }
 
-const QUICK_QUESTIONS = [
-  "🌸 Ver arreglos de cumpleaños",
-  "🌹 Ramos de rosas románticos",
-  "🚚 ¿Cómo funciona el delivery en Houston?",
-  "💍 Arreglos para aniversarios"
-];
-
-const PREVIEW_TICKERS = [
-  "¿Buscas flores hoy? Te ayudo a elegir 🌸",
-  "🚚 Delivery el mismo día en Houston",
-  "🌹 Rosas de lujo y arreglos exclusivos",
-  "💬 Consulta precios y disponibilidad aquí"
-];
+const I18N_CONTENT = {
+  es: {
+    quickQuestions: [
+      "🌸 Ver arreglos de cumpleaños",
+      "🌹 Ramos de rosas románticos",
+      "🚚 ¿Cómo funciona el delivery en Houston?",
+      "💍 Arreglos para aniversarios"
+    ],
+    previewTickers: [
+      "¿Buscas flores hoy? Te ayudo a elegir 🌸",
+      "🚚 Delivery el mismo día en Houston",
+      "🌹 Rosas de lujo y arreglos exclusivos",
+      "💬 Consulta precios y disponibilidad aquí"
+    ],
+    welcomeMessage: "¡Hola! 🌸 Soy **Gabriela**, tu asesora floral virtual de *Gabriela's Flowers* en Houston, Texas.\n\n¿Buscas un arreglo especial para un cumpleaños, aniversario, o deseas conocer nuestras opciones de delivery hoy?",
+    resetMessage: "¡Hola de nuevo! 🌸 ¿En qué arreglo floral o consulta te puedo ayudar en este momento?",
+    errorMessage: "🌸 Hubo un pequeño inconveniente de conexión. Puedes escribirnos directo a nuestro WhatsApp [+1 832 391-1835](https://wa.me/18323911835) para asistirte de inmediato.",
+    defaultErrorResponse: "Disculpa, no pude procesar tu solicitud. Por favor intenta nuevamente.",
+    advisorRole: "GABRIELA • ASESORA IA",
+    liveBadge: "EN VIVO",
+    headerStatus: "Asesora Floral • En línea 🌸",
+    ariaOpen: "Abrir Asistente Floral IA Gabriela",
+    ariaRestart: "Reiniciar chat",
+    ariaClose: "Cerrar chat",
+    ariaSend: "Enviar mensaje",
+    searchingCatalog: "Gabriela está buscando en el catálogo...",
+    popularQuestions: "Consultas populares:",
+    inputPlaceholder: "Pregunta por arreglos, precios o delivery...",
+    poweredBy: "Potenciado por Gemini Flash",
+  },
+  en: {
+    quickQuestions: [
+      "🌸 View birthday arrangements",
+      "🌹 Romantic rose bouquets",
+      "🚚 How does Houston delivery work?",
+      "💍 Anniversary floral designs"
+    ],
+    previewTickers: [
+      "Looking for flowers today? I'll help you choose 🌸",
+      "🚚 Same-day delivery in Houston",
+      "🌹 Luxury roses & exclusive arrangements",
+      "💬 Check prices & availability here"
+    ],
+    welcomeMessage: "Hello! 🌸 I'm **Gabriela**, your virtual floral advisor at *Gabriela's Flowers* in Houston, Texas.\n\nAre you looking for a special arrangement for a birthday, anniversary, or would you like to check our delivery options today?",
+    resetMessage: "Hello again! 🌸 What floral arrangement or question can I help you with right now?",
+    errorMessage: "🌸 There was a brief connection issue. You can message us directly on WhatsApp [+1 832 391-1835](https://wa.me/18323911835) for instant assistance.",
+    defaultErrorResponse: "Sorry, I couldn't process your request. Please try again.",
+    advisorRole: "GABRIELA • AI ADVISOR",
+    liveBadge: "LIVE",
+    headerStatus: "Floral Advisor • Online 🌸",
+    ariaOpen: "Open Gabriela AI Floral Assistant",
+    ariaRestart: "Restart chat",
+    ariaClose: "Close chat",
+    ariaSend: "Send message",
+    searchingCatalog: "Gabriela is searching the catalog...",
+    popularQuestions: "Popular questions:",
+    inputPlaceholder: "Ask about arrangements, prices, or delivery...",
+    poweredBy: "Powered by Gemini Flash",
+  }
+};
 
 export const ChatbotModal = () => {
+  const pathname = usePathname();
+  let currentLocale = "es";
+  try {
+    const intlLocale = useLocale();
+    if (intlLocale === "en" || intlLocale === "es") {
+      currentLocale = intlLocale;
+    }
+  } catch (e) {}
+
+  if (pathname?.startsWith("/en")) {
+    currentLocale = "en";
+  }
+
+  const content = currentLocale === "en" ? I18N_CONTENT.en : I18N_CONTENT.es;
+
   const [isOpen, setIsOpen] = useState(false);
   const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -34,10 +98,25 @@ export const ChatbotModal = () => {
     {
       id: "welcome-msg",
       role: "model",
-      text: "¡Hola! 🌸 Soy **Gabriela**, tu asesora floral virtual de *Gabriela's Flowers* en Houston, Texas.\n\n¿Buscas un arreglo especial para un cumpleaños, aniversario, o deseas conocer nuestras opciones de delivery hoy?",
+      text: content.welcomeMessage,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }
   ]);
+
+  // Sincronizar mensaje de bienvenida si cambia el idioma y no hay historial previo
+  useEffect(() => {
+    setMessages((prev) => {
+      if (prev.length === 1 && prev[0].id === "welcome-msg") {
+        return [{
+          id: "welcome-msg",
+          role: "model",
+          text: content.welcomeMessage,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        }];
+      }
+      return prev;
+    });
+  }, [currentLocale]);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -45,10 +124,10 @@ export const ChatbotModal = () => {
   // Rotador automático de mensajes en el mini-reproductor
   useEffect(() => {
     const interval = setInterval(() => {
-      setTickerIndex((prev) => (prev + 1) % PREVIEW_TICKERS.length);
+      setTickerIndex((prev) => (prev + 1) % content.previewTickers.length);
     }, 3800);
     return () => clearInterval(interval);
-  }, []);
+  }, [content.previewTickers.length]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -86,7 +165,7 @@ export const ChatbotModal = () => {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: apiHistory })
+        body: JSON.stringify({ messages: apiHistory, locale: currentLocale })
       });
 
       if (!res.ok) throw new Error("Error en la respuesta");
@@ -95,7 +174,7 @@ export const ChatbotModal = () => {
       const modelMsg: Message = {
         id: (Date.now() + 1).toString(),
         role: 'model',
-        text: data.text || "Disculpa, no pude procesar tu solicitud. Por favor intenta nuevamente.",
+        text: data.text || content.defaultErrorResponse,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
 
@@ -104,7 +183,7 @@ export const ChatbotModal = () => {
       const errorMsg: Message = {
         id: (Date.now() + 1).toString(),
         role: 'model',
-        text: "🌸 Hubo un pequeño inconveniente de conexión. Puedes escribirnos directo a nuestro WhatsApp [+1 832 391-1835](https://wa.me/18323911835) para asistirte de inmediato.",
+        text: content.errorMessage,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
       setMessages(prev => [...prev, errorMsg]);
@@ -118,7 +197,7 @@ export const ChatbotModal = () => {
       {
         id: Date.now().toString(),
         role: "model",
-        text: "¡Hola de nuevo! 🌸 ¿En qué arreglo floral o consulta te puedo ayudar en este momento?",
+        text: content.resetMessage,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       }
     ]);
@@ -176,7 +255,7 @@ export const ChatbotModal = () => {
           role="button"
           tabIndex={0}
           onKeyDown={(e) => e.key === 'Enter' && setIsOpen(true)}
-          aria-label="Abrir Asistente Floral IA Gabriela"
+          aria-label={content.ariaOpen}
           className="fixed bottom-5 right-4 sm:right-6 z-40 cursor-pointer group select-none animate-in fade-in slide-in-from-bottom-4 duration-300"
         >
           <div className="flex items-center gap-2.5 sm:gap-3.5 bg-white/95 dark:bg-[#12131a]/95 backdrop-blur-md pl-2 pr-3.5 sm:pr-4 py-2 rounded-2xl shadow-[0px_10px_35px_rgba(139,0,36,0.25)] border-2 border-[#D4AF37]/80 hover:border-[#D4AF37] hover:shadow-[0px_12px_40px_rgba(139,0,36,0.35)] transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] max-w-[310px] sm:max-w-none">
@@ -206,11 +285,11 @@ export const ChatbotModal = () => {
             <div className="flex flex-col text-left overflow-hidden min-w-[155px] sm:min-w-[200px]">
               <div className="flex items-center gap-1.5 leading-none mb-1">
                 <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-black dark:text-pink-400">
-                  GABRIELA • ASESORA IA
+                  {content.advisorRole}
                 </span>
                 <span className="flex items-center gap-0.5 text-[8px] bg-green-100 dark:bg-green-950/60 text-green-900 dark:text-green-300 font-extrabold px-1.5 py-0.5 rounded-full">
                   <span className="w-1 h-1 bg-green-500 rounded-full animate-ping"></span>
-                  EN VIVO
+                  {content.liveBadge}
                 </span>
               </div>
 
@@ -220,7 +299,7 @@ export const ChatbotModal = () => {
                   key={tickerIndex} 
                   className="text-[11px] sm:text-xs font-bold text-black dark:text-gray-200 truncate animate-in fade-in slide-in-from-bottom-2 duration-300"
                 >
-                  {PREVIEW_TICKERS[tickerIndex]}
+                  {content.previewTickers[tickerIndex]}
                 </p>
               </div>
             </div>
@@ -255,7 +334,7 @@ export const ChatbotModal = () => {
                   <span className="text-[9px] bg-[#D4AF37]/30 text-[#D4AF37] border border-[#D4AF37]/40 px-1.5 py-0.2 rounded font-black tracking-wider">IA</span>
                 </div>
                 <span className="text-[11px] text-pink-200/90 font-medium flex items-center gap-1">
-                  Asesora Floral • En línea 🌸
+                  {content.headerStatus}
                 </span>
               </div>
             </div>
@@ -263,14 +342,14 @@ export const ChatbotModal = () => {
             <div className="flex items-center gap-1">
               <button
                 onClick={handleReset}
-                title="Reiniciar chat"
+                title={content.ariaRestart}
                 className="p-1.5 hover:bg-white/10 rounded-xl text-pink-200 hover:text-white transition-colors"
               >
                 <RefreshCw size={15} />
               </button>
               <button
                 onClick={() => setIsOpen(false)}
-                title="Cerrar chat"
+                title={content.ariaClose}
                 className="p-1.5 hover:bg-white/10 rounded-xl text-pink-200 hover:text-white transition-colors"
               >
                 <X size={18} />
@@ -308,7 +387,7 @@ export const ChatbotModal = () => {
                 <span className="w-1.5 h-1.5 bg-[#8B0024] dark:bg-pink-400 rounded-full animate-bounce"></span>
                 <span className="w-1.5 h-1.5 bg-[#8B0024] dark:bg-pink-400 rounded-full animate-bounce [animation-delay:0.2s]"></span>
                 <span className="w-1.5 h-1.5 bg-[#8B0024] dark:bg-pink-400 rounded-full animate-bounce [animation-delay:0.4s]"></span>
-                <span className="ml-1 text-[11px] font-medium">Gabriela está buscando en el catálogo...</span>
+                <span className="ml-1 text-[11px] font-medium">{content.searchingCatalog}</span>
               </div>
             )}
 
@@ -316,9 +395,9 @@ export const ChatbotModal = () => {
             {messages.length <= 2 && !isLoading && (
               <div className="pt-2 space-y-1.5">
                 <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block mb-1.5">
-                  Consultas populares:
+                  {content.popularQuestions}
                 </span>
-                {QUICK_QUESTIONS.map((q, idx) => (
+                {content.quickQuestions.map((q, idx) => (
                   <button
                     key={idx}
                     onClick={() => handleSendMessage(q)}
@@ -349,14 +428,14 @@ export const ChatbotModal = () => {
                 type="text"
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
-                placeholder="Pregunta por arreglos, precios o delivery..."
+                placeholder={content.inputPlaceholder}
                 disabled={isLoading}
                 className="flex-1 text-xs sm:text-sm bg-gray-50 dark:bg-[#1c1d28] text-gray-900 dark:text-white px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:border-[#8B0024] dark:focus:border-pink-400 transition-colors placeholder:text-gray-400"
               />
               <button
                 type="submit"
                 disabled={!inputMessage.trim() || isLoading}
-                aria-label="Enviar mensaje"
+                aria-label={content.ariaSend}
                 className="bg-[#8B0024] hover:bg-[#70001d] disabled:opacity-50 text-white p-2.5 rounded-xl transition-all flex items-center justify-center shadow-md hover:scale-105 active:scale-95 disabled:hover:scale-100"
               >
                 <Send size={16} />
@@ -366,7 +445,7 @@ export const ChatbotModal = () => {
             <div className="flex items-center justify-between text-[11px] text-gray-500 dark:text-gray-400 px-1 pt-0.5">
               <span className="flex items-center gap-1">
                 <Sparkles size={11} className="text-[#D4AF37]" />
-                Potenciado por Gemini Flash
+                {content.poweredBy}
               </span>
               <a
                 href="https://wa.me/18323911835"
