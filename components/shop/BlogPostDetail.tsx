@@ -27,12 +27,12 @@ export function BlogPostDetail({ post, locale = "es" }: BlogPostDetailProps) {
 
   if (!post) {
     return (
-      <div className="min-h-screen bg-[#FDFBF9] dark:bg-[#0B0C10] flex flex-col">
+      <div className="min-h-screen bg-[#FDFBF9] dark:bg-[#0B0C10] text-black dark:text-black flex flex-col">
         <ShopHeader />
         <main className="flex-1 flex items-center justify-center p-6">
           <div className="text-center space-y-4 max-w-md">
-            <h1 className="text-2xl font-serif font-black text-gray-900 dark:text-white">Artículo no encontrado</h1>
-            <p className="text-sm text-gray-600 dark:text-gray-400">El post que buscas no existe o fue movido.</p>
+            <h1 className="text-2xl font-serif font-black !text-black dark:!text-black" style={{ color: '#000000' }}>Artículo no encontrado</h1>
+            <p className="text-sm text-black dark:text-black font-semibold">El post que buscas no existe o fue movido.</p>
             <Link
               href="/nosotros"
               className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#8B0024] text-white rounded-full text-xs font-bold"
@@ -64,14 +64,14 @@ export function BlogPostDetail({ post, locale = "es" }: BlogPostDetailProps) {
     const paragraphs = content.split(/\n\n+/);
 
     return (
-      <div className="space-y-6 text-gray-800 dark:text-gray-200 text-sm sm:text-base leading-relaxed">
+      <div className="space-y-6 text-black dark:text-black text-sm sm:text-base leading-relaxed">
         {paragraphs.map((para, i) => {
           const trimmed = para.trim();
 
           // Subtítulo H2 (##)
           if (trimmed.startsWith("## ")) {
             return (
-              <h2 key={i} className="text-2xl sm:text-3xl font-serif font-black text-gray-900 dark:!text-white pt-6 pb-1 border-b border-gray-100 dark:border-gray-800">
+              <h2 key={i} className="text-2xl sm:text-3xl font-serif font-black !text-black dark:!text-black pt-6 pb-1 border-b border-gray-200 dark:border-gray-800" style={{ color: '#000000' }}>
                 {trimmed.replace("## ", "")}
               </h2>
             );
@@ -80,7 +80,7 @@ export function BlogPostDetail({ post, locale = "es" }: BlogPostDetailProps) {
           // Subtítulo H3 (###)
           if (trimmed.startsWith("### ")) {
             return (
-              <h3 key={i} className="text-lg sm:text-xl font-serif font-black text-gray-900 dark:!text-white pt-4 pb-0.5">
+              <h3 key={i} className="text-lg sm:text-xl font-serif font-black !text-black dark:!text-black pt-4 pb-0.5" style={{ color: '#000000' }}>
                 {trimmed.replace("### ", "")}
               </h3>
             );
@@ -89,7 +89,7 @@ export function BlogPostDetail({ post, locale = "es" }: BlogPostDetailProps) {
           // Blockquote (>)
           if (trimmed.startsWith("> ")) {
             return (
-              <blockquote key={i} className="p-4 sm:p-5 my-4 bg-pink-50/80 dark:bg-pink-950/40 rounded-2xl border-l-4 border-[#FF97A4] text-gray-900 dark:text-gray-100 font-medium italic">
+              <blockquote key={i} className="p-4 sm:p-5 my-4 bg-pink-50/80 dark:bg-pink-100/40 rounded-2xl border-l-4 border-[#8B0024] text-black dark:text-black font-semibold italic">
                 {trimmed.replace(/^>\s*/, "")}
               </blockquote>
             );
@@ -99,11 +99,11 @@ export function BlogPostDetail({ post, locale = "es" }: BlogPostDetailProps) {
           if (trimmed.startsWith("- ") || trimmed.startsWith("* ")) {
             const items = trimmed.split(/\n/).filter((l) => l.trim().length > 0);
             return (
-              <ul key={i} className="space-y-2.5 my-3 pl-4 list-disc marker:text-[#FF97A4]">
+              <ul key={i} className="space-y-2.5 my-3 pl-4 list-disc marker:text-[#8B0024]">
                 {items.map((it, idx) => {
                   const cleanItem = it.replace(/^[-*]\s*/, "");
                   return (
-                    <li key={idx} className="font-medium text-gray-700 dark:text-gray-300">
+                    <li key={idx} className="font-semibold text-black dark:text-black">
                       {cleanItem}
                     </li>
                   );
@@ -114,7 +114,7 @@ export function BlogPostDetail({ post, locale = "es" }: BlogPostDetailProps) {
 
           // Párrafo normal
           return (
-            <p key={i} className="font-normal text-gray-700 dark:text-gray-300 leading-relaxed">
+            <p key={i} className="font-medium text-black dark:text-black leading-relaxed">
               {trimmed}
             </p>
           );
@@ -124,7 +124,7 @@ export function BlogPostDetail({ post, locale = "es" }: BlogPostDetailProps) {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFBF9] dark:bg-[#0B0C10] text-[#1A1C1C] dark:text-gray-100 flex flex-col transition-colors duration-300">
+    <div className="min-h-screen bg-[#FDFBF9] dark:bg-[#0B0C10] text-black dark:text-black flex flex-col transition-colors duration-300">
       <ShopHeader />
 
       {/* Structured Data JSON-LD para Google SEO */}
@@ -161,7 +161,7 @@ export function BlogPostDetail({ post, locale = "es" }: BlogPostDetailProps) {
           <div className="flex items-center justify-between gap-3">
             <Link
               href="/nosotros"
-              className="inline-flex items-center gap-2 text-xs font-bold text-gray-600 dark:text-gray-400 hover:text-[#8B0024] dark:hover:text-[#FF97A4] transition-colors"
+              className="inline-flex items-center gap-2 text-xs font-black text-black dark:text-black hover:text-[#8B0024] transition-colors"
             >
               <ArrowLeft size={14} />
               <span>Volver a Nosotros & Blog</span>
@@ -170,7 +170,7 @@ export function BlogPostDetail({ post, locale = "es" }: BlogPostDetailProps) {
             <div className="flex items-center gap-2">
               <button
                 onClick={handleCopyLink}
-                className="p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 transition-all text-xs font-bold flex items-center gap-1.5"
+                className="p-2 rounded-full bg-gray-100 dark:bg-gray-100 text-black dark:text-black hover:bg-gray-200 transition-all text-xs font-bold flex items-center gap-1.5"
                 title="Copiar enlace"
               >
                 {copied ? <Check size={14} className="text-emerald-500" /> : <Share2 size={14} />}
@@ -192,34 +192,34 @@ export function BlogPostDetail({ post, locale = "es" }: BlogPostDetailProps) {
 
           {/* Encabezado del Post */}
           <header className="space-y-4 text-center max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 bg-pink-100 dark:bg-pink-950/80 text-[#8B0024] dark:text-pink-300 px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider">
-              <Sparkles size={13} />
+            <div className="inline-flex items-center gap-2 bg-pink-100 dark:bg-pink-100 text-black dark:text-black px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider">
+              <Sparkles size={13} className="text-[#8B0024]" />
               <span>Boutique Floral & Consejos</span>
             </div>
 
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-black text-gray-900 dark:!text-white leading-tight tracking-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-black !text-black dark:!text-black leading-tight tracking-tight" style={{ color: '#000000' }}>
               {post.title}
             </h1>
 
             {post.excerpt && (
-              <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 font-medium leading-relaxed max-w-2xl mx-auto">
+              <p className="text-sm sm:text-base text-black dark:text-black font-semibold leading-relaxed max-w-2xl mx-auto">
                 {post.excerpt}
               </p>
             )}
 
-            <div className="flex flex-wrap justify-center items-center gap-4 text-xs font-bold text-gray-500 dark:text-gray-400 pt-1">
+            <div className="flex flex-wrap justify-center items-center gap-4 text-xs font-bold text-black dark:text-black pt-1">
               <span className="flex items-center gap-1">
-                <Calendar size={14} className="text-[#FF97A4]" />
+                <Calendar size={14} className="text-[#8B0024]" />
                 {new Date(post.createdAt || Date.now()).toLocaleDateString("es-ES", { month: "long", day: "numeric", year: "numeric" })}
               </span>
               <span>•</span>
               <span className="flex items-center gap-1">
-                <Clock size={14} className="text-purple-500" />
+                <Clock size={14} className="text-purple-600" />
                 3 min de lectura
               </span>
               <span>•</span>
               <span className="flex items-center gap-1">
-                <MapPin size={14} className="text-emerald-500" />
+                <MapPin size={14} className="text-emerald-600" />
                 Houston & Pasadena, TX
               </span>
             </div>
@@ -246,10 +246,10 @@ export function BlogPostDetail({ post, locale = "es" }: BlogPostDetailProps) {
             <div className="w-12 h-12 rounded-full bg-[#8B0024] text-white flex items-center justify-center mx-auto shadow-md">
               <Gift size={22} />
             </div>
-            <h3 className="text-2xl font-serif font-black text-gray-900 dark:!text-white">
+            <h3 className="text-2xl font-serif font-black !text-black dark:!text-black" style={{ color: '#000000' }}>
               ¿Listo para Enviar Flores de Lujo en Houston?
             </h3>
-            <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 max-w-lg mx-auto font-medium">
+            <p className="text-xs sm:text-sm text-black dark:text-black max-w-lg mx-auto font-medium">
               Explora nuestra exclusiva colección de ramos buchones, rosas de exportación y cajas personalizadas con entrega el mismo día.
             </p>
             <div className="flex flex-wrap justify-center items-center gap-3 pt-2">
