@@ -27,9 +27,9 @@ export function BlogPostDetail({ post, locale = "es" }: BlogPostDetailProps) {
 
   if (!post) {
     return (
-      <div className="nosotros-page-root min-h-screen bg-[#FDFBF9] dark:bg-[#0B0C10] text-black dark:text-black flex flex-col">
+      <div className="min-h-screen bg-[#FDFBF9] dark:bg-[#0B0C10] text-black dark:text-black flex flex-col">
         <ShopHeader />
-        <main className="flex-1 flex items-center justify-center p-6">
+        <main className="nosotros-page-root flex-1 flex items-center justify-center p-6">
           <div className="text-center space-y-4 max-w-md">
             <h1 className="text-2xl font-serif font-black !text-black dark:!text-black" style={{ color: '#000000' }}>Artículo no encontrado</h1>
             <p className="text-sm text-black dark:text-black font-semibold">El post que buscas no existe o fue movido.</p>
@@ -124,7 +124,7 @@ export function BlogPostDetail({ post, locale = "es" }: BlogPostDetailProps) {
   };
 
   return (
-    <div className="nosotros-page-root min-h-screen bg-[#FDFBF9] dark:bg-[#0B0C10] text-black dark:text-black flex flex-col transition-colors duration-300">
+    <div className="min-h-screen bg-[#FDFBF9] dark:bg-[#0B0C10] text-black dark:text-black flex flex-col transition-colors duration-300">
       <ShopHeader />
 
       {/* Structured Data JSON-LD para Google SEO */}
@@ -154,7 +154,7 @@ export function BlogPostDetail({ post, locale = "es" }: BlogPostDetailProps) {
         }}
       />
 
-      <main className="flex-1 py-10 md:py-16">
+      <main className="nosotros-page-root flex-1 py-10 md:py-16">
         <article className="max-w-4xl w-full mx-auto px-4 sm:px-6 space-y-8">
           
           {/* Navegación de Regreso */}

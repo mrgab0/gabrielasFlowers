@@ -44,10 +44,10 @@ export function NosotrosClient({ initialPosts = [], locale = "es" }: NosotrosCli
   });
 
   return (
-    <div className="nosotros-page-root min-h-screen bg-[#FDFBF9] dark:bg-[#0B0C10] text-black dark:text-black flex flex-col transition-colors duration-300">
+    <div className="min-h-screen bg-[#FDFBF9] dark:bg-[#0B0C10] text-black dark:text-black flex flex-col transition-colors duration-300">
       <ShopHeader />
 
-      <main className="flex-1">
+      <main className="nosotros-page-root flex-1">
         
         {/* HERO EDITORIAL: HISTORIA DE GABRIELA'S FLOWERS */}
         <section className="relative overflow-hidden py-16 md:py-24 bg-gradient-to-b from-[#fff0ef]/60 via-transparent to-transparent dark:from-[#181922]/60 dark:via-transparent dark:to-transparent border-b border-[#D4AF37]/20">

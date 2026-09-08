@@ -19,32 +19,32 @@ export function Footer({ siteConfig }: FooterProps) {
               className="w-14 h-14 rounded-full object-cover border border-[#D4AF37] shadow-lg hidden sm:block"
             />
             <div>
-              <h3 className="text-2xl sm:text-3xl font-serif font-bold text-white tracking-tight">
+              <h3 className="text-2xl sm:text-3xl font-serif font-bold !text-white tracking-tight" style={{ color: '#FFFFFF' }}>
                 {siteConfig?.footerTitle || "Gabriela's Flowers LLC"}
               </h3>
-              <p className="text-xs text-[#D4AF37] font-serif italic font-medium mt-1">
+              <p className="text-xs !text-[#D4AF37] font-serif italic font-medium mt-1" style={{ color: '#D4AF37' }}>
                 {siteConfig?.footerSlogan || "Boutique Digital de Alta Floristería • Pasadena, Texas"}
               </p>
             </div>
           </div>
           
-          <div className="flex flex-wrap justify-center gap-6 text-xs font-bold tracking-widest text-gray-300 uppercase">
-            <span>4201 Fairmont Pkwy</span>
-            <span>•</span>
-            <span>Pasadena, TX 77504</span>
-            <span>•</span>
-            <span>Boutique Digital</span>
+          <div className="flex flex-wrap justify-center gap-6 text-xs font-bold tracking-widest !text-gray-200 uppercase" style={{ color: '#E5E7EB' }}>
+            <span style={{ color: '#E5E7EB' }}>4201 Fairmont Pkwy</span>
+            <span style={{ color: '#E5E7EB' }}>•</span>
+            <span style={{ color: '#E5E7EB' }}>Pasadena, TX 77504</span>
+            <span style={{ color: '#E5E7EB' }}>•</span>
+            <span style={{ color: '#E5E7EB' }}>Boutique Digital</span>
           </div>
         </div>
 
         <div className="flex flex-col md:flex-row justify-between items-center gap-6 text-center md:text-left">
-          <p className="text-gray-400 font-medium text-xs tracking-wider">
+          <p className="!text-gray-300 font-medium text-xs tracking-wider" style={{ color: 'rgba(255, 255, 255, 0.85)' }}>
             {siteConfig?.footerCopyright || `© ${new Date().getFullYear()} Gabriela's Flowers LLC. Todos los derechos reservados.`}
           </p>
 
           {/* Logotipos de Métodos de Pago Aceptados */}
           <div className="flex flex-wrap items-center justify-center md:justify-end gap-3">
-            <span className="text-xs font-bold uppercase tracking-widest text-gray-400 mr-1">
+            <span className="text-xs font-bold uppercase tracking-widest !text-gray-300 mr-1" style={{ color: 'rgba(255, 255, 255, 0.85)' }}>
               Métodos Aceptados:
             </span>
             
