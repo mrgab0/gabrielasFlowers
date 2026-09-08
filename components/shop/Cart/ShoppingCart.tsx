@@ -4,10 +4,16 @@ import React, { useState } from 'react';
 import { ShoppingCart, X, Plus, Minus } from 'lucide-react';
 import { useCart } from './CartContext';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 export const ShoppingCartComponent = () => {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const { cartItems, addToCart, removeFromCart, decreaseFromCart } = useCart();
+
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
 
   const total = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
 

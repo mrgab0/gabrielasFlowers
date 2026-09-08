@@ -76,6 +76,12 @@ const I18N_CONTENT = {
 
 export const ChatbotModal = () => {
   const pathname = usePathname();
+
+  // No renderizar el chatbot en el panel de administración
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
+
   let currentLocale = "es";
   try {
     const intlLocale = useLocale();

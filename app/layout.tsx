@@ -7,6 +7,12 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 import { AnalyticsTracker } from "@/components/analytics/AnalyticsTracker";
 import Script from "next/script";
+import dynamic from "next/dynamic";
+
+const CookieConsent = dynamic(() => import("@/components/CookieConsent").then((m) => m.CookieConsent));
+const PedidoFlotante = dynamic(() => import("@/components/shop/PedidoFlotante").then((m) => m.PedidoFlotante));
+const ShoppingCartComponent = dynamic(() => import("@/components/shop/Cart/ShoppingCart").then((m) => m.ShoppingCartComponent));
+const ChatbotModal = dynamic(() => import("@/components/shop/Chatbot/ChatbotModal").then((m) => m.ChatbotModal));
 
 import { Playfair_Display, Montserrat, Plus_Jakarta_Sans, Manrope } from "next/font/google";
 
@@ -88,7 +94,11 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <NextIntlClientProvider locale="es" messages={esMessages}>
             <CartProvider>
+              <PedidoFlotante />
+              <ShoppingCartComponent />
               {children}
+              <ChatbotModal />
+              <CookieConsent />
               <AnalyticsTracker />
               <InstallPrompt />
             </CartProvider>

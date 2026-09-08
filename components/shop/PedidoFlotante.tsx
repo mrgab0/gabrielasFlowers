@@ -3,12 +3,15 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Truck } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 export const PedidoFlotante = () => {
+  const pathname = usePathname();
   const [hasOrder, setHasOrder] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
 
   useEffect(() => {
+    if (pathname?.startsWith("/admin")) return;
     const savedOrderId = localStorage.getItem("lastOrderId");
     if (savedOrderId) {
       setHasOrder(true);
@@ -16,7 +19,7 @@ export const PedidoFlotante = () => {
     }
   }, []);
 
-  if (!hasOrder) return null;
+  if (pathname?.startsWith("/admin") || !hasOrder) return null;
 
   return (
     <Link 
