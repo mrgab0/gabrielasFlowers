@@ -169,6 +169,28 @@ html:not(.dark) .hover\:bg-\[\#8B0024\]:hover {
   background-color: #4a1320 !important;
 }
 
+/* --- SECCIÓN NOSOTROS Y BLOG EDITORIAL: TIPOGRAFÍA 100% NEGRO PURO --- */
+.nosotros-page-root,
+.nosotros-page-root h1,
+.nosotros-page-root h2,
+.nosotros-page-root h3,
+.nosotros-page-root h4,
+.nosotros-page-root h5,
+.nosotros-page-root h6,
+.nosotros-page-root p,
+.nosotros-page-root strong,
+.nosotros-page-root span:not(.preserve-color),
+.nosotros-page-root li,
+.nosotros-page-root blockquote {
+  color: #000000 !important;
+}
+
+.nosotros-page-root .text-\[\#8B0024\],
+.nosotros-page-root a.text-\[\#8B0024\],
+html:not(.dark) .nosotros-page-root .text-\[\#8B0024\] {
+  color: #8B0024 !important;
+}
+
 /* --- COBERTURA COMPLETA DE MODO OSCURO (CLIENTE & ADMIN) --- */
 
 .dark main,

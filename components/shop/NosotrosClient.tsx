@@ -44,7 +44,7 @@ export function NosotrosClient({ initialPosts = [], locale = "es" }: NosotrosCli
   });
 
   return (
-    <div className="min-h-screen bg-[#FDFBF9] dark:bg-[#0B0C10] text-black dark:text-black flex flex-col transition-colors duration-300">
+    <div className="nosotros-page-root min-h-screen bg-[#FDFBF9] dark:bg-[#0B0C10] text-black dark:text-black flex flex-col transition-colors duration-300">
       <ShopHeader />
 
       <main className="flex-1">
@@ -62,7 +62,7 @@ export function NosotrosClient({ initialPosts = [], locale = "es" }: NosotrosCli
 
               {/* Título Principal */}
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif font-black !text-black dark:!text-black tracking-tight leading-tight" style={{ color: '#000000' }}>
-                Detalles que <span className="text-[#8B0024]">Enamoran</span>
+                Detalles que Enamoran
               </h1>
 
               {/* Resumen de Historia */}
