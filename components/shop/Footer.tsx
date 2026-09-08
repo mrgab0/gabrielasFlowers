@@ -23,7 +23,7 @@ export function Footer({ siteConfig }: FooterProps) {
                 {siteConfig?.footerTitle || "Gabriela's Flowers LLC"}
               </h3>
               <p className="text-xs text-[#D4AF37] font-serif italic font-medium mt-1">
-                {siteConfig?.footerSlogan || "Boutique Digital de Alta Floristería • Houston, Texas"}
+                {siteConfig?.footerSlogan || "Boutique Digital de Alta Floristería • Pasadena, Texas"}
               </p>
             </div>
           </div>

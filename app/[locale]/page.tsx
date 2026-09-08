@@ -128,7 +128,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
               {locale === 'en' ? t('Index.description') : '"Detalles que enamoran"'}
             </p>
             <div className="flex flex-wrap justify-center items-center gap-3 text-xs sm:text-sm text-gray-600 dark:text-gray-400 font-semibold pt-1">
-              <span className="flex items-center gap-1"><MapPin size={15} className="text-[#8B0024]" /> Houston, Texas</span>
+              <span className="flex items-center gap-1"><MapPin size={15} className="text-[#8B0024]" /> Houston & Pasadena, TX</span>
               <span>•</span>
               <span className="flex items-center gap-1"><Truck size={15} className="text-[#8B0024]" /> Delivery Disponible</span>
               <span>•</span>
