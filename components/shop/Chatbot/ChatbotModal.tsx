@@ -150,6 +150,7 @@ export const ChatbotModal = () => {
     const text = (textToSend || inputMessage).trim();
     if (!text || isLoading) return;
 
+    const startTime = Date.now();
     const userMsg: Message = {
       id: Date.now().toString(),
       role: 'user',
@@ -177,6 +178,15 @@ export const ChatbotModal = () => {
       if (!res.ok) throw new Error("Error en la respuesta");
       const data = await res.json();
 
+      // Simular delay humano de digitación (1.2s - 1.8s proporcional al texto)
+      // mientras se mantiene visible la animación de "Gabriela está escribiendo..."
+      const responseLen = (data.text || "").length || 60;
+      const targetDelay = Math.min(2000, Math.max(1200, responseLen * 12));
+      const elapsed = Date.now() - startTime;
+      if (elapsed < targetDelay) {
+        await new Promise(resolve => setTimeout(resolve, targetDelay - elapsed));
+      }
+
       const modelMsg: Message = {
         id: (Date.now() + 1).toString(),
         role: 'model',
@@ -186,6 +196,10 @@ export const ChatbotModal = () => {
 
       setMessages(prev => [...prev, modelMsg]);
     } catch (error) {
+      const elapsed = Date.now() - startTime;
+      if (elapsed < 1000) {
+        await new Promise(resolve => setTimeout(resolve, 1000 - elapsed));
+      }
       const errorMsg: Message = {
         id: (Date.now() + 1).toString(),
         role: 'model',
