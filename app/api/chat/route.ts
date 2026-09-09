@@ -8,7 +8,7 @@ export const runtime = 'nodejs';
 
 export async function POST(req: Request) {
   try {
-    const { messages, locale = 'es' } = await req.json();
+    const { messages, locale = 'es', clientContext } = await req.json();
     const isEn = locale === 'en';
 
     if (!messages || !Array.isArray(messages) || messages.length === 0) {
@@ -16,6 +16,15 @@ export async function POST(req: Request) {
         error: isEn ? "No valid messages provided." : "No se proporcionaron mensajes válidos." 
       }, { status: 400 });
     }
+
+    const customerName = clientContext?.customerName?.toString()?.trim();
+    const lastOrderId = clientContext?.lastOrderId?.toString()?.trim();
+
+    const clientContextSnippet = (customerName || lastOrderId)
+      ? (isEn
+          ? `\nReturning Customer Context:\n${customerName ? `- Customer Name: ${customerName}\n` : ''}${lastOrderId ? `- Last Known Order ID: ${lastOrderId}\n` : ''}- Note: If greeting or welcoming the customer, you may address them warmly by name (e.g. "Hi again, ${customerName}! 🌸"). Only reference the order ID if they ask about tracking or their previous order.\n`
+          : `\nContexto de Cliente Recurrente:\n${customerName ? `- Nombre del cliente: ${customerName}\n` : ''}${lastOrderId ? `- Último pedido registrado: ${lastOrderId}\n` : ''}- Nota: Si saludas o das la bienvenida al cliente, puedes llamarlo cordialmente por su nombre (ej: "¡Hola de nuevo, ${customerName}! 🌸"). Solo haz referencia al ID de orden si pregunta por su pedido o rastreo.\n`)
+      : '';
 
     const apiKey = process.env.GEMINI_API_KEY;
 
@@ -46,7 +55,7 @@ export async function POST(req: Request) {
     const systemPrompt = isEn
       ? `You are "Gabriela", the friendly, elegant, and expert florist at "Gabriela's Flowers LLC" in Houston & Pasadena, Texas.
 Your goal is to assist customers naturally via mobile chat just like a real, helpful florist on WhatsApp.
-
+${clientContextSnippet}
 Full Business & Website Knowledge:
 - Website Sections & Links:
   * Contact & Email: [Contact Page](/contacto) (direct web form to send emails and inquiries to our florists).
@@ -79,7 +88,7 @@ Conversational Guidelines (STRICT):
 9. Completeness: ALWAYS complete all sentences and thoughts properly with punctuation. NEVER leave a sentence half-cut or truncated.`
       : `Eres "Gabriela", la florista experta, cálida y amigable de "Gabriela's Flowers LLC" en Houston y Pasadena, Texas.
 Tu objetivo es asesorar a los clientes de forma 100% natural, cercana y humana, exactamente como una florista real atendiendo por WhatsApp.
-
+${clientContextSnippet}
 Conocimiento Completo del Sitio Web y Negocio:
 - Secciones y Enlaces de la Web:
   * Contacto y Email: [Página de Contacto](/contacto) (formulario web directo para enviar correos electrónicos y mensajes al equipo floral).

@@ -74,6 +74,9 @@ const I18N_CONTENT = {
   }
 };
 
+const CHAT_STORAGE_KEY = "gf_chat_history_v1";
+const CHAT_STORAGE_TTL = 24 * 60 * 60 * 1000; // 24 horas
+
 export const ChatbotModal = () => {
   const pathname = usePathname();
 
@@ -100,6 +103,8 @@ export const ChatbotModal = () => {
   const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [tickerIndex, setTickerIndex] = useState(0);
+  const isHydratedRef = useRef(false);
+
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "welcome-msg",
@@ -108,6 +113,44 @@ export const ChatbotModal = () => {
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }
   ]);
+
+  // Cargar historial persistido al montar en el navegador
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(CHAT_STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && Array.isArray(parsed.messages) && parsed.messages.length > 0) {
+          const isExpired = Date.now() - (parsed.savedAt || 0) > CHAT_STORAGE_TTL;
+          if (!isExpired) {
+            setMessages(parsed.messages);
+          } else {
+            localStorage.removeItem(CHAT_STORAGE_KEY);
+          }
+        }
+      }
+    } catch (e) {
+      console.warn("Error cargando historial de chat:", e);
+    } finally {
+      isHydratedRef.current = true;
+    }
+  }, []);
+
+  // Guardar historial en localStorage ante cualquier cambio
+  useEffect(() => {
+    if (!isHydratedRef.current) return;
+    try {
+      if (messages.length === 1 && messages[0].id === "welcome-msg") {
+        return;
+      }
+      localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify({
+        savedAt: Date.now(),
+        messages
+      }));
+    } catch (e) {
+      console.warn("Error guardando historial de chat:", e);
+    }
+  }, [messages]);
 
   // Sincronizar mensaje de bienvenida si cambia el idioma y no hay historial previo
   useEffect(() => {
@@ -164,15 +207,31 @@ export const ChatbotModal = () => {
     setIsLoading(true);
 
     try {
+      let clientContext: { customerName?: string; lastOrderId?: string } = {};
+      try {
+        const customerName = localStorage.getItem("customerName") || "";
+        const lastOrderId = localStorage.getItem("lastOrderId") || "";
+        if (customerName || lastOrderId) {
+          clientContext = {
+            customerName: customerName || undefined,
+            lastOrderId: lastOrderId || undefined
+          };
+        }
+      } catch (e) {}
+
       const apiHistory = newMessages.map(m => ({
         role: m.role,
         text: m.text
-      }));
+      })).slice(-16);
 
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: apiHistory, locale: currentLocale })
+        body: JSON.stringify({
+          messages: apiHistory,
+          locale: currentLocale,
+          clientContext: Object.keys(clientContext).length > 0 ? clientContext : undefined
+        })
       });
 
       if (!res.ok) throw new Error("Error en la respuesta");
@@ -213,6 +272,9 @@ export const ChatbotModal = () => {
   };
 
   const handleReset = () => {
+    try {
+      localStorage.removeItem(CHAT_STORAGE_KEY);
+    } catch (e) {}
     setMessages([
       {
         id: Date.now().toString(),
