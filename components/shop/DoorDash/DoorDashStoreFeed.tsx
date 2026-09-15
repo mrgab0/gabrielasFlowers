@@ -212,22 +212,11 @@ export function DoorDashStoreFeed({
         </div>
       )}
 
-      {/* Barra de Categorías Sticky en Móvil */}
-      {navCategories.length > 0 && (
-        <div className="lg:hidden">
-          <DoorDashCategoryNav
-            categories={navCategories}
-            activeCategory={activeCategory}
-            onSelectCategory={handleSelectCategory}
-          />
-        </div>
-      )}
-
-      {/* Contenedor Principal en 2 Columnas (Estilo Tienda DoorDash) */}
+      {/* Contenedor Principal (Estilo Tienda DoorDash: Sidebar en Desktop, Bloque Superior Responsivo en Móvil) */}
       <div className="container mx-auto px-4 sm:px-6 py-6">
-        <div className="flex items-start gap-8">
+        <div className="flex flex-col lg:flex-row items-start gap-8">
           
-          {/* Columna Izquierda: Menú Lateral Sticky (Desktop) */}
+          {/* Menú de Categorías Unificado (Idéntico a PC, responsivo en Móvil) */}
           {navCategories.length > 0 && (
             <DoorDashCategoryNav
               categories={navCategories}
@@ -237,7 +226,7 @@ export function DoorDashStoreFeed({
           )}
 
           {/* Columna Derecha: Catálogo Reagrupado por Categorías Solapables */}
-          <main className="flex-1 min-w-0 space-y-10">
+          <main className="flex-1 min-w-0 w-full space-y-10">
             {sections.length === 0 ? (
               // Estado vacío cuando no hay resultados de búsqueda
               <div className="bg-white dark:bg-[#16181F] rounded-3xl p-12 text-center border border-gray-100 dark:border-gray-800 shadow-sm max-w-lg mx-auto space-y-4">
