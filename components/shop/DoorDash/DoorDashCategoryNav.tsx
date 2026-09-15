@@ -75,8 +75,8 @@ export function DoorDashCategoryNav({
 
       {/* 2. DESKTOP: Menú Lateral Sticky estilo DoorDash (Left Sidebar) */}
       <aside className="hidden lg:block w-60 xl:w-64 flex-shrink-0 sticky top-24 self-start space-y-3 pr-2">
-        <div className="bg-white/80 dark:bg-[#12131A]/80 backdrop-blur-md rounded-2xl p-4 border border-[#D4AF37]/20 shadow-[0_4px_20px_rgba(42,0,2,0.03)]">
-          <div className="flex items-center gap-2 px-3 pb-3 border-b border-gray-100 dark:border-gray-800/80 mb-2">
+        <div className="bg-[#fff8f7] dark:bg-[#0B0C10] rounded-2xl p-4 border border-[#D4AF37]/25 shadow-none">
+          <div className="flex items-center gap-2 px-3 pb-3 border-b border-[#D4AF37]/20 mb-2">
             <Sparkles size={14} className="text-[#D4AF37]" />
             <h3 className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-[#8B0024] dark:text-[#FF97A4]">
               Menú de Categorías
@@ -93,8 +93,8 @@ export function DoorDashCategoryNav({
                   onClick={() => onSelectCategory(cat.id)}
                   className={`w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 flex items-center justify-between group ${
                     isActive
-                      ? "bg-[#fff0ef] dark:bg-pink-950/50 text-[#8B0024] dark:text-[#FF97A4] shadow-sm border-l-4 border-[#8B0024]"
-                      : "text-gray-600 dark:text-gray-300 hover:text-[#2a0002] dark:hover:text-white hover:bg-[#faeae9]/50 dark:hover:bg-gray-800/40"
+                      ? "bg-[#fff0ef] dark:bg-pink-950/60 text-[#8B0024] dark:text-white shadow-sm border-l-4 border-[#8B0024]"
+                      : "text-gray-800 dark:text-white hover:text-[#8B0024] dark:hover:text-[#FF97A4] hover:bg-[#faeae9]/60 dark:hover:bg-white/5"
                   }`}
                 >
                   <span className="truncate pr-2">{cat.name}</span>
@@ -102,7 +102,7 @@ export function DoorDashCategoryNav({
                     className={`text-[10px] px-2 py-0.5 rounded-full font-bold transition-colors ${
                       isActive
                         ? "bg-[#8B0024] text-white"
-                        : "bg-gray-100 dark:bg-gray-800 text-gray-500 group-hover:bg-[#8B0024]/10 group-hover:text-[#8B0024]"
+                        : "bg-gray-200/80 dark:bg-gray-800/90 text-gray-700 dark:text-white group-hover:bg-[#8B0024]/10 group-hover:text-[#8B0024]"
                     }`}
                   >
                     {cat.count}
