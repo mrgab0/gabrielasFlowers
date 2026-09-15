@@ -4,7 +4,7 @@ import React, { useState, useMemo, useEffect, useRef } from "react";
 import { DoorDashStoreHeader } from "./DoorDashStoreHeader";
 import { DoorDashCategoryNav, CategoryItem } from "./DoorDashCategoryNav";
 import { DoorDashProductCard } from "./DoorDashProductCard";
-import { Search, RefreshCw } from "lucide-react";
+import { Search, RefreshCw, ChevronDown } from "lucide-react";
 
 interface DoorDashStoreFeedProps {
   products: any[];
@@ -35,6 +35,8 @@ export function DoorDashStoreFeed({
   const [searchQuery, setSearchQuery] = useState("");
   const [deliveryMode, setDeliveryMode] = useState<"delivery" | "pickup">("delivery");
   const [activeCategory, setActiveCategory] = useState<string>("populares");
+  // Estado para solapar (contraer/expandir) cada categoría
+  const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({});
   const isClickScrolling = useRef(false);
 
   // 1. Filtrado de productos y adicionales según búsqueda en tiempo real
@@ -125,23 +127,39 @@ export function DoorDashStoreFeed({
     }));
   }, [sections]);
 
-  // 3. Manejador de clic en categoría: scroll suave a la sección
+  // Alternar expansión de categoría al tocar el encabezado
+  const toggleCategory = (id: string) => {
+    setExpandedCategories((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
+
+  // 3. Manejador de clic en categoría del menú: expandir automáticamente y scroll suave a la sección
   const handleSelectCategory = (id: string) => {
     setActiveCategory(id);
-    const targetElement = document.getElementById(`section-${id}`);
-    if (targetElement) {
-      isClickScrolling.current = true;
-      const yOffset = -140; // Espacio para el header sticky
-      const y =
-        targetElement.getBoundingClientRect().top +
-        window.pageYOffset +
-        yOffset;
-      window.scrollTo({ top: y, behavior: "smooth" });
+    // Asegurar que la categoría se expanda automáticamente
+    setExpandedCategories((prev) => ({
+      ...prev,
+      [id]: true,
+    }));
 
-      setTimeout(() => {
-        isClickScrolling.current = false;
-      }, 800);
-    }
+    setTimeout(() => {
+      const targetElement = document.getElementById(`section-${id}`);
+      if (targetElement) {
+        isClickScrolling.current = true;
+        const yOffset = -140; // Espacio para el header sticky
+        const y =
+          targetElement.getBoundingClientRect().top +
+          window.pageYOffset +
+          yOffset;
+        window.scrollTo({ top: y, behavior: "smooth" });
+
+        setTimeout(() => {
+          isClickScrolling.current = false;
+        }, 800);
+      }
+    }, 60);
   };
 
   // 4. Scrollspy automático con IntersectionObserver
@@ -187,7 +205,7 @@ export function DoorDashStoreFeed({
         onDeliveryModeChange={setDeliveryMode}
       />
 
-      {/* Componente Destacado (FeaturedProductsSlider conservado intacto) */}
+      {/* Componente Destacado (FeaturedProductsSlider SIEMPRE VISIBLE en la parte superior) */}
       {!searchQuery.trim() && featuredComponent && (
         <div className="w-full -mt-2 mb-4">
           {featuredComponent}
@@ -218,8 +236,8 @@ export function DoorDashStoreFeed({
             />
           )}
 
-          {/* Columna Derecha: Catálogo Reagrupado por Categorías */}
-          <main className="flex-1 min-w-0 space-y-12">
+          {/* Columna Derecha: Catálogo Reagrupado por Categorías Solapables */}
+          <main className="flex-1 min-w-0 space-y-10">
             {sections.length === 0 ? (
               // Estado vacío cuando no hay resultados de búsqueda
               <div className="bg-white dark:bg-[#16181F] rounded-3xl p-12 text-center border border-gray-100 dark:border-gray-800 shadow-sm max-w-lg mx-auto space-y-4">
@@ -242,62 +260,88 @@ export function DoorDashStoreFeed({
                 </button>
               </div>
             ) : (
-              // Renderizado de cada sección por Categoría
-              sections.map((section) => (
-                <section
-                  key={section.id}
-                  id={`section-${section.id}`}
-                  className="scroll-mt-36 space-y-4"
-                >
-                  {/* Encabezado de la Categoría */}
-                  <div className="flex items-baseline justify-between border-b border-[#D4AF37]/20 pb-3">
-                    <div className="flex items-center gap-2.5">
-                      <h2 className="text-2xl sm:text-3xl font-serif font-bold text-[#2a0002] dark:text-white tracking-tight">
-                        {section.name}
-                      </h2>
-                      <span className="text-xs font-semibold text-gray-400 bg-gray-100 dark:bg-gray-800 px-2.5 py-0.5 rounded-full">
-                        {section.items.length} {section.items.length === 1 ? "artículo" : "artículos"}
-                      </span>
-                    </div>
-                  </div>
+              // Renderizado de cada sección por Categoría (Solapable / Acordeón)
+              sections.map((section) => {
+                const isSearching = Boolean(searchQuery.trim());
+                const isExpanded = isSearching || Boolean(expandedCategories[section.id]);
 
-                  {/* Cuadrícula de Tarjetas DoorDash (2 columnas en desktop, 1 columna en móvil) */}
-                  <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-                    {section.items.map((item: any) => {
-                      if (section.isAddonSection) {
-                        return (
-                          <DoorDashProductCard
-                            key={`addon-${item._id}`}
-                            id={item._id}
-                            name={item.name}
-                            slug="adicional"
-                            price={item.price}
-                            description={item.description || "Complemento ideal para acompañar tu ramo"}
-                            category={item.category ? `Adicional: ${item.category}` : "Adicionales"}
-                            badge={item.category || "Regalo"}
-                            image={item.image || "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=400&q=80&auto=format"}
-                            isAddon={true}
-                          />
-                        );
-                      }
+                return (
+                  <section
+                    key={section.id}
+                    id={`section-${section.id}`}
+                    className="scroll-mt-36 space-y-4"
+                  >
+                    {/* Botón Encabezado de la Categoría (Solapa / Contrae y Expande) */}
+                    <button
+                      type="button"
+                      onClick={() => toggleCategory(section.id)}
+                      aria-expanded={isExpanded}
+                      className="w-full flex items-center justify-between border-b border-[#D4AF37]/20 pb-3 text-left group cursor-pointer transition-all hover:border-[#8B0024]/40"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <h2 className="text-2xl sm:text-3xl font-serif font-bold text-[#2a0002] dark:text-white tracking-tight group-hover:text-[#8B0024] dark:group-hover:text-[#FF97A4] transition-colors">
+                          {section.name}
+                        </h2>
+                        <span className="text-xs font-semibold text-gray-400 bg-gray-100 dark:bg-gray-800 px-2.5 py-0.5 rounded-full">
+                          {section.items.length} {section.items.length === 1 ? "artículo" : "artículos"}
+                        </span>
+                      </div>
 
-                      return (
-                        <DoorDashProductCard
-                          key={item._id.toString()}
-                          id={item._id.toString()}
-                          name={item.name}
-                          slug={item.slug}
-                          price={item.price}
-                          description={item.description}
-                          category={item.category}
-                          badge={item.badge}
-                          image={item.images && item.images.length > 0 ? item.images[0] : ""}
-                        />
-                      );
-                    })}
-                  </div>
-                </section>
-              ))
+                      {/* Indicador de Despliegue con Chevron */}
+                      <div className="flex items-center gap-2">
+                        <span className="hidden sm:inline text-[11px] uppercase tracking-wider font-bold text-gray-400 group-hover:text-[#8B0024] dark:group-hover:text-[#FF97A4] transition-colors">
+                          {isExpanded ? "Contraer" : "Ver Arreglos"}
+                        </span>
+                        <div
+                          className={`p-1.5 rounded-full bg-[#fff0ef] dark:bg-pink-950/60 border border-[#D4AF37]/30 transition-transform duration-300 ${
+                            isExpanded ? "rotate-180" : "rotate-0"
+                          }`}
+                        >
+                          <ChevronDown size={17} className="text-[#8B0024] dark:text-[#FF97A4]" />
+                        </div>
+                      </div>
+                    </button>
+
+                    {/* Cuadrícula de Tarjetas DoorDash (visible al expandir o al buscar) */}
+                    {isExpanded && (
+                      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 animate-in fade-in-50 slide-in-from-top-1 duration-300">
+                        {section.items.map((item: any) => {
+                          if (section.isAddonSection) {
+                            return (
+                              <DoorDashProductCard
+                                key={`addon-${item._id}`}
+                                id={item._id}
+                                name={item.name}
+                                slug="adicional"
+                                price={item.price}
+                                description={item.description || "Complemento ideal para acompañar tu ramo"}
+                                category={item.category ? `Adicional: ${item.category}` : "Adicionales"}
+                                badge={item.category || "Regalo"}
+                                image={item.image || "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=400&q=80&auto=format"}
+                                isAddon={true}
+                              />
+                            );
+                          }
+
+                          return (
+                            <DoorDashProductCard
+                              key={item._id.toString()}
+                              id={item._id.toString()}
+                              name={item.name}
+                              slug={item.slug}
+                              price={item.price}
+                              description={item.description}
+                              category={item.category}
+                              badge={item.badge}
+                              image={item.images && item.images.length > 0 ? item.images[0] : ""}
+                            />
+                          );
+                        })}
+                      </div>
+                    )}
+                  </section>
+                );
+              })
             )}
           </main>
 
