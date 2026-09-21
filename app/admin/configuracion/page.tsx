@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { getSiteConfig, updateSiteConfig } from "@/lib/actions/siteConfig";
 import { generateTotpSecretAction, getOrCreateTotpSecretAction, update2FASettingsAction, test2FACodeAction } from "@/lib/actions/admin2fa";
-import { Sparkles, Save, CheckCircle2, ArrowLeft, Layout, AlignLeft, Type, Footprints, ShieldCheck, Key, Smartphone, QrCode, RefreshCw, Lock, AlertTriangle, Check, Grid, Image as ImageIcon, Menu, Share2, Globe, Eye, Palette, Sliders, Star, Bot } from "lucide-react";
+import { sendTestCorporateEmailAction } from "@/lib/actions/emailTest";
+import { Sparkles, Save, CheckCircle2, ArrowLeft, Layout, AlignLeft, Type, Footprints, ShieldCheck, Key, Smartphone, QrCode, RefreshCw, Lock, AlertTriangle, Check, Grid, Image as ImageIcon, Menu, Share2, Globe, Eye, Palette, Sliders, Star, Bot, Mail } from "lucide-react";
 import Link from "next/link";
 import { SingleImageUploader } from "@/components/admin/SingleImageUploader";
 
@@ -12,7 +13,13 @@ export default function AdminConfiguracionPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
-  const [activeTab, setActiveTab] = useState<"grid" | "branding" | "social" | "reviews" | "iframe" | "chatbot" | "security">("grid");
+  const [activeTab, setActiveTab] = useState<"grid" | "branding" | "social" | "reviews" | "iframe" | "chatbot" | "security" | "email">("grid");
+
+  // Estado para prueba de Correo Corporativo
+  const [testEmailAddress, setTestEmailAddress] = useState("sales@flowerforyoullc.com");
+  const [testEmailSenderChoice, setTestEmailSenderChoice] = useState<string>("default");
+  const [sendingTestEmail, setSendingTestEmail] = useState(false);
+  const [testEmailResult, setTestEmailResult] = useState<{ success: boolean; message?: string; error?: string } | null>(null);
 
   useEffect(() => {
     loadConfig();
@@ -152,6 +159,18 @@ export default function AdminConfiguracionPage() {
           }`}
         >
           <Bot size={16} /> Chatbot Dialogflow CX 🤖
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab("email")}
+          className={`flex items-center gap-2 px-5 py-3 rounded-xl font-extrabold text-xs whitespace-nowrap transition-all ${
+            activeTab === "email"
+              ? "bg-[#FF97A4] text-white shadow-md shadow-pink-500/20"
+              : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+          }`}
+        >
+          <Mail size={16} /> Correo Corporativo
         </button>
 
         <button
@@ -794,6 +813,235 @@ export default function AdminConfiguracionPage() {
                   className="p-3.5 border rounded-xl text-xs font-bold dark:bg-gray-900 dark:text-white"
                 />
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* PESTAÑA: Correo Corporativo (.com / .org) & Resend */}
+        {activeTab === "email" && (
+          <div className="bg-white dark:bg-[#12131A] p-6 md:p-8 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm space-y-6 animate-in fade-in duration-200">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b pb-4 border-gray-100 dark:border-gray-800">
+              <div className="flex items-center gap-3">
+                <div className="p-3 bg-pink-50 dark:bg-pink-950/60 text-[#8B0024] dark:text-pink-300 rounded-2xl border border-pink-200 dark:border-pink-900/50">
+                  <Mail size={22} />
+                </div>
+                <div>
+                  <h2 className="font-serif font-black text-lg text-[#1A1C1C] dark:text-white">
+                    Servicio de Correo Corporativo & Resend
+                  </h2>
+                  <p className="text-xs text-gray-400">
+                    Gestiona el remitente oficial, dominios corporativos y servidores SMTP para facturas y notificaciones
+                  </p>
+                </div>
+              </div>
+              <span className="bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 text-[11px] font-black px-3.5 py-1.5 rounded-full uppercase tracking-wider flex items-center gap-1.5">
+                <CheckCircle2 size={13} /> Activo & Conectado
+              </span>
+            </div>
+
+            {/* Selector de Presets de Dominio */}
+            <div className="space-y-3">
+              <label className="text-xs font-black uppercase text-gray-400 tracking-wider block">
+                Selecciona el Dominio del Remitente Oficial:
+              </label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {/* Opción Resend / .COM */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setConfig({
+                      ...config,
+                      corporateSenderEmail: "sales@flowerforyoullc.com",
+                      corporateReplyToEmail: "sales@flowerforyoullc.com",
+                      corporateSenderName: config.corporateSenderName || "Gabriela's Flowers LLC"
+                    });
+                  }}
+                  className={`p-4 rounded-2xl border-2 text-left transition-all flex flex-col justify-between space-y-2 ${
+                    (config.corporateSenderEmail || "").includes("flowerforyoullc.com")
+                      ? "border-[#8B0024] bg-pink-50/20 dark:bg-pink-950/20 shadow-sm"
+                      : "border-gray-200 dark:border-gray-800 hover:border-pink-300"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-black text-xs text-[#1A1C1C] dark:text-white flex items-center gap-1.5">
+                      🌟 Dominio Verificado en Resend
+                    </span>
+                    {(config.corporateSenderEmail || "").includes("flowerforyoullc.com") && (
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#8B0024]"></span>
+                    )}
+                  </div>
+                  <code className="text-xs text-[#8B0024] dark:text-pink-300 font-mono font-bold">sales@flowerforyoullc.com</code>
+                  <span className="text-[10px] text-gray-400">Identidad comercial oficial verificada en Resend.</span>
+                </button>
+
+                {/* Opción Personalizada */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!config.corporateSenderEmail) {
+                      setConfig({ ...config, corporateSenderEmail: "sales@gabrielasflowers.com" });
+                    }
+                  }}
+                  className={`p-4 rounded-2xl border-2 text-left transition-all flex flex-col justify-between space-y-2 ${
+                    config.corporateSenderEmail && !config.corporateSenderEmail.includes("flowerforyoullc.com")
+                      ? "border-[#8B0024] bg-pink-50/20 dark:bg-pink-950/20 shadow-sm"
+                      : "border-gray-200 dark:border-gray-800 hover:border-pink-300"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-black text-xs text-[#1A1C1C] dark:text-white flex items-center gap-1.5">
+                      ✏️ Dominio Personalizado
+                    </span>
+                    {config.corporateSenderEmail && !config.corporateSenderEmail.includes("flowerforyoullc.com") && (
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#8B0024]"></span>
+                    )}
+                  </div>
+                  <span className="text-xs text-gray-600 dark:text-gray-300 font-mono font-bold truncate">
+                    {config.corporateSenderEmail || "Escribe tu dirección abajo"}
+                  </span>
+                  <span className="text-[10px] text-gray-400">Define cualquier alias o buzón especial.</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Inputs de Identidad */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-gray-700 dark:text-gray-300">
+                  Nombre Visible del Remitente:
+                </label>
+                <input
+                  type="text"
+                  name="corporateSenderName"
+                  value={config.corporateSenderName ?? "Gabriela's Flowers LLC"}
+                  onChange={(e) => setConfig({ ...config, corporateSenderName: e.target.value })}
+                  placeholder="Ej: Gabriela's Flowers LLC"
+                  className="w-full p-3 border rounded-xl text-xs font-bold dark:bg-gray-900 dark:text-white focus:ring-2 focus:ring-[#8B0024]"
+                />
+                <span className="text-[10px] text-gray-400">Nombre con el que los clientes ven el correo en su bandeja.</span>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-gray-700 dark:text-gray-300">
+                  Correo Electrónico Remitente:
+                </label>
+                <input
+                  type="email"
+                  name="corporateSenderEmail"
+                  value={config.corporateSenderEmail ?? "sales@flowerforyoullc.com"}
+                  onChange={(e) => setConfig({ ...config, corporateSenderEmail: e.target.value })}
+                  placeholder="sales@flowerforyoullc.com"
+                  className="w-full p-3 border rounded-xl text-xs font-mono font-bold dark:bg-gray-900 dark:text-white focus:ring-2 focus:ring-[#8B0024]"
+                />
+                <span className="text-[10px] text-gray-400">Dirección de correo 'From' de salida.</span>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-gray-700 dark:text-gray-300">
+                  Correo de Respuesta (Reply-To):
+                </label>
+                <input
+                  type="email"
+                  name="corporateReplyToEmail"
+                  value={config.corporateReplyToEmail ?? "sales@flowerforyoullc.com"}
+                  onChange={(e) => setConfig({ ...config, corporateReplyToEmail: e.target.value })}
+                  placeholder="sales@flowerforyoullc.com"
+                  className="w-full p-3 border rounded-xl text-xs font-mono font-bold dark:bg-gray-900 dark:text-white focus:ring-2 focus:ring-[#8B0024]"
+                />
+                <span className="text-[10px] text-gray-400">Donde responden los clientes al presionar 'Responder'.</span>
+              </div>
+            </div>
+
+            {/* Guía Rápida de Configuración en Namecheap y Gmail */}
+            <div className="p-5 bg-blue-50/40 dark:bg-blue-950/20 rounded-2xl border border-blue-100 dark:border-blue-900/50 space-y-3">
+              <h3 className="text-xs font-black uppercase tracking-wider text-blue-950 dark:text-blue-200 flex items-center gap-2">
+                📋 Guía Rápida para Configurar tu Dominio en Resend, Namecheap & Gmail
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-gray-700 dark:text-gray-300">
+                <div className="space-y-1.5 p-3.5 bg-white dark:bg-gray-900 rounded-xl border border-blue-100 dark:border-blue-900/40">
+                  <strong className="text-blue-600 dark:text-blue-400 block">1. En Resend & DNS (Namecheap / Cloudflare):</strong>
+                  <ul className="list-disc pl-4 space-y-1 text-[11px] text-gray-600 dark:text-gray-300">
+                    <li>En Resend ➔ <em>Domains ➔ Add Domain</em> añade tu dominio.</li>
+                    <li>Agrega los registros <strong>DKIM (TXT)</strong> que te entrega Resend.</li>
+                    <li><strong>Registro SPF (TXT):</strong> Host <code>@</code>, Value <code>v=spf1 include:resend.com ~all</code></li>
+                    <li><strong>Registro DMARC (TXT):</strong> Host <code>_dmarc</code>, Value <code>v=DMARC1; p=none; pct=100;</code></li>
+                  </ul>
+                </div>
+
+                <div className="space-y-1.5 p-3.5 bg-white dark:bg-gray-900 rounded-xl border border-blue-100 dark:border-blue-900/40">
+                  <strong className="text-blue-600 dark:text-blue-400 block">2. Variable de Entorno:</strong>
+                  <ul className="list-disc pl-4 space-y-1 text-[11px] text-gray-600 dark:text-gray-300">
+                    <li>Define <code>RESEND_API_KEY=re_...</code> en tus variables de entorno.</li>
+                    <li>El sistema detectará automáticamente Resend y enviará a máxima velocidad sin depender de puertos SMTP bloqueados.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Módulo de Envío de Prueba en Vivo */}
+            <div className="p-5 rounded-2xl border border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/30 space-y-4">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                <h3 className="font-serif font-black text-sm text-[#1A1C1C] dark:text-white flex items-center gap-2">
+                  📨 Probar Envío de Correo Corporativo en Vivo
+                </h3>
+                <span className="text-[11px] text-gray-400 font-medium">
+                  Envía un correo de prueba con membrete oficial a cualquier destinatario
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="sm:col-span-1 space-y-1">
+                  <label className="text-[11px] font-bold text-gray-500 block">Remitente de la Prueba:</label>
+                  <select
+                    value={testEmailSenderChoice}
+                    onChange={(e) => setTestEmailSenderChoice(e.target.value)}
+                    className="w-full p-3 border rounded-xl text-xs font-bold dark:bg-gray-900 dark:text-white focus:ring-2 focus:ring-[#8B0024]"
+                  >
+                    <option value="default">✨ Remitente Activo ({config.corporateSenderEmail || "sales@flowerforyoullc.com"})</option>
+                    <option value='"Gabriela&apos;s Flowers LLC" <sales@flowerforyoullc.com>'>🌟 Forzar sales@flowerforyoullc.com</option>
+                  </select>
+                </div>
+
+                <div className="sm:col-span-2 space-y-1">
+                  <label className="text-[11px] font-bold text-gray-500 block">Destinatario de Prueba:</label>
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <input
+                      type="email"
+                      value={testEmailAddress}
+                      onChange={(e) => setTestEmailAddress(e.target.value)}
+                      placeholder="ejemplo@dominio.com"
+                      className="flex-1 p-3 border rounded-xl text-xs font-bold dark:bg-gray-900 dark:text-white focus:ring-2 focus:ring-[#8B0024]"
+                    />
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        setSendingTestEmail(true);
+                        setTestEmailResult(null);
+                        const senderToTest = testEmailSenderChoice === "default" ? undefined : testEmailSenderChoice;
+                        const res = await sendTestCorporateEmailAction(testEmailAddress, senderToTest);
+                        setTestEmailResult(res);
+                        setSendingTestEmail(false);
+                      }}
+                      disabled={sendingTestEmail || !testEmailAddress}
+                      className="bg-[#1A1C1C] text-white dark:bg-white dark:text-gray-900 px-6 py-3 rounded-xl text-xs font-black hover:bg-black dark:hover:bg-gray-100 transition-all disabled:opacity-50 flex items-center justify-center gap-2 whitespace-nowrap"
+                    >
+                      <Mail size={15} />
+                      {sendingTestEmail ? "Enviando..." : "Enviar Prueba 📩"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {testEmailResult && (
+                <div className={`p-3.5 rounded-xl text-xs font-bold flex items-center gap-2 animate-in fade-in ${
+                  testEmailResult.success 
+                    ? "bg-emerald-50 text-emerald-800 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-900" 
+                    : "bg-red-50 text-red-800 border border-red-200 dark:bg-red-950/40 dark:text-red-300 dark:border-red-900"
+                }`}>
+                  {testEmailResult.success ? <CheckCircle2 size={16} className="text-emerald-600" /> : <AlertTriangle size={16} className="text-red-600" />}
+                  <span>{testEmailResult.success ? testEmailResult.message : testEmailResult.error}</span>
+                </div>
+              )}
             </div>
           </div>
         )}

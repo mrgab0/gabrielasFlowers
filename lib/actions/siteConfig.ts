@@ -43,7 +43,14 @@ const DEFAULT_SITE_CONFIG = {
   dialogflowProjectId: "",
   dialogflowLocation: "us-central1",
   dialogflowLanguageCode: "es",
-  dialogflowChatTitle: "Gabriela's Flowers Virtual Assistant 🌸"
+  dialogflowChatTitle: "Gabriela's Flowers Virtual Assistant 🌸",
+  corporateSenderEmail: "sales@flowerforyoullc.com",
+  corporateSenderName: "Gabriela's Flowers LLC",
+  corporateReplyToEmail: "sales@flowerforyoullc.com",
+  smtpHostOverride: "",
+  smtpPortOverride: 0,
+  smtpUserOverride: "",
+  smtpPassOverride: ""
 };
 
 export async function getSiteConfig() {
@@ -137,6 +144,15 @@ export async function updateSiteConfig(formData: FormData) {
     const dialogflowLanguageCode = getValue("dialogflowLanguageCode", "es");
     const dialogflowChatTitle = getValue("dialogflowChatTitle", "Gabriela's Flowers Virtual Assistant 🌸");
 
+    // Correo Corporativo (.com / .org) & SMTP
+    const corporateSenderEmail = ((formData.get("corporateSenderEmail") as string) || prev.corporateSenderEmail || DEFAULT_SITE_CONFIG.corporateSenderEmail).trim();
+    const corporateSenderName = ((formData.get("corporateSenderName") as string) || prev.corporateSenderName || DEFAULT_SITE_CONFIG.corporateSenderName).trim();
+    const corporateReplyToEmail = ((formData.get("corporateReplyToEmail") as string) || prev.corporateReplyToEmail || corporateSenderEmail).trim();
+    const smtpHostOverride = ((formData.get("smtpHostOverride") as string) ?? (prev.smtpHostOverride || "")).trim();
+    const smtpPortOverride = parseInt((formData.get("smtpPortOverride") as string) || "0", 10) || prev.smtpPortOverride || 0;
+    const smtpUserOverride = ((formData.get("smtpUserOverride") as string) ?? (prev.smtpUserOverride || "")).trim();
+    const smtpPassOverride = ((formData.get("smtpPassOverride") as string) ?? (prev.smtpPassOverride || "")).trim();
+
     await SiteConfig.findOneAndUpdate(
       { key: "global" },
       {
@@ -178,6 +194,13 @@ export async function updateSiteConfig(formData: FormData) {
         dialogflowLocation,
         dialogflowLanguageCode,
         dialogflowChatTitle,
+        corporateSenderEmail,
+        corporateSenderName,
+        corporateReplyToEmail,
+        smtpHostOverride,
+        smtpPortOverride,
+        smtpUserOverride,
+        smtpPassOverride,
         updatedAt: new Date()
       },
       { upsert: true, new: true }

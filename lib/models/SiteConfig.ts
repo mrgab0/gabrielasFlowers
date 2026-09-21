@@ -77,6 +77,15 @@ export interface ISiteConfig extends Document {
   businessAddress?: string;
   businessCity?: string;
 
+  // Configuración de Correo Corporativo (.com / .org) & SMTP
+  corporateSenderEmail?: string;
+  corporateSenderName?: string;
+  corporateReplyToEmail?: string;
+  smtpHostOverride?: string;
+  smtpPortOverride?: number;
+  smtpUserOverride?: string;
+  smtpPassOverride?: string;
+
   updatedAt: Date;
 }
 
@@ -154,6 +163,15 @@ const SiteConfigSchema: Schema = new Schema({
   businessPhone: { type: String, default: "+1 (800) 555-3569" },
   businessAddress: { type: String, default: "4201 Fairmont Pkwy" },
   businessCity: { type: String, default: "Pasadena, TX 77504" },
+
+  // Configuración de Correo Corporativo (.com / .org) & SMTP
+  corporateSenderEmail: { type: String, default: "sales@flowerforyoullc.com" },
+  corporateSenderName: { type: String, default: "Gabriela's Flowers LLC" },
+  corporateReplyToEmail: { type: String, default: "sales@flowerforyoullc.com" },
+  smtpHostOverride: { type: String, default: "" },
+  smtpPortOverride: { type: Number, default: 0 },
+  smtpUserOverride: { type: String, default: "" },
+  smtpPassOverride: { type: String, default: "" },
 
   updatedAt: { type: Date, default: Date.now }
 });
