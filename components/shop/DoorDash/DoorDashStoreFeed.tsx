@@ -84,10 +84,25 @@ export function DoorDashStoreFeed({
     }
 
     // Secciones por cada categoría única presente en la base de datos
+    const EXCLUDED_CATEGORIES = [
+      "Bestseller",
+      "Bestsellers",
+      "Luxury",
+      "Luxury Roses",
+      "Popular!",
+      "Oferta",
+      "Nuevo",
+      "Lovely"
+    ];
+
     const categoriesSet = new Set<string>();
     products.forEach((p) => {
       if (p.category && p.category.trim()) {
-        categoriesSet.add(p.category.trim());
+        const cat = p.category.trim();
+        // Evitar que las insignias destacadas se listen como categorías
+        if (!EXCLUDED_CATEGORIES.some(ex => ex.toLowerCase() === cat.toLowerCase())) {
+          categoriesSet.add(cat);
+        }
       }
     });
 
