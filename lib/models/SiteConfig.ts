@@ -47,8 +47,11 @@ export interface ISiteConfig extends Document {
   customIframeTitle?: string;
   customIframeHtml?: string;
 
-  // Módulo de Chatbot Inteligente Dialogflow CX
+  // Módulo de Chatbot Inteligente Dialogflow CX & Google Gemini
   enableChatbot?: boolean;
+  chatbotMiniMode?: boolean;
+  chatbotInitialPosition?: "bottom-right" | "bottom-left";
+  geminiApiKey?: string;
   dialogflowAgentId?: string;
   dialogflowProjectId?: string;
   dialogflowLocation?: string;
@@ -127,8 +130,11 @@ const SiteConfigSchema: Schema = new Schema({
   customIframeTitle: { type: String, default: "Ubicación & Promociones Destacadas" },
   customIframeHtml: { type: String, default: "" },
 
-  // Módulo de Chatbot Inteligente Dialogflow CX
+  // Módulo de Chatbot Inteligente Dialogflow CX & Google Gemini
   enableChatbot: { type: Boolean, default: true },
+  chatbotMiniMode: { type: Boolean, default: true },
+  chatbotInitialPosition: { type: String, default: "bottom-right" },
+  geminiApiKey: { type: String, default: "" },
   dialogflowAgentId: { type: String, default: "" },
   dialogflowProjectId: { type: String, default: "" },
   dialogflowLocation: { type: String, default: "us-central1" },
