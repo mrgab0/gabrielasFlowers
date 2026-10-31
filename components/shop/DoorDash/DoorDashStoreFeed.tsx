@@ -62,7 +62,7 @@ export function DoorDashStoreFeed({
     });
   }, [addons, searchQuery]);
 
-  // 2. Reagrupar productos en Categorías reales
+  // 2. Reagrupar productos únicamente en las Categorías solicitadas para el Home
   const sections = useMemo(() => {
     const list: {
       id: string;
@@ -83,38 +83,32 @@ export function DoorDashStoreFeed({
       });
     }
 
-    // Secciones por cada categoría única presente en la base de datos
-    const EXCLUDED_CATEGORIES = [
-      "Bestseller",
-      "Bestsellers",
-      "Luxury",
-      "Luxury Roses",
-      "Popular!",
-      "Oferta",
-      "Nuevo",
-      "Lovely"
+    // Categorías exclusivas permitidas para mostrar en el Home
+    const ALLOWED_CATEGORIES = [
+      "Money Bouquets",
+      "Flores Amarillas",
+      "Bouquett",
+      "Heart Boxes",
     ];
 
-    const categoriesSet = new Set<string>();
-    products.forEach((p) => {
-      if (p.category && p.category.trim()) {
-        const cat = p.category.trim();
-        // Evitar que las insignias destacadas se listen como categorías
-        if (!EXCLUDED_CATEGORIES.some(ex => ex.toLowerCase() === cat.toLowerCase())) {
-          categoriesSet.add(cat);
+    ALLOWED_CATEGORIES.forEach((allowedCat) => {
+      const catSlug = slugifyCategory(allowedCat);
+      const catItems = filteredProducts.filter((p) => {
+        if (!p.category) return false;
+        const norm = p.category.trim().toLowerCase();
+        const allowedNorm = allowedCat.trim().toLowerCase();
+        if (norm === allowedNorm) return true;
+        // Compatibilidad para variantes ortográficas (ej. Bouquett vs Bouquet)
+        if (allowedNorm === "bouquett" && (norm === "bouquet" || norm === "bouquets")) {
+          return true;
         }
-      }
-    });
+        return false;
+      });
 
-    const categoryNames = Array.from(categoriesSet);
-
-    categoryNames.forEach((catName) => {
-      const catSlug = slugifyCategory(catName);
-      const catItems = filteredProducts.filter((p) => p.category === catName);
       if (catItems.length > 0) {
         list.push({
           id: `cat-${catSlug}`,
-          name: catName,
+          name: allowedCat,
           items: catItems,
         });
       }
@@ -131,7 +125,7 @@ export function DoorDashStoreFeed({
     }
 
     return list;
-  }, [filteredProducts, filteredAddons, products]);
+  }, [filteredProducts, filteredAddons]);
 
   // Lista de categorías para el menú lateral/móvil
   const navCategories: CategoryItem[] = useMemo(() => {
