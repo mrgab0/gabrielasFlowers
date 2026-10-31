@@ -10,6 +10,12 @@ import { getDeliveryOptions } from "@/lib/actions/delivery";
 import { validateCoupon, checkAutoLaunchCoupon } from "@/lib/actions/coupon";
 import { getPaymentConfigs } from "@/lib/actions/paymentConfig";
 import { Zap, Rocket, Truck, Sun, Clock, Moon, Store, ShieldCheck, CheckCircle2, Ticket, Sparkles, Tag, AlertCircle, Copy, ExternalLink, QrCode } from "lucide-react";
+import dynamic from "next/dynamic";
+
+const DeliveryMapPicker = dynamic(
+  () => import("@/components/shop/DeliveryMapPicker").then((mod) => mod.DeliveryMapPicker),
+  { ssr: false }
+);
 
 const PaymentLogos = {
   zelle: <svg viewBox="0 0 38 24" width="38" height="24" className="w-8 h-auto"><path d="M0 0h38v24H0z" fill="#6d2277"/><path d="M10 5h18v3l-10 8h10v5H10v-3l10-8H10z" fill="#fff"/></svg>,
@@ -36,6 +42,20 @@ export default function CheckoutPage() {
   const [selectedPayment, setSelectedPayment] = useState("");
   const [deliveryOptionsList, setDeliveryOptionsList] = useState<DeliveryOption[]>(DEFAULT_DELIVERY_OPTIONS);
   const [selectedDelivery, setSelectedDelivery] = useState<DeliveryOption>(DEFAULT_DELIVERY_OPTIONS[2]);
+
+  const [deliveryLocation, setDeliveryLocation] = useState<{
+    address: string;
+    lat: number;
+    lng: number;
+    distanceMiles: number;
+    googleMapsUrl: string;
+  }>({
+    address: "",
+    lat: 29.6521,
+    lng: -95.1706,
+    distanceMiles: 0,
+    googleMapsUrl: "https://maps.google.com",
+  });
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -87,7 +107,20 @@ export default function CheckoutPage() {
   };
 
   const subtotal = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-  const deliveryFee = selectedDelivery ? selectedDelivery.extraPrice : 0;
+
+  const calcOptionFee = (opt: DeliveryOption) => {
+    if (opt.id === "pickup") return 0;
+    const miles = deliveryLocation?.distanceMiles || 0;
+    const perMile = opt.pricePerMile || 0;
+    const base = opt.extraPrice || 0;
+    
+    if (perMile > 0 && miles === 0) return base;
+
+    const totalFee = perMile > 0 ? (miles * perMile) + base : base;
+    return Math.round(totalFee * 100) / 100;
+  };
+
+  const deliveryFee = selectedDelivery ? calcOptionFee(selectedDelivery) : 0;
 
   let discountAmount = 0;
   if (appliedCoupon) {
@@ -135,7 +168,11 @@ export default function CheckoutPage() {
     const orderData = {
       customerName: data.get("name")?.toString() || "",
       customerPhone: data.get("phone")?.toString() || "",
-      address: data.get("address")?.toString() || "",
+      address: deliveryLocation.address || data.get("address")?.toString() || address,
+      destLat: deliveryLocation.lat,
+      destLng: deliveryLocation.lng,
+      distanceMiles: deliveryLocation.distanceMiles,
+      googleMapsUrl: deliveryLocation.googleMapsUrl,
       deliveryMethod: `${selectedDelivery.title} (${selectedDelivery.estimatedTimeLabel})`,
       deliveryFee: deliveryFee,
       couponCode: appliedCoupon ? appliedCoupon.code : "",
@@ -205,13 +242,12 @@ export default function CheckoutPage() {
                       className="w-full p-3.5 border border-gray-300 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF97A4] font-medium text-gray-900 dark:text-white bg-white dark:bg-gray-900 placeholder:text-gray-400" 
                       required 
                     />
-                    <textarea 
-                      name="address" 
-                      value={address} 
-                      onChange={(e) => setAddress(e.target.value)} 
-                      placeholder="Dirección Exacta de Entrega (o escribir 'Retiro en Tienda') *" 
-                      className="w-full p-3.5 border border-gray-300 dark:border-gray-700 rounded-xl h-20 focus:outline-none focus:ring-2 focus:ring-[#FF97A4] font-medium text-gray-900 dark:text-white bg-white dark:bg-gray-900 placeholder:text-gray-400" 
-                      required 
+                    <DeliveryMapPicker
+                      initialAddress={address}
+                      onLocationChange={(locData) => {
+                        setAddress(locData.address);
+                        setDeliveryLocation(locData);
+                      }}
                     />
                   </div>
                 </div>
@@ -228,6 +264,7 @@ export default function CheckoutPage() {
                     {deliveryOptionsList.map((option, index) => {
                       const IconComponent = iconMap[option.iconName] || Truck;
                       const isSelected = (selectedDelivery.id && selectedDelivery.id === option.id) || selectedDelivery.title === option.title;
+                      const calculatedPrice = calcOptionFee(option);
 
                       return (
                         <label
@@ -260,8 +297,8 @@ export default function CheckoutPage() {
                           </div>
 
                           <div className="text-right flex-shrink-0 ml-3">
-                            <span className={`text-sm font-extrabold block ${option.extraPrice > 0 ? "text-[#FF97A4]" : "text-green-600"}`}>
-                              {option.extraPrice > 0 ? `+$${option.extraPrice.toFixed(2)} USD` : "Gratis"}
+                            <span className={`text-sm font-extrabold block ${calculatedPrice > 0 ? "text-[#FF97A4]" : "text-green-600"}`}>
+                              {calculatedPrice > 0 ? `+$${calculatedPrice.toFixed(2)} USD` : "Gratis"}
                             </span>
                             {isSelected && (
                               <CheckCircle2 size={18} className="text-[#FF97A4] ml-auto mt-1" />
