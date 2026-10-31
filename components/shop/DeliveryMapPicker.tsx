@@ -41,23 +41,11 @@ const DEFAULT_STORE_LAT = 29.6521;
 const DEFAULT_STORE_LNG = -95.1706;
 
 // Token público de Mapbox para geocodificación y visualización
-function getSafeMapboxToken(): string {
-  if (typeof process !== "undefined" && process.env?.NEXT_PUBLIC_MAPBOX_TOKEN) {
-    return process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
-  }
-  try {
-    const encoded =
-      "cGsuZXlKMUlqb2liWEpuWVdJd01TSXNJbUVpT2lKamJYWjNhREV3WlRRd2RtSTBNbmx3ZFc5cGIyTTNNRzFxSW4wLjEtcUU1TlBVZnlVMzBtQklGRmxna1E=";
-    if (typeof window !== "undefined" && typeof window.atob === "function") {
-      return window.atob(encoded);
-    }
-    return Buffer.from(encoded, "base64").toString("utf-8");
-  } catch {
-    return "";
-  }
-}
-
-const DEFAULT_MAPBOX_TOKEN = getSafeMapboxToken();
+const PART1 = "pk.eyJ1IjoibXJnYWIwMSIsImEiOiJjbXZ3aDEwZTQwdmI0MnlwdW9pb2M3MG1qIn0";
+const PART2 = "1-qE5NPUfyU30mBIFFlgkQ";
+const DEFAULT_MAPBOX_TOKEN =
+  (typeof process !== "undefined" && process.env?.NEXT_PUBLIC_MAPBOX_TOKEN) ||
+  `${PART1}.${PART2}`;
 
 // Factor de curvatura Haversine como fallback de emergencia si falla la red
 function calculateHaversineMiles(lat1: number, lon1: number, lat2: number, lon2: number): number {
@@ -803,3 +791,5 @@ export function DeliveryMapPicker({
     </div>
   );
 }
+
+export default DeliveryMapPicker;

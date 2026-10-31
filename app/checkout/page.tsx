@@ -35,7 +35,7 @@ const iconMap: Record<string, any> = {
 import dynamic from "next/dynamic";
 
 const DeliveryMapPicker = dynamic(
-  () => import("@/components/shop/DeliveryMapPicker").then((mod) => mod.DeliveryMapPicker),
+  () => import("@/components/shop/DeliveryMapPicker"),
   { ssr: false }
 );
 
