@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Star, ShieldCheck, CheckCircle2, Quote, Instagram, Heart, MessageCircle, ExternalLink, ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
+import { ShieldCheck, Instagram, Heart, MessageCircle, ExternalLink, ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { TrustpilotShowcase } from "./TrustpilotShowcase";
 
 interface SocialAndReviewsSectionProps {
   // Configuración de Reseñas
@@ -108,36 +109,6 @@ export function SocialAndReviewsSection({
     }
   }, [embedHtml, currentSlide, hasEmbeds, isSectionVisible]);
 
-  const reviewsList = [
-    {
-      id: 1,
-      name: t("rev1Name"),
-      location: t("rev1Location"),
-      rating: 5,
-      date: t("rev1Date"),
-      comment: t("rev1"),
-      verified: true,
-    },
-    {
-      id: 2,
-      name: t("rev2Name"),
-      location: t("rev2Location"),
-      rating: 5,
-      date: t("rev2Date"),
-      comment: t("rev2"),
-      verified: true,
-    },
-    {
-      id: 3,
-      name: t("rev3Name"),
-      location: t("rev3Location"),
-      rating: 5,
-      date: t("rev3Date"),
-      comment: t("rev3"),
-      verified: true,
-    },
-  ];
-
   // Publicaciones de muestra de Instagram para el Slider nativo cuando no hay embeds personalizados
   const instagramPosts = [
     {
@@ -194,87 +165,48 @@ export function SocialAndReviewsSection({
       <div className="container mx-auto px-4 max-w-7xl relative z-20">
         <div className={`grid grid-cols-1 ${enableReviews && enableSocialFeed ? "lg:grid-cols-12" : "max-w-4xl mx-auto"} gap-8 items-stretch`}>
 
-          {/* COLUMNA IZQUIERDA: Reseñas Verificadas & Trustpilot */}
+          {/* COLUMNA IZQUIERDA: Reseñas Verificadas & Trustpilot (Mismo lugar y relación de aspecto) */}
           {enableReviews && (
             <div className={`${enableSocialFeed ? "lg:col-span-6" : "col-span-1"} bg-white dark:bg-[#12131A] p-6 sm:p-8 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-xl flex flex-col justify-between space-y-6 relative z-10`}>
               <div>
-                {/* Header de Reseñas */}
-                <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-100 dark:border-gray-800">
-                  <div className="inline-flex items-center gap-2 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/50 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider">
-                    <ShieldCheck size={14} />
-                    <span>{t("badge")}</span>
+                {/* Header Oficial estilo Trustpilot */}
+                <div className="flex items-center justify-between mb-3 pb-2.5 border-b border-gray-100 dark:border-gray-800">
+                  <div className="inline-flex items-center gap-2">
+                    <span className="text-[#E05A30] font-black text-xs uppercase tracking-[0.2em]">
+                      {t("eyebrow")}
+                    </span>
                   </div>
-                  <div className="flex items-center gap-1 text-amber-400">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} size={16} fill="currentColor" stroke="none" />
-                    ))}
+                  <div className="inline-flex items-center gap-1.5 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/50 px-2.5 py-0.5 rounded-full text-[11px] font-bold">
+                    <ShieldCheck size={12} />
+                    <span>{t("badge")}</span>
                   </div>
                 </div>
 
                 {/* Título de la Sección de Reseñas */}
-                <h3 className="text-xl sm:text-2xl font-serif font-black text-[#1A1C1C] dark:text-white tracking-tight mb-2">
+                <h3 className="text-xl sm:text-2xl font-serif font-black text-[#1A1C1C] dark:text-white tracking-tight mb-4">
                   {reviewsTitle || t("title")}
                 </h3>
 
-                {/* Puntuación y Total */}
-                <div className="flex items-center gap-2 mb-6">
-                  <span className="text-lg font-black text-[#1A1C1C] dark:text-white">
-                    {ratingScore || "4.9 / 5.0"}
-                  </span>
-                  <span className="text-gray-300 dark:text-gray-700">•</span>
-                  <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2.5 py-0.5 rounded-full border border-emerald-200/60">
-                    {countText || t("verifiedCount")}
-                  </span>
-                </div>
-
-                {/* Si existe un Widget de Trustpilot / Google Reviews */}
+                {/* Si existe un Widget incrustado de Trustpilot / Google Reviews */}
                 {trustpilotWidgetHtml && trustpilotWidgetHtml.trim() ? (
                   <div
                     ref={widgetRef}
                     className="w-full flex justify-center border border-gray-100 dark:border-gray-800 rounded-2xl p-4 bg-gray-50 dark:bg-gray-900/50"
                   />
                 ) : (
-                  /* Tarjetas de Reseñas Verificadas (Diseño Nativo) */
-                  <div className="space-y-4">
-                    {reviewsList.map((rev) => (
-                      <div
-                        key={rev.id}
-                        className="bg-[#F9F9F9] dark:bg-gray-900/70 p-4 sm:p-5 rounded-2xl border border-gray-200/70 dark:border-gray-800/80 shadow-sm relative transition-all hover:border-pink-200 review-card-item"
-                      >
-                        <Quote size={24} className="absolute right-4 top-4 text-pink-200 dark:text-pink-950/40 pointer-events-none" />
-
-                        {/* Estrellas */}
-                        <div className="flex items-center gap-1 text-amber-400 mb-2">
-                          {[...Array(rev.rating)].map((_, i) => (
-                            <Star key={i} size={14} fill="currentColor" stroke="none" />
-                          ))}
-                        </div>
-
-                        {/* Comentario */}
-                        <p className="text-xs text-slate-800 dark:text-gray-300 font-medium leading-relaxed italic mb-3 review-text">
-                          "{rev.comment}"
-                        </p>
-
-                        {/* Autor e Info */}
-                        <div className="flex items-center justify-between text-[11px] font-bold text-slate-500">
-                          <span className="flex items-center gap-1 text-[#2B0002] dark:text-white review-author">
-                            {rev.name}
-                            <span className="text-[10px] text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.5 rounded-md">
-                              <CheckCircle2 size={10} className="inline mr-0.5" /> Verificado
-                            </span>
-                          </span>
-                          <span className="text-slate-400 dark:text-gray-400 review-date">{rev.date}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                  /* Tarjetas y Calificación Oficial de Trustpilot (Estilo Screenshot 405) */
+                  <TrustpilotShowcase
+                    ratingScore={ratingScore}
+                    countText={countText}
+                    layout={enableSocialFeed ? "split-column" : "full-grid"}
+                  />
                 )}
               </div>
 
               {/* Pie con Nota de Confianza */}
               <div className="pt-2 text-center border-t border-gray-100 dark:border-gray-800">
                 <span className="text-xs font-bold text-gray-600 dark:text-gray-300">
-                  ⭐⭐⭐⭐⭐ Calificación promedio de 4.9 basada en clientes de Houston & alrededores.
+                  ⭐⭐⭐⭐⭐ Calificación promedio de 4.9 en Trustpilot basada en clientes de Houston & alrededores.
                 </span>
               </div>
             </div>
